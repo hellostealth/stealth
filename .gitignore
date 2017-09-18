@@ -10,3 +10,4 @@
 /coverage
 .yardoc
 doc/
+*.gem
