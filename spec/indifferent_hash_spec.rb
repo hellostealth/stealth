@@ -2,7 +2,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
-describe CommandBuilder::IndifferentHash do
+describe Stealth::IndifferentHash do
   describe "constructor" do
     it "should accept a flattened array" do
       hash = IndifferentHash[:a, 1, 'b', 2]
@@ -17,7 +17,7 @@ describe CommandBuilder::IndifferentHash do
     end
 
     it 'should instantiate a new instance with .new()' do
-      expect(IndifferentHash.new).to be_an_instance_of(CommandBuilder::IndifferentHash)
+      expect(IndifferentHash.new).to be_an_instance_of(Stealth::IndifferentHash)
     end
   end
 

@@ -12,6 +12,6 @@ require 'uri'
 # other files we need
 require 'command-builder/helpers/indifferent_access'
 
-module CommandBuilder
+module Stealth
 
 end

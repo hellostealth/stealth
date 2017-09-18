@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-module CommandBuilder
+module Stealth
   # A poor man's ActiveSupport::HashWithIndifferentAccess, with all the Rails-y
   # stuff removed.
   #
   # Implements a hash where keys <tt>:foo</tt> and <tt>"foo"</tt> are
   # considered to be the same.
   #
-  #   rgb = CommandBuilder::IndifferentHash.new
+  #   rgb = Stealth::IndifferentHash.new
   #
   #   rgb[:black]    =  '#000000' # symbol assignment
   #   rgb[:black]  # => '#000000' # symbol retrieval
@@ -21,7 +21,7 @@ module CommandBuilder
   # writing interface (calling e.g. <tt>[]=</tt>, <tt>merge</tt>). This mapping
   # belongs to the public interface. For example, given:
   #
-  #   hash = CommandBuilder::IndifferentHash.new(:a=>1)
+  #   hash = Stealth::IndifferentHash.new(:a=>1)
   #
   # You are guaranteed that the key is returned as a string:
   #
@@ -29,13 +29,13 @@ module CommandBuilder
   #
   # Technically other types of keys are accepted:
   #
-  #   hash = CommandBuilder::IndifferentHash.new(:a=>1)
+  #   hash = Stealth::IndifferentHash.new(:a=>1)
   #   hash[0] = 0
   #   hash # => { "a"=>1, 0=>0 }
   #
   # But this class is intended for use cases where strings or symbols are the
   # expected keys and it is convenient to understand both as the same. For
-  # example the +params+ hash in CommandBuilder.
+  # example the +params+ hash in Stealth.
   class IndifferentHash < Hash
     # Returns +true+ so that <tt>Array#extract_options!</tt> finds members of
     # this class.
@@ -73,7 +73,7 @@ module CommandBuilder
 
     # Assigns a new value to the hash:
     #
-    #   hash = CommandBuilder::IndifferentHash.new
+    #   hash = Stealth::IndifferentHash.new
     #   hash[:key] = 'value'
     #
     # This value can be later fetched using either +:key+ or <tt>'key'</tt>.
@@ -85,16 +85,16 @@ module CommandBuilder
 
     # Updates the receiver in-place, merging in the hash passed as argument:
     #
-    #   hash_1 = CommandBuilder::IndifferentHash.new
+    #   hash_1 = Stealth::IndifferentHash.new
     #   hash_1[:key] = 'value'
     #
-    #   hash_2 = CommandBuilder::IndifferentHash.new
+    #   hash_2 = Stealth::IndifferentHash.new
     #   hash_2[:key] = 'New Value!'
     #
     #   hash_1.update(hash_2) # => {"key"=>"New Value!"}
     #
     # The argument can be either an
-    # <tt>CommandBuilder::IndifferentHash</tt> or a regular +Hash+.
+    # <tt>Stealth::IndifferentHash</tt> or a regular +Hash+.
     # In either case the merge respects the semantics of indifferent access.
     #
     # If the argument is a regular hash with keys +:key+ and +"key"+ only one
@@ -126,7 +126,7 @@ module CommandBuilder
 
     # Checks the hash for a key matching the argument passed in:
     #
-    #   hash = CommandBuilder::IndifferentHash.new
+    #   hash = Stealth::IndifferentHash.new
     #   hash['key'] = 'value'
     #   hash.key?(:key)  # => true
     #   hash.key?('key') # => true
@@ -141,7 +141,7 @@ module CommandBuilder
     # Same as <tt>Hash#[]</tt> where the key passed as argument can be
     # either a string or a symbol:
     #
-    #   counters = CommandBuilder::IndifferentHash.new
+    #   counters = Stealth::IndifferentHash.new
     #   counters[:foo] = 1
     #
     #   counters['foo'] # => 1
@@ -154,7 +154,7 @@ module CommandBuilder
     # Same as <tt>Hash#fetch</tt> where the key passed as argument can be
     # either a string or a symbol:
     #
-    #   counters = CommandBuilder::IndifferentHash.new
+    #   counters = Stealth::IndifferentHash.new
     #   counters[:foo] = 1
     #
     #   counters.fetch('foo')          # => 1
@@ -169,7 +169,7 @@ module CommandBuilder
       # Same as <tt>Hash#dig</tt> where the key passed as argument can be
       # either a string or a symbol:
       #
-      #   counters = CommandBuilder::IndifferentHash.new
+      #   counters = Stealth::IndifferentHash.new
       #   counters[:foo] = { bar: 1 }
       #
       #   counters.dig('foo', 'bar')     # => 1
@@ -184,10 +184,10 @@ module CommandBuilder
     # Same as <tt>Hash#default</tt> where the key passed as argument can be
     # either a string or a symbol:
     #
-    #   hash = CommandBuilder::IndifferentHash.new(1)
+    #   hash = Stealth::IndifferentHash.new(1)
     #   hash.default                   # => 1
     #
-    #   hash = CommandBuilder::IndifferentHash.new { |hash, key| key }
+    #   hash = Stealth::IndifferentHash.new { |hash, key| key }
     #   hash.default                   # => nil
     #   hash.default('foo')            # => 'foo'
     #   hash.default(:foo)             # => 'foo'
@@ -197,7 +197,7 @@ module CommandBuilder
 
     # Returns an array of the values at the specified indices:
     #
-    #   hash = CommandBuilder::IndifferentHash.new
+    #   hash = Stealth::IndifferentHash.new
     #   hash[:a] = 'x'
     #   hash[:b] = 'y'
     #   hash.values_at('a', 'b') # => ["x", "y"]
@@ -208,7 +208,7 @@ module CommandBuilder
     # Returns an array of the values at the specified indices, but also
     # raises an exception when one of the keys can't be found.
     #
-    #   hash = CommandBuilder::IndifferentHash.new
+    #   hash = Stealth::IndifferentHash.new
     #   hash[:a] = 'x'
     #   hash[:b] = 'y'
     #   hash.fetch_values('a', 'b') # => ["x", "y"]
@@ -220,7 +220,7 @@ module CommandBuilder
 
     # Returns a shallow copy of the hash.
     #
-    #   hash = CommandBuilder::IndifferentHash.new({ a: { b: 'b' } })
+    #   hash = Stealth::IndifferentHash.new({ a: { b: 'b' } })
     #   dup  = hash.dup
     #   dup[:a][:c] = 'c'
     #
@@ -318,21 +318,21 @@ end
 
 # :stopdoc:
 
-IndifferentHash = CommandBuilder::IndifferentHash
+IndifferentHash = Stealth::IndifferentHash
 
 class Hash
-  # Returns an <tt>CommandBuilder::IndifferentHash</tt> out of its receiver:
+  # Returns an <tt>Stealth::IndifferentHash</tt> out of its receiver:
   #
   #   { a: 1 }.with_indifferent_access['a'] # => 1
   def with_indifferent_access
-    CommandBuilder::IndifferentHash.new(self)
+    Stealth::IndifferentHash.new(self)
   end
 
   # Called when object is nested under an object that receives
   # #with_indifferent_access. This method will be called on the current object
   # by the enclosing object and is aliased to #with_indifferent_access by
   # default. Subclasses of Hash may overwrite this method to return +self+ if
-  # converting to an <tt>CommandBuilder::IndifferentHash</tt> would not be
+  # converting to an <tt>Stealth::IndifferentHash</tt> would not be
   # desirable.
   #
   #   b = { b: 1 }
