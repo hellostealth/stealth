@@ -10,7 +10,7 @@ require 'time'
 require 'uri'
 
 # other files we need
-require 'command-builder/helpers/indifferent_access'
+require 'stealth/helpers/indifferent_access'
 
 module Stealth
 
