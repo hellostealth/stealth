@@ -1,1 +1,1 @@
-require 'command-builder/base'
+require 'stealth/base'
