@@ -175,4 +175,54 @@ describe "transition callbacks" do
       }.to change(post_flow, :tweet_link).from(false).to(true)
     end
   end
+
+  describe "on_entry and on_exit method-style callbacks" do
+    class ConcisePostFlow
+      include Stealth::Flow
+
+      attr_reader :email_reviewer, :tweet_link
+
+      def initialize
+        @email_reviewer = false
+        @tweet_link = false
+      end
+
+      flow do
+        state :draft do
+          event :submit_for_review, :transitions_to => :in_review
+        end
+
+        state :in_review do
+          event :approve, :transitions_to => :live
+          event :reject, :transitions_to => :draft
+        end
+
+        state :live
+      end
+
+      def on_draft_exit(new_state, event, *args)
+        @email_reviewer = true
+      end
+
+      def on_live_entry(prior_state, event, *args)
+        @tweet_link = true
+      end
+    end
+
+    let(:post_flow) { ConcisePostFlow.new }
+
+    it "should email the reviewer when flow transitions (on_exit) to in_review" do
+      expect {
+        post_flow.submit_for_review!
+      }.to change(post_flow, :email_reviewer).from(false).to(true)
+    end
+
+    it "should tweet the post link when flow transitions (on_entry) to live" do
+      post_flow.submit_for_review!
+
+      expect {
+        post_flow.approve!
+      }.to change(post_flow, :tweet_link).from(false).to(true)
+    end
+  end
 end
