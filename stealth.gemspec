@@ -17,6 +17,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'hanami-controller',  '~> 1.0'
 
   s.add_development_dependency 'rspec', '~> 3.6.0'
+  s.add_development_dependency 'rspec_junit_formatter', '~> 0.3.0'
   s.add_development_dependency 'rack-test', '~> 0.7.0'
 
   s.files         = `git ls-files`.split("\n")
