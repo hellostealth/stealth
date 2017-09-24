@@ -2,6 +2,7 @@ PATH
   remote: .
   specs:
     stealth (0.9.0)
+      dotenv (~> 2.0)
       hanami-controller (~> 1.0)
       hanami-router (~> 1.0)
       hanami-utils (~> 1.0)
@@ -82,7 +83,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  dotenv (~> 2.0)
   rack-test (~> 0.7.0)
   rspec (~> 3.6.0)
   rspec_junit_formatter (~> 0.3.0)
