@@ -8,8 +8,8 @@ jobs:
     docker:
       # specify the version you desire here
        - image: circleci/ruby:2.4.1-node-browsers
-        environment:
-          STEALTH_ENV: test
+         environment:
+           STEALTH_ENV: test
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
