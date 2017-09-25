@@ -15,6 +15,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'hanami-validations', '~> 1.0'
   s.add_dependency 'hanami-router',      '~> 1.0'
   s.add_dependency 'hanami-controller',  '~> 1.0'
+  s.add_dependency 'dotenv', '~> 2.0'
 
   s.add_development_dependency 'rspec', '~> 3.6.0'
   s.add_development_dependency 'rspec_junit_formatter', '~> 0.3.0'
