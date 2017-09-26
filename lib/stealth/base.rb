@@ -4,7 +4,6 @@
 require 'stealth/version'
 require 'stealth/helpers/indifferent_access'
 require 'stealth/flow/base'
-require 'stealth/environment'
 
 module Stealth
 

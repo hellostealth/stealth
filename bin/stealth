@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
 
 require 'bundler'
-require 'hanami/cli'
+require 'stealth/cli'
 Stealth::Cli.start
