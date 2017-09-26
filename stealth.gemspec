@@ -11,11 +11,8 @@ Gem::Specification.new do |s|
   s.author = 'Mauricio Gomes'
   s.email = 'mauricio@edge14.com'
 
-  s.add_dependency 'hanami-utils',       '~> 1.0'
-  s.add_dependency 'hanami-validations', '~> 1.0'
-  s.add_dependency 'hanami-router',      '~> 1.0'
-  s.add_dependency 'hanami-controller',  '~> 1.0'
-  s.add_dependency 'dotenv', '~> 2.0'
+  s.add_dependency 'sinatra', '~> 2.0.0'
+  s.add_dependency 'puma', '~> 3.10.0'
   s.add_dependency 'thor', '~> 0.20'
 
   s.add_development_dependency 'rspec', '~> 3.6.0'
