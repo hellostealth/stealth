@@ -6,6 +6,7 @@ module Stealth
     class Server < Command
       def initialize(options)
         super(options)
+        Stealth.load_environment
       end
 
       def start
