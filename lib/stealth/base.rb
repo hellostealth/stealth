@@ -2,6 +2,7 @@
 # frozen_string_literal: true
 
 require 'stealth/version'
+require 'stealth/errors'
 require 'stealth/server'
 require 'stealth/flow/base'
 
