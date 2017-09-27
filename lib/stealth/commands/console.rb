@@ -49,6 +49,8 @@ module Stealth
 
         # Add convenience methods to the main:Object binding
         TOPLEVEL_BINDING.eval('self').__send__(:include, CodeReloading)
+
+        Stealth.load_environment
       end
 
       def engine_lookup

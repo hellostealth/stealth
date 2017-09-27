@@ -15,4 +15,8 @@ module Stealth
     nil
   end
 
+  def self.load_environment
+    require File.join(Stealth.root, 'config', 'boot')
+  end
+
 end
