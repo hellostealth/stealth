@@ -14,6 +14,8 @@ Gem::Specification.new do |s|
   s.add_dependency 'sinatra', '~> 2.0.0'
   s.add_dependency 'puma', '~> 3.10.0'
   s.add_dependency 'thor', '~> 0.20'
+  s.add_dependency 'multi_json', '~> 1.12'
+  s.add_dependency 'faraday', '~> 0.13'
 
   s.add_development_dependency 'rspec', '~> 3.6.0'
   s.add_development_dependency 'rspec_junit_formatter', '~> 0.3.0'
