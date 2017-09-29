@@ -1,7 +1,9 @@
 # coding: utf-8
 # frozen_string_literal: true
 
+# base requirements
 require 'yaml'
+require 'sidekiq'
 
 require 'stealth/version'
 require 'stealth/errors'
