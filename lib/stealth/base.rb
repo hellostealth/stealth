@@ -7,8 +7,11 @@ require 'sidekiq'
 
 # helpers
 require 'stealth/helpers/object'
+
+# core
 require 'stealth/version'
 require 'stealth/errors'
+require 'stealth/jobs'
 require 'stealth/server'
 require 'stealth/flow/base'
 
