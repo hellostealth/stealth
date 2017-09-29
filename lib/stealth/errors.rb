@@ -10,5 +10,8 @@ module Stealth
     class ServiceImpaired < Errors
     end
 
+    class ServiceNotRecognized < Errors
+    end
+
   end
 end
