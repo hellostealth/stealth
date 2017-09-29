@@ -5,6 +5,8 @@
 require 'yaml'
 require 'sidekiq'
 
+# helpers
+require 'stealth/helpers/object'
 require 'stealth/version'
 require 'stealth/errors'
 require 'stealth/server'
