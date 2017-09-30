@@ -8,6 +8,6 @@
   text: "What do you think of our bot?"
   buttons:
     - text: "Cool"
-      value: cool
+      payload: cool
     - text: "Show me more"
-      value: more
+      payload: more
