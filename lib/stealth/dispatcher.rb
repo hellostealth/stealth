@@ -3,7 +3,7 @@
 
 module Stealth
 
-  # Responsible for coordinating incoming responses
+  # Responsible for coordinating incoming messages
   #  1. Receives incoming request params
   #  2. Initializes respective service request handler
   #  3. Processes params through service request handler (might be async)

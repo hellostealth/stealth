@@ -7,10 +7,10 @@ module Stealth
 
       class MessageEvent
 
-        attr_reader :service_response
+        attr_reader :service_message
 
-        def initialize(service_response:, params:)
-          @service_response = service_response
+        def initialize(service_message:, params:)
+          @service_message = service_message
         end
 
         def process
@@ -23,9 +23,9 @@ module Stealth
 
           def fetch_message
             if params['message']['quick_reply'].present?
-              service_response.message = params['message']['quick_reply']['payload']
+              service_message.message = params['message']['quick_reply']['payload']
             elsif params['message']['text'].present?
-              service_response.message = params['message']['text']
+              service_message.message = params['message']['text']
             end
           end
 
@@ -33,7 +33,7 @@ module Stealth
             if params['location'].present?
               lat = params['location']['coordinates']['lat']
               lng = params['location']['coordinates']['long']
-              service_response.location = {
+              service_message.location = {
                 lat: lat,
                 lng: lng
               }
@@ -43,7 +43,7 @@ module Stealth
           def fetch_attachments
             if params['attachments'].present? && params['attachments'].is_a?(Array)
               params['attachments'].each do |attachment|
-                service_response.attachments << {
+                service_message.attachments << {
                   type: attachment['type'],
                   url: attachment['payload']['url']
                 }

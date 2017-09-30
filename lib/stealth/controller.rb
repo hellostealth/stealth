@@ -4,13 +4,13 @@
 module Stealth
   class Controller
 
-    attr_accessor :current_response
+    attr_accessor :current_message
 
     def initialize(service_message:)
-      @current_response = {
+      @current_message = {
         sender_id: service_message.sender_id,
         timestamp: service_message.timestamp,
-        message: service_message.message,
+        text: service_message.message,
         location: service_message.location,
         attachments: service_message.attachments
       }
@@ -23,11 +23,11 @@ module Stealth
     end
 
     def has_location?
-      current_response.location.present?
+      current_message.location.present?
     end
 
     def has_attachments?
-      current_response.location.present?
+      current_message.location.present?
     end
 
     def route

@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 require 'stealth/services/facebook/message_handler'
-require 'stealth/services/facebook/response_handler'
+require 'stealth/services/facebook/reply_handler'
 
 module Stealth
   module Services

@@ -1,7 +1,7 @@
 # coding: utf-8
 # frozen_string_literal: true
 
-require 'stealth/services/base_response_handler'
+require 'stealth/services/base_reply_handler'
 require 'stealth/services/base_message_handler'
 
 require 'stealth/services/jobs/handle_message_job'
@@ -17,7 +17,7 @@ module Stealth
         @options = options
       end
 
-      def transmit_response(message:)
+      def transmit_reply(message:)
         raise(ServiceImpaired, "Service implementation does not implement 'transmit'.")
       end
 
