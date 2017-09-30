@@ -1,11 +1,20 @@
 # coding: utf-8
 # frozen_string_literal: true
 
+# base requirements
 require 'yaml'
+require 'sidekiq'
 
+# helpers
+require 'stealth/helpers/object'
+
+# core
 require 'stealth/version'
+require 'stealth/errors'
+require 'stealth/jobs'
 require 'stealth/server'
 require 'stealth/flow/base'
+require 'stealth/services/base_client'
 
 module Stealth
 

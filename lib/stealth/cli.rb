@@ -1,3 +1,6 @@
+# coding: utf-8
+# frozen_string_literal: true
+
 require 'thor'
 require 'stealth/cli_base'
 require 'stealth/commands/console'

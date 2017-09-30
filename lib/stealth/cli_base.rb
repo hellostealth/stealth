@@ -1,3 +1,6 @@
+# coding: utf-8
+# frozen_string_literal: true
+
 module Stealth
   module CliBase
     def define_commands(&blk)

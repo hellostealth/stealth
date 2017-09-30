@@ -1,3 +1,6 @@
+# coding: utf-8
+# frozen_string_literal: true
+
 require 'stealth/flow/errors'
 require 'stealth/flow/specification'
 require 'stealth/flow/event_collection'
