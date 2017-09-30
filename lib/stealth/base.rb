@@ -14,6 +14,7 @@ require 'stealth/errors'
 require 'stealth/jobs'
 require 'stealth/server'
 require 'stealth/flow/base'
+require 'stealth/services/base_client'
 
 module Stealth
 

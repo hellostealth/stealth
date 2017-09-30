@@ -13,5 +13,8 @@ module Stealth
     class ServiceNotRecognized < Errors
     end
 
+    class ControllerRoutingNotImplemented < Errors
+    end
+
   end
 end
