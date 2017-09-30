@@ -3,7 +3,7 @@
 
 module Stealth
   module Services
-    class BaseResponseHandler
+    class BaseReplyHandler
 
       attr_reader :client
 
