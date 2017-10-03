@@ -6,9 +6,9 @@ module Stealth
 
     attr_accessor :reply_type, :reply
 
-    def initialize(reply:)
-      @reply_type = reply_type
-      @reply = reply
+    def initialize(unstructured_reply:)
+      @reply_type = unstructured_reply["reply_type"]
+      @reply = unstructured_reply
     end
 
   end
