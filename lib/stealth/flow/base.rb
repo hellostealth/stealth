@@ -116,7 +116,7 @@ module Stealth
 
         run_on_exit(from, to, name, *args)
 
-        transition_value = persist_flow_state to.to_s
+        transition_value = persist_flow_state(to.to_s)
 
         run_on_entry(to, from, name, *args)
 
