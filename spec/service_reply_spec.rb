@@ -17,7 +17,7 @@ describe "Stealth::ServiceReply" do
         context: binding
       )
 
-      expect(service_reply.replies.size).to eq 3
+      expect(service_reply.replies.size).to eq 5
     end
 
     it "should raise Stealth::Errors::UndefinedVariable when local variable is not available" do

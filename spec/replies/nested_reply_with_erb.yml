@@ -1,10 +1,12 @@
 - reply_type: text
   text: "Hi, <%= first_name %>. Welcome to Stealth bot..."
-  delay: 2
+- reply-type: delay
+  duration: 2
 - reply_type: text
   text: "We offer users an awesome Ruby framework for building chat bots."
-  delay: 2
-- reply_type: quick_reply
+- reply-type: delay
+  duration: 2
+- reply_type: text
   text: "What do you think of our bot?"
   buttons:
     - text: "Cool"
