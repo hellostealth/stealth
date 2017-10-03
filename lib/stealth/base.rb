@@ -4,7 +4,7 @@
 # base requirements
 require 'yaml'
 require 'sidekiq'
-require 'active_support/inflector'
+require 'active_support'
 
 # core
 require 'stealth/version'
