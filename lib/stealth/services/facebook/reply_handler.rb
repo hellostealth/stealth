@@ -416,6 +416,12 @@ module Stealth
 
             default_action
           end
+
+          def check_if_arguments_are_valid!(suggestions:, buttons:)
+            if !suggestions.empty? && !buttons.empty?
+              raise(ArgumentError, "A reply cannot have buttons and suggestions!")
+            end
+          end
       end
 
     end
