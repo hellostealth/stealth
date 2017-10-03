@@ -183,6 +183,10 @@ module Stealth
           sender_action_template(action: 'typing_off')
         end
 
+        def delay
+          enable_typing_indicator
+        end
+
         private
 
           def unstructured_template

@@ -56,6 +56,10 @@ module Stealth
         reply_format_not_supported(format: 'disable_typing_indicator')
       end
 
+      def delay
+        reply_format_not_supported(format: 'delay')
+      end
+
     end
   end
 end
