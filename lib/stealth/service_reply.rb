@@ -15,8 +15,22 @@ module Stealth
         raise(Stealth::Errors::UndefinedVariable, e.message)
       end
 
-      @replies = YAML.load(erb_reply)
+      @replies = load_replies(YAML.load(erb_reply))
     end
+
+    private
+
+      def load_replies(unstructured_replies)
+        unstructured_replies.collect do |reply|
+          Stealth::Reply.new(
+            reply_type: reply["reply_type"],
+            text: reply["text"],
+            delay: reply["delay"],
+            buttons: reply["buttons"],
+            details: reply["details"]
+          )
+        end
+      end
 
   end
 end
