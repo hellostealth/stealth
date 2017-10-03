@@ -4,18 +4,11 @@
 module Stealth
   class Reply
 
-    attr_accessor :reply_type, :text, :buttons, :delay
+    attr_accessor :reply_type, :reply
 
-    def initialize(reply_type:, text:, buttons: nil, delay: nil, details: nil)
+    def initialize(reply:)
       @reply_type = reply_type
-      @text = text
-      @buttons = buttons
-      @delay = delay
-      @details = details
-    end
-
-    def delay?
-      delay.present?
+      @reply = reply
     end
 
   end

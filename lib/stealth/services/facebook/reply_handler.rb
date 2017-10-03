@@ -6,80 +6,81 @@ module Stealth
     module Facebook
 
       class ReplyHandler < Stealth::Services::BaseReplyHandler
-        attr_reader :recipient_id
+        attr_reader :recipient_id, :reply
 
-        def initialize(recipient_id:)
+        def initialize(recipient_id:, reply:)
           @recipient_id = recipient_id
+          @reply = reply
         end
 
-        def text(text:, suggestions: [], buttons: [])
+        def text
           check_if_arguments_are_valid!(
-            suggestions: suggestions,
-            buttons: buttons
+            suggestions: reply['suggestions'],
+            buttons: reply['buttons']
           )
 
           template = unstructured_template
-          template['message']['text'] = text
+          template['message']['text'] = reply['text']
 
-          if suggestions.present?
-            fb_suggestions = generate_suggestions(suggestions: suggestions)
+          if reply['suggestions'].present?
+            fb_suggestions = generate_suggestions(suggestions: reply['suggestions'])
             template["message"]["quick_replies"] = fb_suggestions
           end
 
-          if buttons.present?
-            fb_buttons = generate_buttons(buttons: buttons)
+          if reply['buttons'].present?
+            fb_buttons = generate_buttons(buttons: reply['buttons'])
             template["message"]["buttons"] = fb_suggestions
           end
 
           template
         end
 
-        def image(image_url:, suggestions: [], buttons: [])
+        def image
           check_if_arguments_are_valid!(
-            suggestions: suggestions,
-            buttons: buttons
+            suggestions: reply['suggestions'],
+            buttons: reply['buttons']
           )
 
           template = unstructured_template
           attachment = attachment_template(
             attachment_type: 'image',
-            attachment_url: image_url
+            attachment_url: reply['image_url']
           )
           template['message']['attachment'] = attachment
 
-          if suggestions.present?
-            fb_suggestions = generate_suggestions(suggestions: suggestions)
+          if reply['suggestions'].present?
+            fb_suggestions = generate_suggestions(suggestions: reply['suggestions'])
             template["message"]["quick_replies"] = fb_suggestions
           end
 
-          if buttons.present?
-            fb_buttons = generate_buttons(buttons: buttons)
+          if reply['buttons'].present?
+            fb_buttons = generate_buttons(buttons: reply['buttons'])
             template["message"]["buttons"] = fb_suggestions
           end
 
           template
         end
 
-        def audio(audio_url:, suggestions: [], buttons: [])
+        def audio
           check_if_arguments_are_valid!(
-            suggestions: suggestions,
-            buttons: buttons
+            suggestions: reply['suggestions'],
+            buttons: reply['buttons']
           )
 
           template = unstructured_template
           attachment = attachment_template(
             attachment_type: 'audio',
-            attachment_url: audio_url
+            attachment_url: reply['audio_url']
           )
           template['message']['attachment'] = attachment
 
-          if suggestions.present?
-            fb_suggestions = generate_suggestions(suggestions: suggestions)
+          if reply['suggestions'].present?
+            fb_suggestions = generate_suggestions(suggestions: reply['suggestions'])
             template["message"]["quick_replies"] = fb_suggestions
           end
 
-          if buttons.present?
-            fb_buttons = generate_buttons(buttons: buttons)
+          if reply['buttons'].present?
+            fb_buttons = generate_buttons(buttons: reply['buttons'])
             template["message"]["buttons"] = fb_suggestions
           end
 
@@ -88,82 +89,82 @@ module Stealth
 
         def video(video_url:, suggestions: [], buttons: [])
           check_if_arguments_are_valid!(
-            suggestions: suggestions,
-            buttons: buttons
+            suggestions: reply['suggestions'],
+            buttons: reply['buttons']
           )
 
           template = unstructured_template
           attachment = attachment_template(
             attachment_type: 'video',
-            attachment_url: video_url
+            attachment_url: reply['video_url']
           )
           template['message']['attachment'] = attachment
 
-          if suggestions.present?
-            fb_suggestions = generate_suggestions(suggestions: suggestions)
+          if reply['suggestions'].present?
+            fb_suggestions = generate_suggestions(suggestions: reply['suggestions'])
             template["message"]["quick_replies"] = fb_suggestions
           end
 
-          if buttons.present?
-            fb_buttons = generate_buttons(buttons: buttons)
+          if reply['buttons'].present?
+            fb_buttons = generate_buttons(buttons: reply['buttons'])
             template["message"]["buttons"] = fb_suggestions
           end
 
           template
         end
 
-        def file(file_url:, suggestions: [], buttons: [])
+        def file
           check_if_arguments_are_valid!(
-            suggestions: suggestions,
-            buttons: buttons
+            suggestions: reply['suggestions'],
+            buttons: reply['buttons']
           )
 
           template = unstructured_template
           attachment = attachment_template(
             attachment_type: 'file',
-            attachment_url: file_url
+            attachment_url: reply['file_url']
           )
           template['message']['attachment'] = attachment
 
-          if suggestions.present?
-            fb_suggestions = generate_suggestions(suggestions: suggestions)
+          if reply['suggestions'].present?
+            fb_suggestions = generate_suggestions(suggestions: reply['suggestions'])
             template["message"]["quick_replies"] = fb_suggestions
           end
 
-          if buttons.present?
-            fb_buttons = generate_buttons(buttons: buttons)
+          if reply['buttons'].present?
+            fb_buttons = generate_buttons(buttons: reply['buttons'])
             template["message"]["buttons"] = fb_suggestions
           end
 
           template
         end
 
-        def cards(details:)
+        def cards
           template = card_template(
-            sharable: details["sharable"],
-            aspect_ratio: details["aspect_ratio"]
+            sharable: reply["details"]["sharable"],
+            aspect_ratio: reply["details"]["aspect_ratio"]
           )
 
-          fb_elements = generate_card_elements(elements: details["elements"])
+          fb_elements = generate_card_elements(elements: reply["details"]["elements"])
           template["message"]["attachments"]["payload"]["elements"] = fb_elements
 
           template
         end
 
-        def list(details:)
+        def list
           template = list_template(
-            top_element_style: details["top_element_style"]
+            top_element_style: reply["details"]["top_element_style"]
           )
 
-          fb_elements = generate_list_elements(elements: details["elements"])
+          fb_elements = generate_list_elements(elements: reply["details"]["elements"])
           template["message"]["attachments"]["payload"]["elements"] = fb_elements
 
-          if details["buttons"].present?
-            if details["buttons"].size > 1
+          if reply["details"]["buttons"].present?
+            if reply["details"]["buttons"].size > 1
               raise(ArgumentError, "Facebook lists support a single button attached to the list itsef.")
             end
 
-            template["message"]["attachments"]["payload"]["buttons"] = generate_buttons(buttons: details["buttons"])
+            template["message"]["attachments"]["payload"]["buttons"] = generate_buttons(buttons: reply["details"]["buttons"])
           end
 
           template

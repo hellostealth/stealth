@@ -22,13 +22,7 @@ module Stealth
 
       def load_replies(unstructured_replies)
         unstructured_replies.collect do |reply|
-          Stealth::Reply.new(
-            reply_type: reply["reply_type"],
-            text: reply["text"],
-            delay: reply["delay"],
-            buttons: reply["buttons"],
-            details: reply["details"]
-          )
+          Stealth::Reply.new(unstructured_reply: reply)
         end
       end
 
