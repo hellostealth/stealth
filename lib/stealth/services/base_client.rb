@@ -10,14 +10,13 @@ module Stealth
   module Services
     class BaseClient
 
-      attr_reader :service, :options
+      attr_reader :reply
 
-      def initialize(service:, options: {})
-        @service = service
-        @options = options
+      def initialize(reply:)
+        @reply = reply
       end
 
-      def transmit_reply(message:)
+      def transmit
         raise(ServiceImpaired, "Service implementation does not implement 'transmit'.")
       end
 
