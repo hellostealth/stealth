@@ -20,6 +20,11 @@ module Stealth
           access_token = "access_token=#{ENV['FACEBOOK_PAGE_ACCESS_TOKEN']}"
           @api_endpoint = [FB_ENDPOINT, access_token].join('?')
         end
+
+        def send_reply(reply:)
+          headers = { "Content-Type" => "application/json" }
+          Faraday.post(api_endpoint, reply.to_json, headers)
+        end
       end
 
     end
