@@ -6,6 +6,7 @@ module Stealth
     module Facebook
 
       class ReplyHandler < Stealth::Services::BaseReplyHandler
+
         attr_reader :recipient_id, :reply
 
         def initialize(recipient_id:, reply:)
@@ -87,7 +88,7 @@ module Stealth
           template
         end
 
-        def video(video_url:, suggestions: [], buttons: [])
+        def video
           check_if_arguments_are_valid!(
             suggestions: reply['suggestions'],
             buttons: reply['buttons']

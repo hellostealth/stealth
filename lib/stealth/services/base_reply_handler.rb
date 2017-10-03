@@ -5,38 +5,38 @@ module Stealth
   module Services
     class BaseReplyHandler
 
-      attr_reader :client
+      attr_reader :recipient_id, :reply
 
-      def initialize(client:, options: {})
+      def initialize(recipient_id:, reply:)
         @client = client
         @options = options
       end
 
-      def text(text:, suggestions: [], buttons: [])
+      def text
         reply_format_not_supported(format: 'text')
       end
 
-      def image(image_url:, suggestions: [], buttons: [])
+      def image
         reply_format_not_supported(format: 'image')
       end
 
-      def audio(audio_url:, suggestions: [], buttons: [])
+      def audio
         reply_format_not_supported(format: 'audio')
       end
 
-      def video(video_url:, suggestions: [], buttons: [])
+      def video
         reply_format_not_supported(format: 'video')
       end
 
-      def file(file_url:, suggestions: [], buttons: [])
+      def file
         reply_format_not_supported(format: 'file')
       end
 
-      def cards(details:)
+      def cards
         reply_format_not_supported(format: 'cards')
       end
 
-      def list(details:)
+      def list
         reply_format_not_supported(format: 'list')
       end
 
