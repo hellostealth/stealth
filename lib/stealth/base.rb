@@ -14,6 +14,7 @@ require 'stealth/server'
 require 'stealth/reply'
 require 'stealth/service_reply'
 require 'stealth/service_message'
+require 'stealth/controller'
 require 'stealth/flow/base'
 require 'stealth/services/base_client'
 
@@ -39,6 +40,23 @@ module Stealth
 
   def self.load_environment
     require File.join(Stealth.root, 'config', 'boot')
+    require_directory "controllers"
+    require_directory "models"
+    require_directory "helpers"
   end
+
+  private
+
+    def self.require_directory(directory)
+      for_each_file_in(directory) { |file| require_relative(file) }
+    end
+
+    def self.for_each_file_in(directory, &blk)
+      directory = directory.to_s.gsub(%r{(\/|\\)}, File::SEPARATOR)
+      directory = Pathname.new(Dir.pwd).join(directory).to_s
+      directory = File.join(directory, '**', '*.rb') unless directory =~ /(\*\*)/
+
+      Dir.glob(directory).sort.each(&blk)
+    end
 
 end
