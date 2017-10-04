@@ -16,5 +16,8 @@ module Stealth
     class ControllerRoutingNotImplemented < Errors
     end
 
+    class UndefinedVariable < Errors
+    end
+
   end
 end

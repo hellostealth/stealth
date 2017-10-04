@@ -17,6 +17,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'multi_json', '~> 1.12'
   s.add_dependency 'faraday', '~> 0.13'
   s.add_dependency 'sidekiq', '~> 5.0'
+  s.add_dependency 'activesupport', '~> 5.1'
 
   s.add_development_dependency 'rspec', '~> 3.6.0'
   s.add_development_dependency 'rspec_junit_formatter', '~> 0.3.0'

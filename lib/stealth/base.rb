@@ -4,15 +4,16 @@
 # base requirements
 require 'yaml'
 require 'sidekiq'
-
-# helpers
-require 'stealth/helpers/object'
+require 'active_support'
 
 # core
 require 'stealth/version'
 require 'stealth/errors'
 require 'stealth/jobs'
 require 'stealth/server'
+require 'stealth/reply'
+require 'stealth/service_reply'
+require 'stealth/service_message'
 require 'stealth/flow/base'
 require 'stealth/services/base_client'
 

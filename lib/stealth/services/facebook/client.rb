@@ -11,14 +11,17 @@ module Stealth
       class Client < Stealth::Services::BaseClient
         FB_ENDPOINT = "https://graph.facebook.com/v2.10/me/messages"
 
-        attr_reader :recipient_id, :api_endpoint
+        attr_reader :api_endpoint, :reply
 
-        def initialize(options:)
-          @options = options
-
-          @recipient_id = options[:recipient_id]
+        def initialize(reply:)
+          @reply = reply
           access_token = "access_token=#{ENV['FACEBOOK_PAGE_ACCESS_TOKEN']}"
           @api_endpoint = [FB_ENDPOINT, access_token].join('?')
+        end
+
+        def transmit
+          headers = { "Content-Type" => "application/json" }
+          Faraday.post(api_endpoint, reply.to_json, headers)
         end
       end
 
