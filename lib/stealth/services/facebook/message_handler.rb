@@ -7,10 +7,11 @@ module Stealth
 
       class MessageHandler < Stealth::Services::BaseMessageHandler
 
-        attr_reader :service_message
+        attr_reader :service_message, :params, :headers
 
         def initialize(params:, headers:)
-          super
+          @params = params
+          @headers = headers
         end
 
         def coordinate
@@ -19,7 +20,7 @@ module Stealth
           else
             # Queue the request processing so we can respond quickly to FB
             # and also keep track of this message
-            Stealth::Services::Facebook::HandleRequestJob.perform_async(
+            Stealth::Services::HandleMessageJob.perform_async(
               'facebook',
               params,
               headers

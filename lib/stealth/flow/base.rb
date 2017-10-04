@@ -68,7 +68,7 @@ module Stealth
     end
 
     module InstanceMethods
-      attr_accessor :flow_state
+      attr_accessor :flow_state, :user_id
 
       def current_state
         loaded_state = load_flow_state
@@ -76,13 +76,12 @@ module Stealth
         res || spec.initial_state
       end
 
-      # See the 'Guards' section in the README
-      # @return true if the last transition was halted by one of the transition callbacks.
+      # Return true if the last transition was halted by one of the transition callbacks.
       def halted?
         @halted
       end
 
-      # @return the reason of the last transition abort as set by the previous
+      # Return the reason of the last transition abort as set by the previous
       # call of `halt` or `halt!` method.
       def halted_because
         @halted_because
@@ -151,6 +150,12 @@ module Stealth
         c.flow_spec
       end
 
+      def init_state(state)
+        loaded_state = state
+        res = spec.states[loaded_state.to_sym] if loaded_state
+        @flow_state = res || spec.initial_state
+      end
+
       private
 
       def check_transition(event)
@@ -208,7 +213,7 @@ module Stealth
           instance_exec(prior_state.name, triggering_event, *args, &state.on_entry)
         else
           hook_name = "on_#{state}_entry"
-          self.send hook_name, prior_state, triggering_event, *args if has_callback?(hook_name)
+          self.send(hook_name, prior_state, triggering_event, *args) if has_callback?(hook_name)
         end
       end
 
@@ -218,7 +223,7 @@ module Stealth
             instance_exec(new_state.name, triggering_event, *args, &state.on_exit)
           else
             hook_name = "on_#{state}_exit"
-            self.send hook_name, new_state, triggering_event, *args if has_callback?(hook_name)
+            self.send(hook_name, new_state, triggering_event, *args) if has_callback?(hook_name)
           end
         end
       end
@@ -229,6 +234,13 @@ module Stealth
 
       def persist_flow_state(new_value)
         @flow_state = new_value
+        if defined?($redis)
+          $redis.set(user_id, flow_and_state)
+        end
+      end
+
+      def flow_and_state
+        [self.class.to_s, current_state].join("->")
       end
     end
 

@@ -4,26 +4,13 @@
 module Stealth
   class Controller
 
-    attr_accessor :current_message
+    attr_reader :current_message, :current_user_id, :current_flow,
+                :current_state, :current_service, :flow_controller
 
     def initialize(service_message:)
-      @current_message = {
-        sender_id: service_message.sender_id,
-        timestamp: service_message.timestamp,
-        text: service_message.message,
-        location: service_message.location,
-        attachments: service_message.attachments
-      }
-
-      @service = service_message.service
-    end
-
-    def current_service
-      @service
-    end
-
-    def current_sender_id
-      current_message.sender_id
+      @current_message = service
+      @current_service = service_message.service
+      @current_user_id = service_message.sender_id
     end
 
     def has_location?
@@ -31,14 +18,20 @@ module Stealth
     end
 
     def has_attachments?
-      current_message.location.present?
+      current_message.attachments.present?
     end
 
     def route
       raise(ControllerRoutingNotImplemented, "Please implement `route` method in BotController.")
     end
 
-    def send_replies(service_reply:)
+    def send_replies
+      service_reply = Stealth::ServiceReply.new(
+        recipient_id: current_sender_id,
+        yaml_reply: action_replies,
+        context: binding
+      )
+
       for reply in service_reply.replies do
         handler = reply_handler.new(
           recipient_id: current_sender_id,
@@ -61,6 +54,25 @@ module Stealth
       end
     end
 
+    def load_flow(session:)
+      flow_and_state = flow_and_state_from_session(session)
+      flow_klass = flow_and_state.first.classify.constantize
+      @current_state = flow_and_state.last
+      @current_flow = flow_klass.new
+      @current_flow.init_state(@current_state)
+    end
+
+    def flow_controller
+      @flow_controller = begin
+        flow_controller = [@current_flow.class.to_s.pluralize, 'Controller'].join.classify.constantize
+        flow_controller.new
+      end
+    end
+
+    def call_controller_action
+      flow_controller.send(current_state)
+    end
+
     private
 
       def reply_handler
@@ -77,6 +89,14 @@ module Stealth
         rescue NameError
           raise(ServiceNotRecognized, "The service '#{current_service}' was not recognized.")
         end
+      end
+
+      def flow_and_state_from_session(session)
+        session.split("->")
+      end
+
+      def action_replies
+        File.read(File.join(Stealth.root, 'replies', "#{current_state}.yml"))
       end
 
   end

@@ -12,31 +12,32 @@ module Stealth
   #  5. Returns an HTTP response to be returned to the requestor
   class Dispatcher
 
-    attr_reader :service, :params, :headers, :request_handler
+    attr_reader :service, :params, :headers, :message_handler
 
     def initialize(service:, params:, headers:)
       @service = service
       @params = params
       @headers = headers
-      @request_handler = request_handler_klass.new(
+      @message_handler = message_handler.new(
         params: params,
         headers: headers
       )
     end
 
     def coordinate
-      request_handler.coordinate
+      message_handler.coordinate
     end
 
     def process
-      service_message = request_handler.process
+      service_message = message_handler.process
       bot_controller = BotController.new(service_message: service_message)
       bot_controller.route
+      bot_controller.call_controller_action
     end
 
     private
 
-      def request_handler_klass
+      def message_handler_klass
         begin
           Kernel.const_get("Stealth::Services::#{service.capitalize}::MessageHandler")
         rescue NameError
