@@ -32,6 +32,7 @@ module Stealth
       service_message = message_handler.process
       bot_controller = BotController.new(service_message: service_message)
       bot_controller.route
+      bot_controller.call_controller_action
     end
 
     private
