@@ -4,16 +4,13 @@
 module Stealth
   class Controller
 
-    attr_accessor :current_message
-    attr_accessor :current_flow, :current_state, :current_service, :flow_controller
+    attr_reader :current_message, :current_user_id, :current_flow,
+                :current_state, :current_service, :flow_controller
 
     def initialize(service_message:)
       @current_message = service
       @current_service = service_message.service
-    end
-
-    def current_user_id
-      current_message.sender_id
+      @current_user_id = service_message.sender_id
     end
 
     def has_location?
