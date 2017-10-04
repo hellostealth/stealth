@@ -22,7 +22,7 @@ module Stealth
       @service
     end
 
-    def current_sender_id
+    def current_user_id
       current_message.sender_id
     end
 
