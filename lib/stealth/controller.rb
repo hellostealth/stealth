@@ -25,7 +25,13 @@ module Stealth
       raise(ControllerRoutingNotImplemented, "Please implement `route` method in BotController.")
     end
 
-    def send_replies(service_reply:)
+    def send_replies
+      service_reply = Stealth::ServiceReply.new(
+        recipient_id: current_sender_id,
+        yaml_reply: action_replies,
+        context: binding
+      )
+
       for reply in service_reply.replies do
         handler = reply_handler.new(
           recipient_id: current_sender_id,
@@ -87,6 +93,10 @@ module Stealth
 
       def flow_and_state_from_session(session)
         session.split("->")
+      end
+
+      def action_replies
+        File.read(File.join(Stealth.root, 'replies', "#{current_state}.yml"))
       end
 
   end
