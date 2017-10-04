@@ -5,21 +5,11 @@ module Stealth
   class Controller
 
     attr_accessor :current_message
+    attr_accessor :current_flow, :current_state, :current_service, :flow_controller
 
     def initialize(service_message:)
-      @current_message = {
-        sender_id: service_message.sender_id,
-        timestamp: service_message.timestamp,
-        text: service_message.message,
-        location: service_message.location,
-        attachments: service_message.attachments
-      }
-
-      @service = service_message.service
-    end
-
-    def current_service
-      @service
+      @current_message = service
+      @current_service = service_message.service
     end
 
     def current_user_id
@@ -31,7 +21,7 @@ module Stealth
     end
 
     def has_attachments?
-      current_message.location.present?
+      current_message.attachments.present?
     end
 
     def route
