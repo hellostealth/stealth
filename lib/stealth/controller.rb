@@ -51,6 +51,25 @@ module Stealth
       end
     end
 
+    def load_flow(session:)
+      flow_and_state = flow_and_state_from_session(session)
+      flow_klass = flow_and_state.first.classify.constantize
+      @current_state = flow_and_state.last
+      @current_flow = flow_klass.new
+      @current_flow.init_state(@current_state)
+    end
+
+    def flow_controller
+      @flow_controller = begin
+        flow_controller = [@current_flow.class.to_s.pluralize, 'Controller'].join.classify.constantize
+        flow_controller.new
+      end
+    end
+
+    def call_controller_action
+      flow_controller.send(current_state)
+    end
+
     private
 
       def reply_handler
@@ -67,6 +86,10 @@ module Stealth
         rescue NameError
           raise(ServiceNotRecognized, "The service '#{current_service}' was not recognized.")
         end
+      end
+
+      def flow_and_state_from_session(session)
+        session.split("->")
       end
 
   end
