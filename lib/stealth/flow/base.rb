@@ -76,13 +76,12 @@ module Stealth
         res || spec.initial_state
       end
 
-      # See the 'Guards' section in the README
-      # @return true if the last transition was halted by one of the transition callbacks.
+      # Return true if the last transition was halted by one of the transition callbacks.
       def halted?
         @halted
       end
 
-      # @return the reason of the last transition abort as set by the previous
+      # Return the reason of the last transition abort as set by the previous
       # call of `halt` or `halt!` method.
       def halted_because
         @halted_because
