@@ -7,10 +7,11 @@ module Stealth
 
       class MessageHandler < Stealth::Services::BaseMessageHandler
 
-        attr_reader :service_message
+        attr_reader :service_message, :params, :headers
 
         def initialize(params:, headers:)
-          super
+          @params = params
+          @headers = headers
         end
 
         def coordinate
