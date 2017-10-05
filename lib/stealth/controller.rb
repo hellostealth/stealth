@@ -22,7 +22,7 @@ module Stealth
     end
 
     def route
-      raise(ControllerRoutingNotImplemented, "Please implement `route` method in BotController.")
+      raise(Stealth::Errors::ControllerRoutingNotImplemented, "Please implement `route` method in BotController.")
     end
 
     def send_replies
@@ -79,7 +79,7 @@ module Stealth
         begin
           Kernel.const_get("Stealth::Services::#{current_service.capitalize}::ReplyHandler")
         rescue NameError
-          raise(ServiceNotRecognized, "The service '#{current_service}' was not recognized.")
+          raise(Stealth::Errors::ServiceNotRecognized, "The service '#{current_service}' was not recognized.")
         end
       end
 
@@ -87,7 +87,7 @@ module Stealth
         begin
           Kernel.const_get("Stealth::Services::#{current_service.capitalize}::Client")
         rescue NameError
-          raise(ServiceNotRecognized, "The service '#{current_service}' was not recognized.")
+          raise(Stealth::Errors::ServiceNotRecognized, "The service '#{current_service}' was not recognized.")
         end
       end
 

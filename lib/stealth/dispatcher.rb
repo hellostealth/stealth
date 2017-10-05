@@ -41,7 +41,7 @@ module Stealth
         begin
           Kernel.const_get("Stealth::Services::#{service.capitalize}::MessageHandler")
         rescue NameError
-          raise(ServiceNotRecognized, "The service '#{service}' was not recognized.")
+          raise(Stealth::Errors::ServiceNotRecognized, "The service '#{service}' was not recognized.")
         end
       end
 
