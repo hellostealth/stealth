@@ -47,8 +47,8 @@ module Stealth
           end
 
           def respond_with_validation
-            if params['hub.verify_token'] == ENV['FACEBOOK_VERIFY_TOKEN']
-              [200, ENV['FACEBOOK_CHALLENGE']]
+            if params['hub.verify_token'] == Stealth.config.facebook.verify_token
+              [200, Stealth.config.facebook.challenge]
             else
               [401, "Verify token did not match environment variable."]
             end
