@@ -22,7 +22,7 @@ describe "Stealth::Configuration" do
     end
 
     it "should retain the configuration at the class level" do
-      expect(Stealth::config.facebook.setup.greeting).to eq parsed_config['facebook']['setup']['greeting']
+      expect(Stealth.config.facebook.setup.greeting).to eq parsed_config['facebook']['setup']['greeting']
     end
 
     it "should handle multiple keys at the root level" do
