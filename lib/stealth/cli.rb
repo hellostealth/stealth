@@ -15,7 +15,7 @@ module Stealth
     EOS
     def version
       require 'stealth/version'
-      puts "v#{ Stealth::VERSION }"
+      puts "#{ Stealth::VERSION }"
     end
     map %w{--version -v} => :version
 
@@ -64,6 +64,18 @@ module Stealth
       else
         Stealth::Commands::Console.new(options).start
       end
+    end
+
+
+    desc 'setup', 'Runs setup tasks for a specified service'
+    long_desc <<-EOS
+    `stealth setup <service>` runs setup tasks for the specified service.
+
+    $ > stealth setup facebook
+    EOS
+    def setup(service)
+      service_setup_klass = "Stealth::Service::#{service.classify}::Setup".constantize
+      service_setup_klass.trigger
     end
   end
 end
