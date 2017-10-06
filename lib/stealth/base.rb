@@ -9,6 +9,7 @@ require 'active_support'
 # core
 require 'stealth/version'
 require 'stealth/errors'
+require 'stealth/configuration'
 require 'stealth/jobs'
 require 'stealth/server'
 require 'stealth/reply'
@@ -28,14 +29,26 @@ module Stealth
     nil
   end
 
-  def self.load_services_vars(services_yaml)
-    services = YAML.load(services_yaml)
-    services.each do |service, keys|
-      keys.each do |key, value|
-        key = [service, key].join('_').upcase
-        ENV[key] = value
+  def self.config
+    @configuration
+  end
+
+  # Loads the services.yml configuration unless one has already been loaded
+  def self.load_services_config(services_yaml)
+    @semaphore ||= Mutex.new
+
+    @configuration ||= begin
+      @semaphore.synchronize do
+        Stealth::Configuration.new(YAML.load(ERB.new(services_yaml).result))
       end
     end
+  end
+
+  # Same as `load_services_config` but forces the loading even if one has
+  # already been loaded
+  def self.load_services_config!(services_yaml)
+    @configuration = nil
+    load_services_config(services_yaml)
   end
 
   def self.load_environment
