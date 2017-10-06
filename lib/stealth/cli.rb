@@ -15,7 +15,7 @@ module Stealth
     EOS
     def version
       require 'stealth/version'
-      puts "v#{ Stealth::VERSION }"
+      puts "#{ Stealth::VERSION }"
     end
     map %w{--version -v} => :version
 
