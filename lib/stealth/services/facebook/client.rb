@@ -15,7 +15,7 @@ module Stealth
 
         def initialize(reply:)
           @reply = reply
-          access_token = "access_token=#{ENV['FACEBOOK_PAGE_ACCESS_TOKEN']}"
+          access_token = "access_token=#{Stealth.config.facebook.page_access_token}"
           @api_endpoint = [FB_ENDPOINT, access_token].join('?')
         end
 
