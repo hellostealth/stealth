@@ -4,7 +4,8 @@ facebook:
   page_access_token: EAADhbJruBbMBAKY9bnesHh9eM09ZAHjGsCQtNdvuZClZCFtyIXdFdIQI2mV0PJM910Qyn3lNNhZBPZB54zLRhDNmeIkDz9myS25CTy0kFxHjQCXJxz5oeZCD60VWdAZAFxbeDKvF8eF28qDHAI4wkGc3jvVhjFISKmmFRRM6goUeAZDZD
   setup:
     greeting: # Greetings are broken up by locale
-      - default: "Welcome to the Stealth bot 🤖"
+      - locale: default
+        text: "Welcome to the Stealth bot 🤖"
     persistent_menu:
       - type: payload
         text: Main Menu

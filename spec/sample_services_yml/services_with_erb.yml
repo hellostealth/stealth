@@ -4,7 +4,8 @@ facebook:
   page_access_token: <%= ENV['FACEBOOK_PAGE_ACCESS_TOKEN'] %>
   setup:
     greeting: # Greetings are broken up by locale
-      - default: "Welcome to the Stealth bot 🤖"
+      - locale: default
+        text: "Welcome to the Stealth bot 🤖"
     persistent_menu:
       - type: payload
         text: Main Menu
