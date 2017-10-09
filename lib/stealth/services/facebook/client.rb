@@ -23,6 +23,7 @@ module Stealth
           headers = { "Content-Type" => "application/json" }
           Faraday.post(api_endpoint, reply.to_json, headers)
         end
+
       end
 
     end

@@ -9,7 +9,7 @@ module Stealth
 
         attr_reader :recipient_id, :reply
 
-        def initialize(recipient_id:, reply:)
+        def initialize(recipient_id: nil, reply: nil)
           @recipient_id = recipient_id
           @reply = reply
         end
@@ -185,6 +185,15 @@ module Stealth
 
         def delay
           enable_typing_indicator
+        end
+
+        # generates property/value pairs required to set the profile
+        def messenger_profile
+          profile = {}
+          Stealth.config.facebook.setup.each do |profile_option|
+            profile[profile_option] = self.send(profile_option)
+          end
+          profile
         end
 
         private
@@ -426,6 +435,19 @@ module Stealth
             if !suggestions.empty? && !buttons.empty?
               raise(ArgumentError, "A reply cannot have buttons and suggestions!")
             end
+          end
+
+          def greeting
+            Stealth.config.facebook.setup.greeting.map do |greeting|
+              {
+                "locale": greeting["locale"],
+                "text": greeting["text"]
+              }
+            end
+          end
+
+          def persistent_menu
+            generate_buttons(buttons: Stealth.config.facebook.setup.persistent_menu)
           end
       end
 

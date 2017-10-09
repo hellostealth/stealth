@@ -11,21 +11,13 @@ module Stealth
 
         class << self
           def trigger
-            set_greeting_text
-            set_persistent_menu
+            reply_handler = Stealth::Services::Facebook::ReplyHandler.new
+            reply = reply_handler.messenger_profile
+            client = Stealth::Services::Facebook::Client.new(reply: reply)
+            client.transmit
           end
-
-          private
-
-            def set_greeting_text
-
-            end
-
-            def set_persistent_menu
-
-            end
-
         end
+
       end
 
     end
