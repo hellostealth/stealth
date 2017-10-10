@@ -18,7 +18,7 @@ module Stealth
       @service = service
       @params = params
       @headers = headers
-      @message_handler = message_handler.new(
+      @message_handler = message_handler_klass.new(
         params: params,
         headers: headers
       )
