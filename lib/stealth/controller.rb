@@ -29,14 +29,14 @@ module Stealth
 
     def send_replies
       service_reply = Stealth::ServiceReply.new(
-        recipient_id: current_sender_id,
+        recipient_id: current_user_id,
         yaml_reply: action_replies,
         context: binding
       )
 
       for reply in service_reply.replies do
         handler = reply_handler.new(
-          recipient_id: current_sender_id,
+          recipient_id: current_user_id,
           reply: reply
         )
 
