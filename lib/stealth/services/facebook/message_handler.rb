@@ -20,11 +20,7 @@ module Stealth
           else
             # Queue the request processing so we can respond quickly to FB
             # and also keep track of this message
-            Stealth::Services::HandleMessageJob.perform_async(
-              'facebook',
-              params,
-              headers
-            )
+            Stealth::Services::HandleMessageJob.perform_async('facebook', params, {})
 
             # Relay our acceptance
             [200, 'OK']
