@@ -7,10 +7,11 @@ module Stealth
 
       class MessageEvent
 
-        attr_reader :service_message
+        attr_reader :service_message, :params
 
         def initialize(service_message:, params:)
           @service_message = service_message
+          @params = params
         end
 
         def process
