@@ -55,17 +55,17 @@ module Stealth
     end
 
     def load_flow(session:)
-      flow_and_state = flow_and_state_from_session(session)
-      flow_klass = flow_and_state.first.classify.constantize
-      @current_state = flow_and_state.last
+      @flow_and_state = flow_and_state_from_session(session)
+      flow_klass = [@flow_and_state.first, 'Flow'].join.classify.constantize
+      @current_state = @flow_and_state.last
       @current_flow = flow_klass.new
       @current_flow.init_state(@current_state)
     end
 
     def flow_controller
       @flow_controller = begin
-        flow_controller = [@current_flow.class.to_s.pluralize, 'Controller'].join.classify.constantize
-        flow_controller.new
+        flow_controller = [@flow_and_state.first.pluralize, 'Controller'].join.classify.constantize
+        flow_controller.new(service_message: @current_message)
       end
     end
 
