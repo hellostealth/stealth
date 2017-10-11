@@ -101,8 +101,12 @@ module Stealth
         session.split("->")
       end
 
+      def replies_folder
+        self.class.to_s.split('Controller').first.underscore
+      end
+
       def action_replies
-        File.read(File.join(Stealth.root, 'replies', "#{current_state}.yml"))
+        File.read(File.join(Stealth.root, 'replies', replies_folder, "#{current_state}.yml"))
       end
 
   end
