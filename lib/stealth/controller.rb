@@ -8,7 +8,7 @@ module Stealth
                 :current_state, :current_service, :flow_controller
 
     def initialize(service_message:)
-      @current_message = service
+      @current_message = service_message
       @current_service = service_message.service
       @current_user_id = service_message.sender_id
     end
