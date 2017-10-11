@@ -9,6 +9,7 @@ require 'active_support/all'
 # core
 require 'stealth/version'
 require 'stealth/errors'
+require 'stealth/logger'
 require 'stealth/configuration'
 require 'stealth/jobs'
 require 'stealth/dispatcher'
