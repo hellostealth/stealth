@@ -27,7 +27,7 @@ module Stealth
   end
 
   def self.boot
-    nil
+    load_environment
   end
 
   def self.config

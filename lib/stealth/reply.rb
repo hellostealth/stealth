@@ -11,5 +11,9 @@ module Stealth
       @reply = unstructured_reply
     end
 
+    def [](key)
+      @reply[key]
+    end
+
   end
 end

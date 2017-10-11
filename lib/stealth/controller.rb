@@ -7,10 +7,12 @@ module Stealth
     attr_reader :current_message, :current_user_id, :current_flow,
                 :current_state, :current_service, :flow_controller
 
-    def initialize(service_message:)
-      @current_message = service
+    def initialize(service_message:, current_flow: nil, current_state: nil)
+      @current_message = service_message
       @current_service = service_message.service
       @current_user_id = service_message.sender_id
+      @current_flow = current_flow
+      @current_state = current_state
     end
 
     def has_location?
@@ -27,14 +29,14 @@ module Stealth
 
     def send_replies
       service_reply = Stealth::ServiceReply.new(
-        recipient_id: current_sender_id,
+        recipient_id: current_user_id,
         yaml_reply: action_replies,
         context: binding
       )
 
       for reply in service_reply.replies do
         handler = reply_handler.new(
-          recipient_id: current_sender_id,
+          recipient_id: current_user_id,
           reply: reply
         )
 
@@ -55,17 +57,21 @@ module Stealth
     end
 
     def load_flow(session:)
-      flow_and_state = flow_and_state_from_session(session)
-      flow_klass = flow_and_state.first.classify.constantize
-      @current_state = flow_and_state.last
+      @flow_and_state = flow_and_state_from_session(session)
+      flow_klass = [@flow_and_state.first, 'Flow'].join.classify.constantize
+      @current_state = @flow_and_state.last
       @current_flow = flow_klass.new
       @current_flow.init_state(@current_state)
     end
 
     def flow_controller
       @flow_controller = begin
-        flow_controller = [@current_flow.class.to_s.pluralize, 'Controller'].join.classify.constantize
-        flow_controller.new
+        flow_controller = [@flow_and_state.first.pluralize, 'Controller'].join.classify.constantize
+        flow_controller.new(
+          service_message: @current_message,
+          current_flow: current_flow,
+          current_state: current_state
+        )
       end
     end
 
@@ -95,8 +101,12 @@ module Stealth
         session.split("->")
       end
 
+      def replies_folder
+        self.class.to_s.split('Controller').first.underscore
+      end
+
       def action_replies
-        File.read(File.join(Stealth.root, 'replies', "#{current_state}.yml"))
+        File.read(File.join(Stealth.root, 'replies', replies_folder, "#{current_state}.yml"))
       end
 
   end
