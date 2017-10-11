@@ -2,6 +2,7 @@
 # frozen_string_literal: true
 
 require 'sinatra/base'
+require 'multi_json'
 
 module Stealth
   class Server < Sinatra::Base
@@ -16,11 +17,18 @@ module Stealth
     end
 
     get_or_post '/incoming/:service' do
+      # JSON params need to be parsed and added to the params
+      if request.env['CONTENT_TYPE'] == 'application/json'
+        json_params = MultiJson.load(request.body.read)
+        params.merge!(json_params)
+      end
+
       dispatcher = Stealth::Dispatcher.new(
         service: params[:service],
         params: params,
         headers: request.env
       )
+
       dispatcher.coordinate
     end
 
