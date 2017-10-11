@@ -79,6 +79,14 @@ module Stealth
       flow_controller.send(current_state)
     end
 
+    def advance_to(flow:, state:)
+      if defined?($redis)
+        $redis.set(current_user_id, [flow, state].join('->'))
+      else
+        false
+      end
+    end
+
     private
 
       def reply_handler
