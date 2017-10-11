@@ -317,9 +317,7 @@ module Stealth
               "recipient" => {
                 "id" => recipient_id
               },
-              "sender_action" => {
-                "text" => action
-              }
+              "sender_action" => action
             }
           end
 
