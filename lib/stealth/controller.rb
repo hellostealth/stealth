@@ -7,10 +7,12 @@ module Stealth
     attr_reader :current_message, :current_user_id, :current_flow,
                 :current_state, :current_service, :flow_controller
 
-    def initialize(service_message:)
+    def initialize(service_message:, current_flow: nil, current_state: nil)
       @current_message = service_message
       @current_service = service_message.service
       @current_user_id = service_message.sender_id
+      @current_flow = current_flow
+      @current_state = current_state
     end
 
     def has_location?
@@ -65,7 +67,11 @@ module Stealth
     def flow_controller
       @flow_controller = begin
         flow_controller = [@flow_and_state.first.pluralize, 'Controller'].join.classify.constantize
-        flow_controller.new(service_message: @current_message)
+        flow_controller.new(
+          service_message: @current_message,
+          current_flow: current_flow,
+          current_state: current_state
+        )
       end
     end
 
