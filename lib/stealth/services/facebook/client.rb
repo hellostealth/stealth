@@ -23,7 +23,8 @@ module Stealth
 
         def transmit
           headers = { "Content-Type" => "application/json" }
-          Faraday.post(api_endpoint, reply.to_json, headers)
+          response = Faraday.post(api_endpoint, reply.to_json, headers)
+          Stealth::Logger.l(topic: "facebook", message: "Transmitting. Response: #{response.status}: #{response.body}")
         end
 
       end
