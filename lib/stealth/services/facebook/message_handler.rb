@@ -7,7 +7,7 @@ module Stealth
 
       class MessageHandler < Stealth::Services::BaseMessageHandler
 
-        attr_reader :service_message, :params, :headers
+        attr_reader :service_message, :params, :headers, :facebook_message
 
         def initialize(params:, headers:)
           @params = params
@@ -29,6 +29,7 @@ module Stealth
 
         def process
           @service_message = ServiceMessage.new(service: 'facebook')
+          @facebook_message = params['entry'].first['messaging'].first
           service_message.sender_id = get_sender_id
           service_message.timestamp = get_timestamp
           process_message_event
@@ -51,19 +52,19 @@ module Stealth
           end
 
           def get_sender_id
-            params['sender']['id']
+            facebook_message['sender']['id']
           end
 
           def get_timestamp
-            Time.at(params['sender']['timestamp']).to_datetime
+            Time.at(facebook_message['sender']['timestamp']).to_datetime
           end
 
           def process_message_event
             # We only support message events rn
-            if params['message'].present?
+            if facebook_message['message'].present?
               message_event = Stealth::Services::Facebook::MessageEvent.new(
                 service_message: service_message,
-                params: params
+                params: facebook_message
               )
 
               message_event.process
