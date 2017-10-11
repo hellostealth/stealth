@@ -58,7 +58,7 @@ module Stealth
           end
 
           def get_timestamp
-            Time.at(facebook_message['sender']['timestamp']).to_datetime
+            Time.at(facebook_message['timestamp']).to_datetime
           end
 
           def process_message_event
