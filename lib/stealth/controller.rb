@@ -5,14 +5,13 @@ module Stealth
   class Controller
 
     attr_reader :current_message, :current_user_id, :current_flow,
-                :current_state, :current_service, :flow_controller
+                :current_service, :flow_controller
 
-    def initialize(service_message:, current_flow: nil, current_state: nil)
+    def initialize(service_message:, current_flow: nil)
       @current_message = service_message
       @current_service = service_message.service
       @current_user_id = service_message.sender_id
       @current_flow = current_flow
-      @current_state = current_state
     end
 
     def has_location?
@@ -59,9 +58,8 @@ module Stealth
     def load_flow(session:)
       @flow_and_state = flow_and_state_from_session(session)
       flow_klass = [@flow_and_state.first, 'Flow'].join.classify.constantize
-      @current_state = @flow_and_state.last
       @current_flow = flow_klass.new
-      @current_flow.init_state(@current_state)
+      @current_flow.init_state(@current_flow.current_state)
     end
 
     def flow_controller
@@ -69,14 +67,13 @@ module Stealth
         flow_controller = [@flow_and_state.first.pluralize, 'Controller'].join.classify.constantize
         flow_controller.new(
           service_message: @current_message,
-          current_flow: current_flow,
-          current_state: current_state
+          current_flow: current_flow
         )
       end
     end
 
     def call_controller_action
-      flow_controller.send(current_state)
+      flow_controller.send(current_flow.current_state.to_s)
     end
 
     def advance_to(flow:, state:)
@@ -114,7 +111,7 @@ module Stealth
       end
 
       def action_replies
-        File.read(File.join(Stealth.root, 'replies', replies_folder, "#{current_state}.yml"))
+        File.read(File.join(Stealth.root, 'replies', replies_folder, "#{current_flow.current_state}.yml"))
       end
 
   end
