@@ -82,6 +82,10 @@ describe Stealth::Flow do
       expect(NewTodoFlow.flow_spec.states.length).to eq 4
       expect(NewTodoFlow.flow_spec.states.keys).to eq([:new, :get_due_date, :created, :error])
     end
+
+    it "should return the states in an array for a given flow instance" do
+      expect(flow.states).to eq [:new, :get_due_date, :created, :error]
+    end
   end
 
 end
