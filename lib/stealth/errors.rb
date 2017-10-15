@@ -19,5 +19,8 @@ module Stealth
     class UndefinedVariable < Errors
     end
 
+    class RedisNotConfigured < Errors
+    end
+
   end
 end

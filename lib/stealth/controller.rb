@@ -76,6 +76,13 @@ module Stealth
       flow_controller.send(current_flow.current_state.to_s)
     end
 
+    def current_session
+      @current_session ||= begin
+        session = Stealth::Session.new
+        session.session
+      end
+    end
+
     def advance_to(flow:, state:)
       if defined?($redis)
         $redis.set(current_user_id, [flow, state].join('->'))
