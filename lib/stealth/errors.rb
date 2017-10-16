@@ -22,5 +22,8 @@ module Stealth
     class RedisNotConfigured < Errors
     end
 
+    class InvalidStateTransition < Errors
+    end
+
   end
 end
