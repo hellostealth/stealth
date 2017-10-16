@@ -56,6 +56,7 @@ module Stealth
 
   def self.load_environment
     require File.join(Stealth.root, 'config', 'boot')
+    require_directory("config/initializers")
     require_directory("bot")
   end
 
