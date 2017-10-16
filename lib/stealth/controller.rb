@@ -122,7 +122,7 @@ module Stealth
       end
 
       def action_replies
-        File.read(File.join(Stealth.root, 'replies', replies_folder, "#{current_session.state_string}.yml"))
+        File.read(File.join(Stealth.root, 'bot', 'replies', replies_folder, "#{current_session.state_string}.yml"))
       end
 
       def step(flow:, state:)

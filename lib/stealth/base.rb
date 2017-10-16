@@ -56,9 +56,7 @@ module Stealth
 
   def self.load_environment
     require File.join(Stealth.root, 'config', 'boot')
-    require_directory "controllers"
-    require_directory "models"
-    require_directory "helpers"
+    require_directory("bot")
   end
 
   private
