@@ -150,9 +150,12 @@ module Stealth
         c.flow_spec
       end
 
+      def states
+        self.class.flow_spec.states.keys
+      end
+
       def init_state(state)
-        loaded_state = state
-        res = spec.states[loaded_state.to_sym] if loaded_state
+        res = spec.states[state.to_sym] if state
         @flow_state = res || spec.initial_state
       end
 

@@ -55,16 +55,9 @@ module Stealth
       end
     end
 
-    def load_flow(session:)
-      @flow_and_state = flow_and_state_from_session(session)
-      flow_klass = [@flow_and_state.first, 'Flow'].join.classify.constantize
-      @current_flow = flow_klass.new
-      @current_flow.init_state(@current_flow.current_state)
-    end
-
     def flow_controller
       @flow_controller = begin
-        flow_controller = [@flow_and_state.first.pluralize, 'Controller'].join.classify.constantize
+        flow_controller = [current_session.flow_string.pluralize, 'Controller'].join.classify.constantize
         flow_controller.new(
           service_message: @current_message,
           current_flow: current_flow
@@ -72,23 +65,38 @@ module Stealth
       end
     end
 
-    def call_controller_action
-      flow_controller.send(current_flow.current_state.to_s)
-    end
-
     def current_session
-      @current_session ||= begin
-        session = Stealth::Session.new
-        session.session
+      @current_session ||= Stealth::Session.new(user_id: current_user_id)
+    end
+
+    def call_controller_action(action: nil)
+      action ||= current_session.state_string
+      flow_controller.send(action)
+    end
+
+    def step_to(session: nil, flow: nil, state: nil)
+      if session.nil? && flow.nil? && state.nil?
+        raise(ArgumentError, "A session, flow, or state must be specified.")
+      end
+
+      if session.present?
+        step_to_session(session)
+        return
+      end
+
+      if flow.present?
+        step_to_flow(flow: flow, state: state)
+        return
+      end
+
+      if state.present?
+        step_to_state(state)
+        return
       end
     end
 
-    def advance_to(flow:, state:)
-      if defined?($redis)
-        $redis.set(current_user_id, [flow, state].join('->'))
-      else
-        false
-      end
+    def step_to_next
+      step_to_next_state
     end
 
     private
@@ -109,16 +117,46 @@ module Stealth
         end
       end
 
-      def flow_and_state_from_session(session)
-        session.split("->")
-      end
-
       def replies_folder
-        self.class.to_s.split('Controller').first.underscore
+        current_session.flow_string.underscore.pluralize
       end
 
       def action_replies
-        File.read(File.join(Stealth.root, 'replies', replies_folder, "#{current_flow.current_state}.yml"))
+        File.read(File.join(Stealth.root, 'replies', replies_folder, "#{current_session.state_string}.yml"))
+      end
+
+      def step(flow:, state:)
+        session = Stealth::Session.new(user_id: current_user_id)
+        session.set(flow: flow, state: state)
+        @current_session = session
+        @current_flow = session.flow
+
+        call_controller_action(action: state)
+      end
+
+      def step_to_session(session)
+        step(flow: session.flow_string, state: session.state_string)
+      end
+
+      def step_to_flow(flow:, state:)
+        step(flow: flow, state: state)
+      end
+
+      def step_to_state(state)
+        step(flow: current_session.flow_string, state: state)
+      end
+
+      def step_to_next_state
+        current_state_index = current_flow.states.index(current_flow.state_string.to_sym)
+        next_state = current_flow.states[current_state_index + 1]
+        if next_state.nil?
+          raise(
+            Stealth::Errors::InvalidStateTransitions,
+            "The next state after #{current_flow.state_string} has not yet been defined."
+          )
+        end
+
+        step(flow: current_flow.flow_string, state: next_state)
       end
 
   end
