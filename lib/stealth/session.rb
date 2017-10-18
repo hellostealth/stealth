@@ -28,7 +28,7 @@ module Stealth
 
     def flow
       @flow = begin
-        flow_klass = [flow_string, 'Flow'].join.classify.constantize
+        flow_klass = [flow_string, 'flow'].join('_').classify.constantize
         flow = flow_klass.new.init_state(state_string)
         flow
       end
