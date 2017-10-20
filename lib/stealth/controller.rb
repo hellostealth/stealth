@@ -4,6 +4,10 @@
 module Stealth
   class Controller
 
+    include ActiveSupport::Callbacks
+
+    define_callbacks :action
+
     attr_reader :current_message, :current_user_id, :current_flow,
                 :current_service, :flow_controller
 
@@ -69,9 +73,11 @@ module Stealth
       @current_session ||= Stealth::Session.new(user_id: current_user_id)
     end
 
-    def call_controller_action(action: nil)
-      action ||= current_session.state_string
-      flow_controller.send(action)
+    def action(action: nil)
+      run_callbacks :action do
+        action ||= current_session.state_string
+        flow_controller.send(action)
+      end
     end
 
     def step_to(session: nil, flow: nil, state: nil)
@@ -97,6 +103,18 @@ module Stealth
 
     def step_to_next
       step_to_next_state
+    end
+
+    def self.before_action(*args, &block)
+      set_callback(:action, :before, *args, &block)
+    end
+
+    def self.around_action(*args, &block)
+      set_callback(:action, :around, *args, &block)
+    end
+
+    def self.after_action(*args, &block)
+      set_callback(:action, :after, *args, &block)
     end
 
     private
@@ -131,7 +149,7 @@ module Stealth
         @current_session = session
         @current_flow = session.flow
 
-        call_controller_action(action: state)
+        action(action: state)
       end
 
       def step_to_session(session)
