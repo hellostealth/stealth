@@ -2,6 +2,7 @@
 # frozen_string_literal: true
 
 require 'stealth/services/facebook/events/message_event'
+require 'stealth/services/facebook/events/postback_event'
 
 module Stealth
   module Services
@@ -34,7 +35,7 @@ module Stealth
           @facebook_message = params['entry'].first['messaging'].first
           service_message.sender_id = get_sender_id
           service_message.timestamp = get_timestamp
-          process_message_event
+          process_facebook_event
 
           service_message
         end
@@ -61,16 +62,20 @@ module Stealth
             Time.at(facebook_message['timestamp']).to_datetime
           end
 
-          def process_message_event
-            # We only support message events rn
+          def process_facebook_event
             if facebook_message['message'].present?
               message_event = Stealth::Services::Facebook::MessageEvent.new(
                 service_message: service_message,
                 params: facebook_message
               )
-
-              message_event.process
+            elsif facebook_message['postback'].present?
+              message_event = Stealth::Services::Facebook::PostbackEvent.new(
+                service_message: service_message,
+                params: facebook_message
+              )
             end
+
+            message_event.process
           end
       end
 
