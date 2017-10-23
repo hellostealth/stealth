@@ -151,7 +151,7 @@ module Stealth
       end
 
       def states
-        self.class.flow_spec.states.keys
+        self.spec.states.keys
       end
 
       def init_state(state)
