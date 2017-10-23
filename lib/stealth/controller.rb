@@ -157,6 +157,11 @@ module Stealth
       end
 
       def step_to_flow(flow:, state:)
+        if state.blank?
+          flow_klass = [flow, 'flow'].join('_').classify.constantize
+          state = flow_klass.flow_spec.states.keys.first
+        end
+
         step(flow: flow, state: state)
       end
 
