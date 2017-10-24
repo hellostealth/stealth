@@ -81,28 +81,23 @@ module Stealth
     end
 
     def step_to(session: nil, flow: nil, state: nil)
-      if session.nil? && flow.nil? && state.nil?
-        raise(ArgumentError, "A session, flow, or state must be specified.")
-      end
+      flow, state = get_flow_and_state(session: session, flow: flow, state: state)
+      step(flow: flow, state: state)
+    end
 
-      if session.present?
-        step_to_session(session)
-        return
-      end
-
-      if flow.present?
-        step_to_flow(flow: flow, state: state)
-        return
-      end
-
-      if state.present?
-        step_to_state(state)
-        return
-      end
+    def update_session_to(session: nil, flow: nil, state: nil)
+      flow, state = get_flow_and_state(session: session, flow: flow, state: state)
+      update_session(flow: flow, state: state)
     end
 
     def step_to_next
-      step_to_next_state
+      flow, state = get_next_state
+      step(flow: flow, state: state)
+    end
+
+    def update_session_to_next
+      flow, state = get_next_state
+      update_session(flow: flow, state: state)
     end
 
     def self.before_action(*args, &block)
@@ -143,38 +138,52 @@ module Stealth
         File.read(File.join(Stealth.root, 'bot', 'replies', replies_folder, "#{current_session.state_string}.yml"))
       end
 
+      def update_session(flow:, state:)
+        @current_session = Stealth::Session.new(user_id: current_user_id)
+        @current_session.set(flow: flow, state: state)
+      end
+
       def step(flow:, state:)
-        session = Stealth::Session.new(user_id: current_user_id)
-        session.set(flow: flow, state: state)
-        @current_session = session
-        @current_flow = session.flow
+        update_session(flow: flow, state: state)
+        @current_flow = current_session.flow
 
         action(action: state)
       end
 
-      def step_to_session(session)
-        step(flow: session.flow_string, state: session.state_string)
+      def get_flow_and_state(session: nil, flow: nil, state: nil)
+        if session.nil? && flow.nil? && state.nil?
+          raise(ArgumentError, "A session, flow, or state must be specified.")
+        end
+
+        if session.present?
+          return session.flow_string, session.state_string
+        end
+
+        if flow.present?
+          if state.blank?
+            flow_klass = [flow, 'flow'].join('_').classify.constantize
+            state = flow_klass.flow_spec.states.keys.first
+          end
+
+          return flow, state
+        end
+
+        if state.present?
+          return current_session.flow_string, state
+        end
       end
 
-      def step_to_flow(flow:, state:)
-        step(flow: flow, state: state)
-      end
-
-      def step_to_state(state)
-        step(flow: current_session.flow_string, state: state)
-      end
-
-      def step_to_next_state
-        current_state_index = current_flow.states.index(current_flow.state_string.to_sym)
-        next_state = current_flow.states[current_state_index + 1]
+      def get_next_state
+        current_state_index = current_session.flow.states.index(current_session.state_string.to_sym)
+        next_state = current_session.flow.states[current_state_index + 1]
         if next_state.nil?
           raise(
             Stealth::Errors::InvalidStateTransitions,
-            "The next state after #{current_flow.state_string} has not yet been defined."
+            "The next state after #{current_session.state_string} has not yet been defined."
           )
         end
 
-        step(flow: current_flow.flow_string, state: next_state)
+        return current_session.flow_string, next_state
       end
 
   end
