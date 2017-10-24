@@ -28,9 +28,13 @@ module Stealth
             template["message"]["quick_replies"] = fb_suggestions
           end
 
+          # If buttons are present, we need to convert this to a button template
           if reply['buttons'].present?
+            template['message'].delete('text')
+
             fb_buttons = generate_buttons(buttons: reply['buttons'])
-            template["message"]["buttons"] = fb_suggestions
+            attachment = button_attachment_template(text: reply['text'], buttons: fb_buttons)
+            template['message']['attachment'] = attachment
           end
 
           template
@@ -288,6 +292,17 @@ module Stealth
               "type" => attachment_type,
               "payload" => {
                 "url" => attachment_url
+              }
+            }
+          end
+
+          def button_attachment_template(text:, buttons:)
+            {
+              "type" => "template",
+              "payload" => {
+                "template_type" => "button",
+                "text"          => text,
+                "buttons"       => buttons
               }
             }
           end
