@@ -157,6 +157,7 @@ module Stealth
       def init_state(state)
         res = spec.states[state.to_sym] if state
         @flow_state = res || spec.initial_state
+        self
       end
 
       private
