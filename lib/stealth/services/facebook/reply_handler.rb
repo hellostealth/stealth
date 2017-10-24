@@ -54,11 +54,6 @@ module Stealth
             template["message"]["quick_replies"] = fb_suggestions
           end
 
-          if reply['buttons'].present?
-            fb_buttons = generate_buttons(buttons: reply['buttons'])
-            template["message"]["buttons"] = fb_suggestions
-          end
-
           template
         end
 
@@ -78,11 +73,6 @@ module Stealth
           if reply['suggestions'].present?
             fb_suggestions = generate_suggestions(suggestions: reply['suggestions'])
             template["message"]["quick_replies"] = fb_suggestions
-          end
-
-          if reply['buttons'].present?
-            fb_buttons = generate_buttons(buttons: reply['buttons'])
-            template["message"]["buttons"] = fb_suggestions
           end
 
           template
@@ -106,11 +96,6 @@ module Stealth
             template["message"]["quick_replies"] = fb_suggestions
           end
 
-          if reply['buttons'].present?
-            fb_buttons = generate_buttons(buttons: reply['buttons'])
-            template["message"]["buttons"] = fb_suggestions
-          end
-
           template
         end
 
@@ -130,11 +115,6 @@ module Stealth
           if reply['suggestions'].present?
             fb_suggestions = generate_suggestions(suggestions: reply['suggestions'])
             template["message"]["quick_replies"] = fb_suggestions
-          end
-
-          if reply['buttons'].present?
-            fb_buttons = generate_buttons(buttons: reply['buttons'])
-            template["message"]["buttons"] = fb_suggestions
           end
 
           template
