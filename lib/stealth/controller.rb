@@ -174,16 +174,16 @@ module Stealth
       end
 
       def get_next_state
-        current_state_index = current_flow.states.index(current_flow.state_string.to_sym)
-        next_state = current_flow.states[current_state_index + 1]
+        current_state_index = current_session.flow.states.index(current_session.state_string.to_sym)
+        next_state = current_session.flow.states[current_state_index + 1]
         if next_state.nil?
           raise(
             Stealth::Errors::InvalidStateTransitions,
-            "The next state after #{current_flow.state_string} has not yet been defined."
+            "The next state after #{current_session.state_string} has not yet been defined."
           )
         end
 
-        return current_flow.flow_string, next_state
+        return current_session.flow_string, next_state
       end
 
   end
