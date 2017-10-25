@@ -444,8 +444,8 @@ module Stealth
           def greeting
             Stealth.config.facebook.setup.greeting.map do |greeting|
               {
-                "locale": greeting["locale"],
-                "text": greeting["text"]
+                "locale" => greeting["locale"],
+                "text" => greeting["text"]
               }
             end
           end
