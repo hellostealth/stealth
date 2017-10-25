@@ -401,6 +401,13 @@ module Stealth
                   "title" => button["text"]
                 }
 
+              when 'nested'
+                button = {
+                  "type" => "nested",
+                  "title" => button["text"],
+                  "call_to_actions" => generate_buttons(buttons: button["buttons"])
+                }
+
               else
                 raise(Stealth::Errors::ServiceImpaired, "Sorry, we don't yet support #{button["type"]} buttons yet!")
               end
