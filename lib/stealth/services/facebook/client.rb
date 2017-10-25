@@ -5,6 +5,7 @@ require 'faraday'
 
 require 'stealth/services/facebook/message_handler'
 require 'stealth/services/facebook/reply_handler'
+require 'stealth/services/facebook/setup'
 
 module Stealth
   module Services
