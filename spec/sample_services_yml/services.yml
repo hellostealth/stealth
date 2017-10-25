@@ -1,21 +1,31 @@
-facebook:
-  verify_token: c68823f4-7259-4600-b9f0-382a67260757
-  challenge: pOmQ7iq4ZA1hK6TbO7yrVZCmygVjfIiEIYaIZAlEveOAzY4UKb
-  page_access_token: EAADhbJruBbMBAKY9bnesHh9eM09ZAHjGsCQtNdvuZClZCFtyIXdFdIQI2mV0PJM910Qyn3lNNhZBPZB54zLRhDNmeIkDz9myS25CTy0kFxHjQCXJxz5oeZCD60VWdAZAFxbeDKvF8eF28qDHAI4wkGc3jvVhjFISKmmFRRM6goUeAZDZD
-  setup:
-    greeting: # Greetings are broken up by locale
-      - locale: default
-        text: "Welcome to the Stealth bot 🤖"
-    persistent_menu:
-      - type: payload
-        text: Main Menu
-        payload: main_menu
-      - type: url
-        text: Visit our website
-        url: https://example.com
-      - type: call
-        text: Call us
-        payload: "+17345551234"
-twilio_sms:
-  account_sid: BC6f4bd46307054c84fdff70badcd9ef5d
-  auth_token: 4af73d27d92cff6391611a9c976725cc
+default: &default
+  facebook:
+    verify_token: c68823f4-7259-4600-b9f0-382a67260757
+    challenge: pOmQ7iq4ZA1hK6TbO7yrVZCmygVjfIiEIYaIZAlEveOAzY4UKb
+    page_access_token: EAADhbJruBbMBAKY9bnesHh9eM09ZAHjGsCQtNdvuZClZCFtyIXdFdIQI2mV0PJM910Qyn3lNNhZBPZB54zLRhDNmeIkDz9myS25CTy0kFxHjQCXJxz5oeZCD60VWdAZAFxbeDKvF8eF28qDHAI4wkGc3jvVhjFISKmmFRRM6goUeAZDZD
+    setup:
+      greeting: # Greetings are broken up by locale
+        - locale: default
+          text: "Welcome to the Stealth bot 🤖"
+      persistent_menu:
+        - type: payload
+          text: Main Menu
+          payload: main_menu
+        - type: url
+          text: Visit our website
+          url: https://example.com
+        - type: call
+          text: Call us
+          payload: "+17345551234"
+  twilio_sms:
+    account_sid: BC6f4bd46307054c84fdff70badcd9ef5d
+    auth_token: 4af73d27d92cff6391611a9c976725cc
+
+production:
+  <<: *default
+
+development:
+  <<: *default
+
+test:
+  <<: *default
