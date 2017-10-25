@@ -46,7 +46,13 @@ module Stealth
 
     @configuration ||= begin
       @semaphore.synchronize do
-        Stealth::Configuration.new(YAML.load(ERB.new(services_yaml).result))
+        services_config = YAML.load(ERB.new(services_yaml).result)
+
+        unless services_config.has_key?(env)
+          raise Stealth::Errors::ConfigurationError, "Could not find services.yml configuration for #{env} environment."
+        end
+
+        Stealth::Configuration.new(services_config[env])
       end
     end
   end

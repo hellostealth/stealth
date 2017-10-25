@@ -1,21 +1,31 @@
-facebook:
-  verify_token: <%= ENV['FACEBOOK_VERIFY_TOKEN'] %>
-  challenge: <%= ENV['FACEBOOK_CHALLENGE'] %>
-  page_access_token: <%= ENV['FACEBOOK_PAGE_ACCESS_TOKEN'] %>
-  setup:
-    greeting: # Greetings are broken up by locale
-      - locale: default
-        text: "Welcome to the Stealth bot 🤖"
-    persistent_menu:
-      - type: payload
-        text: Main Menu
-        payload: main_menu
-      - type: url
-        text: Visit our website
-        url: https://example.com
-      - type: call
-        text: Call us
-        payload: "+17345551234"
-twilio_sms:
-  account_sid: <%= ENV['TWILIO_ACCOUNT_SID'] %>
-  auth_token: <%= ENV['TWILIO_AUTH_TOKEN'] %>
+default: &default
+  facebook:
+    verify_token: <%= ENV['FACEBOOK_VERIFY_TOKEN'] %>
+    challenge: <%= ENV['FACEBOOK_CHALLENGE'] %>
+    page_access_token: <%= ENV['FACEBOOK_PAGE_ACCESS_TOKEN'] %>
+    setup:
+      greeting: # Greetings are broken up by locale
+        - locale: default
+          text: "Welcome to the Stealth bot 🤖"
+      persistent_menu:
+        - type: payload
+          text: Main Menu
+          payload: main_menu
+        - type: url
+          text: Visit our website
+          url: https://example.com
+        - type: call
+          text: Call us
+          payload: "+17345551234"
+  twilio_sms:
+    account_sid: <%= ENV['TWILIO_ACCOUNT_SID'] %>
+    auth_token: <%= ENV['TWILIO_AUTH_TOKEN'] %>
+
+production:
+  <<: *default
+
+development:
+  <<: *default
+
+test:
+  <<: *default

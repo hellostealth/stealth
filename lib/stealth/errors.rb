@@ -4,6 +4,9 @@
 module Stealth
   class Errors < StandardError
 
+    class ConfigurationError < Errors
+    end
+
     class ReplyFormatNotSupported < Errors
     end
 
