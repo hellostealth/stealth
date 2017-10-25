@@ -173,6 +173,10 @@ module Stealth
 
         # generates property/value pairs required to set the profile
         def messenger_profile
+          unless Stealth.config.facebook.setup.present?
+            raise Stealth::Errors::ConfigurationError, "Setup for Facebook is not specified in services.yml."
+          end
+
           profile = {}
           Stealth.config.facebook.setup.each do |profile_option|
             profile[profile_option] = self.send(profile_option)
