@@ -178,9 +178,10 @@ module Stealth
           end
 
           profile = {}
-          Stealth.config.facebook.setup.each do |profile_option|
+          Stealth.config.facebook.setup.each do |profile_option, _|
             profile[profile_option] = self.send(profile_option)
           end
+
           profile
         end
 
