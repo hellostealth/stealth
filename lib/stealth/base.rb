@@ -24,6 +24,10 @@ require 'stealth/services/base_client'
 
 module Stealth
 
+  def self.env
+    @env ||= ActiveSupport::StringInquirer.new(ENV['STEALTH_ENV'] || 'development')
+  end
+
   def self.root
     @root ||= File.expand_path(Pathname.new(Dir.pwd))
   end
