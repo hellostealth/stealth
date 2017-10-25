@@ -452,6 +452,8 @@ module Stealth
 
           def persistent_menu
             generate_buttons(buttons: Stealth.config.facebook.setup.persistent_menu)
+          def get_started
+            Stealth.config.facebook.setup.get_started
           end
       end
 
