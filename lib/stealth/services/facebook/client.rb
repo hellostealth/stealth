@@ -11,14 +11,14 @@ module Stealth
     module Facebook
 
       class Client < Stealth::Services::BaseClient
-        FB_ENDPOINT = "https://graph.facebook.com/v2.10/me/messages"
+        FB_ENDPOINT = "https://graph.facebook.com/v2.10/me"
 
         attr_reader :api_endpoint, :reply
 
-        def initialize(reply:)
+        def initialize(reply:, endpoint: 'messages')
           @reply = reply
           access_token = "access_token=#{Stealth.config.facebook.page_access_token}"
-          @api_endpoint = [FB_ENDPOINT, access_token].join('?')
+          @api_endpoint = [[FB_ENDPOINT, endpoint].join('/'), access_token].join('?')
         end
 
         def transmit
