@@ -173,10 +173,15 @@ module Stealth
 
         # generates property/value pairs required to set the profile
         def messenger_profile
+          unless Stealth.config.facebook.setup.present?
+            raise Stealth::Errors::ConfigurationError, "Setup for Facebook is not specified in services.yml."
+          end
+
           profile = {}
-          Stealth.config.facebook.setup.each do |profile_option|
+          Stealth.config.facebook.setup.each do |profile_option, _|
             profile[profile_option] = self.send(profile_option)
           end
+
           profile
         end
 
@@ -401,6 +406,13 @@ module Stealth
                   "title" => button["text"]
                 }
 
+              when 'nested'
+                button = {
+                  "type" => "nested",
+                  "title" => button["text"],
+                  "call_to_actions" => generate_buttons(buttons: button["buttons"])
+                }
+
               else
                 raise(Stealth::Errors::ServiceImpaired, "Sorry, we don't yet support #{button["type"]} buttons yet!")
               end
@@ -433,14 +445,24 @@ module Stealth
           def greeting
             Stealth.config.facebook.setup.greeting.map do |greeting|
               {
-                "locale": greeting["locale"],
-                "text": greeting["text"]
+                "locale" => greeting["locale"],
+                "text" => greeting["text"]
               }
             end
           end
 
           def persistent_menu
-            generate_buttons(buttons: Stealth.config.facebook.setup.persistent_menu)
+            Stealth.config.facebook.setup.persistent_menu.map do |persistent_menu|
+              {
+                "locale" => persistent_menu['locale'],
+                "composer_input_disabled" => (persistent_menu['composer_input_disabled'] || false),
+                "call_to_actions" => generate_buttons(buttons: persistent_menu['call_to_actions'])
+              }
+            end
+          end
+
+          def get_started
+            Stealth.config.facebook.setup.get_started
           end
       end
 

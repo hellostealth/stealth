@@ -74,7 +74,8 @@ module Stealth
     $ > stealth setup facebook
     EOS
     def setup(service)
-      service_setup_klass = "Stealth::Service::#{service.classify}::Setup".constantize
+      Stealth.load_environment
+      service_setup_klass = "Stealth::Services::#{service.classify}::Setup".constantize
       service_setup_klass.trigger
     end
   end
