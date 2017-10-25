@@ -455,6 +455,7 @@ module Stealth
             Stealth.config.facebook.setup.persistent_menu.map do |persistent_menu|
               {
                 "locale" => persistent_menu['locale'],
+                "composer_input_disabled" => (persistent_menu['composer_input_disabled'] || false),
                 "call_to_actions" => generate_buttons(buttons: persistent_menu['call_to_actions'])
               }
             end
