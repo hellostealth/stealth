@@ -451,7 +451,14 @@ module Stealth
           end
 
           def persistent_menu
-            generate_buttons(buttons: Stealth.config.facebook.setup.persistent_menu)
+            Stealth.config.facebook.setup.persistent_menu.map do |persistent_menu|
+              {
+                "locale" => persistent_menu['locale'],
+                "call_to_actions" => generate_buttons(buttons: persistent_menu['call_to_actions'])
+              }
+            end
+          end
+
           def get_started
             Stealth.config.facebook.setup.get_started
           end
