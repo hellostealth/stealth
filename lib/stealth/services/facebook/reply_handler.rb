@@ -131,7 +131,7 @@ module Stealth
           )
 
           fb_elements = generate_card_elements(elements: reply["details"]["elements"])
-          template["message"]["attachments"]["payload"]["elements"] = fb_elements
+          template["message"]["attachment"]["payload"]["elements"] = fb_elements
 
           template
         end
@@ -202,10 +202,12 @@ module Stealth
                 "id" => recipient_id
               },
               "message" => {
-                "type" => "template",
-                "payload" => {
-                  "template_type" => "generic",
-                  "elements" => []
+                "attachment" => {
+                  "type" => "template",
+                  "payload" => {
+                    "template_type" => "generic",
+                    "elements" => []
+                  }
                 }
               }
             }
@@ -227,10 +229,12 @@ module Stealth
                 "id" => recipient_id
               },
               "message" => {
-                "type" => "template",
-                "payload" => {
-                  "template_type" => "list",
-                  "elements" => []
+                "attachment" => {
+                  "type" => "template",
+                  "payload" => {
+                    "template_type" => "list",
+                    "elements" => []
+                  }
                 }
               }
             }
