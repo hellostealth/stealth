@@ -255,8 +255,8 @@ module Stealth
           end
 
           def element_template(element_type:, element:)
-            unless element["text"].present?
-              raise(ArgumentError, "Facebook card and list elements must have a 'text' attribute.")
+            unless element["title"].present?
+              raise(ArgumentError, "Facebook card and list elements must have a 'title' attribute.")
             end
 
             template = {
