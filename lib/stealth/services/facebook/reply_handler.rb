@@ -131,7 +131,7 @@ module Stealth
           )
 
           fb_elements = generate_card_elements(elements: reply["details"]["elements"])
-          template["message"]["attachments"]["payload"]["elements"] = fb_elements
+          template["message"]["attachment"]["payload"]["elements"] = fb_elements
 
           template
         end
@@ -202,10 +202,12 @@ module Stealth
                 "id" => recipient_id
               },
               "message" => {
-                "type" => "template",
-                "payload" => {
-                  "template_type" => "generic",
-                  "elements" => []
+                "attachment" => {
+                  "type" => "template",
+                  "payload" => {
+                    "template_type" => "generic",
+                    "elements" => []
+                  }
                 }
               }
             }
@@ -227,10 +229,12 @@ module Stealth
                 "id" => recipient_id
               },
               "message" => {
-                "type" => "template",
-                "payload" => {
-                  "template_type" => "list",
-                  "elements" => []
+                "attachment" => {
+                  "type" => "template",
+                  "payload" => {
+                    "template_type" => "list",
+                    "elements" => []
+                  }
                 }
               }
             }
@@ -255,8 +259,8 @@ module Stealth
           end
 
           def element_template(element_type:, element:)
-            unless element["text"].present?
-              raise(ArgumentError, "Facebook card and list elements must have a 'text' attribute.")
+            unless element["title"].present?
+              raise(ArgumentError, "Facebook card and list elements must have a 'title' attribute.")
             end
 
             template = {
