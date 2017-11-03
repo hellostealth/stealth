@@ -126,11 +126,11 @@ module Stealth
 
         def cards
           template = card_template(
-            sharable: reply["details"]["sharable"],
-            aspect_ratio: reply["details"]["aspect_ratio"]
+            sharable: reply["sharable"],
+            aspect_ratio: reply["aspect_ratio"]
           )
 
-          fb_elements = generate_card_elements(elements: reply["details"]["elements"])
+          fb_elements = generate_card_elements(elements: reply["elements"])
           template["message"]["attachment"]["payload"]["elements"] = fb_elements
 
           template
@@ -138,18 +138,18 @@ module Stealth
 
         def list
           template = list_template(
-            top_element_style: reply["details"]["top_element_style"]
+            top_element_style: reply["top_element_style"]
           )
 
-          fb_elements = generate_list_elements(elements: reply["details"]["elements"])
+          fb_elements = generate_list_elements(elements: reply["elements"])
           template["message"]["attachments"]["payload"]["elements"] = fb_elements
 
-          if reply["details"]["buttons"].present?
-            if reply["details"]["buttons"].size > 1
+          if reply["buttons"].present?
+            if reply["buttons"].size > 1
               raise(ArgumentError, "Facebook lists support a single button attached to the list itsef.")
             end
 
-            template["message"]["attachments"]["payload"]["buttons"] = generate_buttons(buttons: reply["details"]["buttons"])
+            template["message"]["attachments"]["payload"]["buttons"] = generate_buttons(buttons: reply["buttons"])
           end
 
           template
