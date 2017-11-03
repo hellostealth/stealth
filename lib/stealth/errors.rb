@@ -28,5 +28,8 @@ module Stealth
     class InvalidStateTransition < Errors
     end
 
+    class ReplyNotFound < Errors
+    end
+
   end
 end
