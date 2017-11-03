@@ -133,6 +133,11 @@ module Stealth
           fb_elements = generate_card_elements(elements: reply["elements"])
           template["message"]["attachment"]["payload"]["elements"] = fb_elements
 
+          if reply['suggestions'].present?
+            fb_suggestions = generate_suggestions(suggestions: reply['suggestions'])
+            template["message"]["quick_replies"] = fb_suggestions
+          end
+
           template
         end
 
