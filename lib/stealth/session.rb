@@ -53,7 +53,7 @@ module Stealth
     def set(flow:, state:)
       @session = canonical_session_slug(flow: flow, state: state)
       flow
-      $redis.set(user_id, canonical_session_slug(flow: flow, state: state))
+      $redis.set(user_id, session)
     end
 
     def present?

@@ -145,7 +145,13 @@ module Stealth
       end
 
       def action_replies
-        File.read(File.join(Stealth.root, 'bot', 'replies', replies_folder, "#{current_session.state_string}.yml"))
+        reply_file_path = File.join(Stealth.root, 'bot', 'replies', replies_folder, "#{current_session.state_string}.yml")
+
+        begin
+          File.read(reply_file_path)
+        rescue Errno::ENOENT
+          raise(Stealth::Errors::ReplyNotFound, "Could not find a reply in #{reply_file_path}.")
+        end
       end
 
       def update_session(flow:, state:)
