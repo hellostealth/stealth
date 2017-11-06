@@ -28,6 +28,31 @@ module Stealth
           Stealth::Logger.l(topic: "facebook", message: "Transmitting. Response: #{response.status}: #{response.body}")
         end
 
+        def self.fetch_profile(recipient_id:, fields: nil)
+          if fields.blank?
+            fields = [:first_name, :last_name, :profile_pic, :locale, :timezone, :gender, :is_payment_enabled, :last_ad_referral]
+          end
+
+          query_hash ={
+            fields: fields.join(','),
+            access_token: Stealth.config.facebook.page_access_token
+          }
+
+          uri = URI::HTTPS.build(
+            host: "graph.facebook.com",
+            path: "/v2.10/#{recipient_id}",
+            query: query_hash.to_query
+          )
+
+          response = Faraday.get(uri.to_s)
+          Stealth::Logger.l(topic: "facebook", message: "Requested user profile for #{recipient_id}. Response: #{response.status}: #{response.body}")
+
+          if response.status.in?(200..299)
+            MultiJson.load(response.body)
+          else
+            false
+          end
+        end
       end
 
     end
