@@ -168,7 +168,7 @@ module Stealth
         # Reported by Kyle Burton
         if !spec.states[event.transitions_to]
           raise StealthFlowError.new("Event[#{event.name}]'s " +
-              "transitions_to[#{event.transitions_to}] is not a declared state.")
+              "transitions_to[#{event.transitions_to}] is not a declared state")
         end
       end
 

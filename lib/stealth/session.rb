@@ -12,7 +12,7 @@ module Stealth
       @user_id = user_id
 
       unless defined?($redis)
-        raise(Stealth::Errors::RedisNotConfigured, "Please make sure REDIS_URL is configured before using sessions.")
+        raise(Stealth::Errors::RedisNotConfigured, "Please make sure REDIS_URL is configured before using sessions")
       end
 
       get

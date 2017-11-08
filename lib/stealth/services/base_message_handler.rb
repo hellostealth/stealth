@@ -14,7 +14,7 @@ module Stealth
 
       # Should respond with a Rack response (https://github.com/sinatra/sinatra#return-values)
       def coordinate
-        raise(Stealth::Errors::ServiceImpaired, "Service request handler does not implement 'process'.")
+        raise(Stealth::Errors::ServiceImpaired, "Service request handler does not implement 'process'")
       end
 
       # After coordinate responds to the service, an optional async job

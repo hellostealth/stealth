@@ -17,7 +17,7 @@ module Stealth
       end
 
       def transmit
-        raise(Stealth::Errors::ServiceImpaired, "Service implementation does not implement 'transmit'.")
+        raise(Stealth::Errors::ServiceImpaired, "Service implementation does not implement 'transmit'")
       end
 
     end

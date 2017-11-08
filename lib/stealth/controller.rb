@@ -27,7 +27,7 @@ module Stealth
     end
 
     def route
-      raise(Stealth::Errors::ControllerRoutingNotImplemented, "Please implement `route` method in BotController.")
+      raise(Stealth::Errors::ControllerRoutingNotImplemented, "Please implement `route` method in BotController")
     end
 
     def send_replies
@@ -53,7 +53,7 @@ module Stealth
             sleep_duration = Float(reply["duration"])
             sleep(sleep_duration)
           rescue ArgumentError, TypeError
-            raise(ArgumentError, 'Invalid duration specified. Duration must be a float.')
+            raise(ArgumentError, 'Invalid duration specified. Duration must be a float')
           end
         end
       end
@@ -128,7 +128,7 @@ module Stealth
         begin
           Kernel.const_get("Stealth::Services::#{current_service.capitalize}::ReplyHandler")
         rescue NameError
-          raise(Stealth::Errors::ServiceNotRecognized, "The service '#{current_service}' was not recognized.")
+          raise(Stealth::Errors::ServiceNotRecognized, "The service '#{current_service}' was not recognized")
         end
       end
 
@@ -136,7 +136,7 @@ module Stealth
         begin
           Kernel.const_get("Stealth::Services::#{current_service.capitalize}::Client")
         rescue NameError
-          raise(Stealth::Errors::ServiceNotRecognized, "The service '#{current_service}' was not recognized.")
+          raise(Stealth::Errors::ServiceNotRecognized, "The service '#{current_service}' was not recognized")
         end
       end
 
@@ -150,7 +150,7 @@ module Stealth
         begin
           File.read(reply_file_path)
         rescue Errno::ENOENT
-          raise(Stealth::Errors::ReplyNotFound, "Could not find a reply in #{reply_file_path}.")
+          raise(Stealth::Errors::ReplyNotFound, "Could not find a reply in #{reply_file_path}")
         end
       end
 
@@ -168,7 +168,7 @@ module Stealth
 
       def get_flow_and_state(session: nil, flow: nil, state: nil)
         if session.nil? && flow.nil? && state.nil?
-          raise(ArgumentError, "A session, flow, or state must be specified.")
+          raise(ArgumentError, "A session, flow, or state must be specified")
         end
 
         if session.present?
@@ -195,7 +195,7 @@ module Stealth
         if next_state.nil?
           raise(
             Stealth::Errors::InvalidStateTransitions,
-            "The next state after #{current_session.state_string} has not yet been defined."
+            "The next state after #{current_session.state_string} has not yet been defined"
           )
         end
 
