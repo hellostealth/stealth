@@ -23,6 +23,3 @@ module Stealth
     end
   end
 end
-
-
-require 'stealth/services/facebook/client'
