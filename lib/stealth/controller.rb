@@ -126,7 +126,7 @@ module Stealth
 
       def reply_handler
         begin
-          Kernel.const_get("Stealth::Services::#{current_service.capitalize}::ReplyHandler")
+          Kernel.const_get("Stealth::Services::#{current_service.classify}::ReplyHandler")
         rescue NameError
           raise(Stealth::Errors::ServiceNotRecognized, "The service '#{current_service}' was not recognized")
         end
@@ -134,7 +134,7 @@ module Stealth
 
       def service_client
         begin
-          Kernel.const_get("Stealth::Services::#{current_service.capitalize}::Client")
+          Kernel.const_get("Stealth::Services::#{current_service.classify}::Client")
         rescue NameError
           raise(Stealth::Errors::ServiceNotRecognized, "The service '#{current_service}' was not recognized")
         end
