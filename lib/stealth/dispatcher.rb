@@ -38,7 +38,7 @@ module Stealth
 
       def message_handler_klass
         begin
-          Kernel.const_get("Stealth::Services::#{service.capitalize}::MessageHandler")
+          Kernel.const_get("Stealth::Services::#{service.classify}::MessageHandler")
         rescue NameError
           raise(Stealth::Errors::ServiceNotRecognized, "The service '#{service}' was not recognized")
         end
