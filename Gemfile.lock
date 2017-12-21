@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    stealth (0.9.5)
+    stealth (0.9.8)
       activesupport (~> 5.1)
       multi_json (~> 1.12)
       puma (~> 3.10)
@@ -26,7 +26,7 @@ GEM
     multi_json (1.12.2)
     mustermann (1.0.1)
     oj (3.3.6)
-    puma (3.10.0)
+    puma (3.11.0)
     rack (2.0.3)
     rack-protection (2.0.0)
       rack
@@ -75,4 +75,4 @@ DEPENDENCIES
   stealth!
 
 BUNDLED WITH
-   1.15.3
+   1.16.0
