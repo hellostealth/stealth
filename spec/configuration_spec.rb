@@ -5,7 +5,7 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 describe "Stealth::Configuration" do
 
   describe "accessing via method calling" do
-    let(:services_yml) { File.read(File.join(File.dirname(__FILE__), 'sample_services_yml', 'services.yml')) }
+    let(:services_yml) { File.read(File.join(File.dirname(__FILE__), 'support', 'services.yml')) }
     let(:parsed_config) { YAML.load(ERB.new(services_yml).result)[Stealth.env] }
     let(:config) { Stealth.load_services_config!(services_yml) }
 
@@ -31,7 +31,7 @@ describe "Stealth::Configuration" do
   end
 
   describe "config files with ERB" do
-    let(:services_yml) { File.read(File.join(File.dirname(__FILE__), 'sample_services_yml', 'services_with_erb.yml')) }
+    let(:services_yml) { File.read(File.join(File.dirname(__FILE__), 'support', 'services_with_erb.yml')) }
     let(:config) { Stealth.load_services_config!(services_yml) }
 
     it "should replace available embedded env vars" do
