@@ -60,7 +60,7 @@ module Stealth
     end
 
     def flow_controller
-      @flow_controller = begin
+      @flow_controller ||= begin
         flow_controller = [current_session.flow_string.pluralize, 'controller'].join('_').classify.constantize
         flow_controller.new(
           service_message: @current_message,
