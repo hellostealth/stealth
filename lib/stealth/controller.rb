@@ -84,7 +84,7 @@ module Stealth
       flow, state = get_flow_and_state(session: session, flow: flow, state: state)
 
       unless delay.is_a?(ActiveSupport::Duration)
-        raise ArgumentError, "Please specify your schedule_step_to `in` parameter using ActiveSupport::Duration, e.g. `1.day` or `5.hours`"
+        raise ArgumentError, "Please specify your step_to_in `delay` parameter using ActiveSupport::Duration, e.g. `1.day` or `5.hours`"
       end
 
       Stealth::ScheduledReplyJob.perform_in(delay, current_service, current_user_id, flow, state)
