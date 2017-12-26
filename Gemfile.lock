@@ -23,6 +23,7 @@ GEM
     i18n (0.9.1)
       concurrent-ruby (~> 1.0)
     minitest (5.10.3)
+    mock_redis (0.17.3)
     multi_json (1.12.2)
     mustermann (1.0.1)
     oj (3.3.6)
@@ -68,6 +69,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  mock_redis (~> 0.17)
   oj (~> 3.3)
   rack-test (~> 0.7)
   rspec (~> 3.6)
