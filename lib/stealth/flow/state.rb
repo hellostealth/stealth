@@ -8,10 +8,14 @@ module Stealth
       include Comparable
 
       attr_accessor :name
-      attr_reader :spec
+      attr_reader :spec, :fails_to
 
-      def initialize(name, spec)
-        @name, @spec = name, spec
+      def initialize(name, spec, fails_to = nil)
+        if fails_to.present? && !fails_to.is_a?(Stealth::Flow::State)
+          raise(ArgumentError, 'fails_to state should be a Stealth::Flow::State')
+        end
+
+        @name, @spec, @fails_to = name, spec, fails_to
       end
 
       def <=>(other_state)
