@@ -31,10 +31,6 @@ module Stealth
         end
       end
 
-      def draw(graph, from_state)
-        graph.add_edges(from_state.name.to_s, transitions_to.to_s, meta.merge(:label => to_s))
-      end
-
       def to_s
         @name.to_s
       end
