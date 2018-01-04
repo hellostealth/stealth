@@ -8,67 +8,37 @@ describe Stealth::Flow do
     include Stealth::Flow
 
     flow do
-      state :new do
-        event :submit_todo, :transitions_to => :get_due_date
-        event :error_in_input, :transitions_to => :error
-      end
+      state :new
 
-      state :get_due_date do
-        event :submit_due_date, :transitions_to => :created
-      end
+      state :get_due_date
 
       state :created
 
-      state :error do
-        event :submit_todo, :transitions_to => :get_due_date
-        event :error_in_input, :transitions_to => :error
-      end
+      state :error
     end
   end
 
   let(:flow) { NewTodoFlow.new }
 
-  describe "state transitions" do
-    it "should start out in the 'new' state" do
-      expect(flow.current_state).to eq :new
-    end
-
-    it "should transition into the 'get_due_date' state after submit" do
-      flow.submit_todo!
-      expect(flow.current_state).to eq :get_due_date
-    end
-
-    it "should transition into the 'error' state after error_in_input" do
-      flow.error_in_input!
-      expect(flow.current_state).to eq :error
-    end
-
-    it "should transition through multiple states" do
-      flow.submit_todo!
-      flow.submit_due_date!
+  describe "inititating with states" do
+    it "should init a state given a state name" do
+      flow.init_state(:created)
       expect(flow.current_state).to eq :created
-    end
 
-    it "should remain in the error state" do
-      flow.error_in_input!
-      expect(flow.current_state).to eq :error
-      flow.error_in_input!
+      flow.init_state('error')
       expect(flow.current_state).to eq :error
     end
 
-    it "should be false when checking the possibility of a non-valid transition" do
-      expect(flow.can_submit_due_date?).to be false
-    end
-
-    it "should be false when checking the possibility of a valid transition" do
-      flow.submit_todo!
-      expect(flow.can_submit_due_date?).to be true
+    it "should raise an error if an invalid state is specified" do
+      expect {
+        flow.init_state(:invalid)
+      }.to raise_error(Stealth::Errors::InvalidStateTransition)
     end
   end
 
   describe "accessing states" do
-    it "should start out in the 'new' state" do
-      expect(flow.new?).to be true
+    it "should start out in the initial state" do
+      expect(flow.current_state).to eq :new
     end
 
     it "should support comparing states" do

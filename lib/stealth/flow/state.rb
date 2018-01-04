@@ -7,16 +7,20 @@ module Stealth
 
       include Comparable
 
-      attr_accessor :name, :events, :meta, :on_entry, :on_exit
+      attr_accessor :name
       attr_reader :spec
 
-      def initialize(name, spec, meta = {})
-        @name, @spec, @events, @meta = name, spec, EventCollection.new, meta
+      def initialize(name, spec)
+        @name, @spec = name, spec
       end
 
       def <=>(other_state)
         states = spec.states.keys
-        raise ArgumentError, "state `#{other_state}' does not exist" unless states.include?(other_state.to_sym)
+
+        unless states.include?(other_state.to_sym)
+          raise(ArgumentError, "state `#{other_state}' does not exist")
+        end
+
         states.index(self.to_sym) <=> states.index(other_state.to_sym)
       end
 
