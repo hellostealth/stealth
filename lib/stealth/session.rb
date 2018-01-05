@@ -11,7 +11,7 @@ module Stealth
     def initialize(user_id:)
       @user_id = user_id
 
-      unless defined?($redis)
+      unless defined?($redis) && $redis.present?
         raise(Stealth::Errors::RedisNotConfigured, "Please make sure REDIS_URL is configured before using sessions")
       end
 
@@ -27,6 +27,8 @@ module Stealth
     end
 
     def flow
+      return nil if flow_string.blank?
+
       @flow = begin
         flow_klass = [flow_string, 'flow'].join('_').classify.constantize
         flow = flow_klass.new.init_state(state_string)
@@ -35,7 +37,7 @@ module Stealth
     end
 
     def state
-      flow.current_state
+      flow&.current_state
     end
 
     def flow_string
