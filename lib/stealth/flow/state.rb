@@ -19,13 +19,39 @@ module Stealth
       end
 
       def <=>(other_state)
-        states = spec.states.keys
+        state_position(self) <=> state_position(other_state)
+      end
 
-        unless states.include?(other_state.to_sym)
-          raise(ArgumentError, "state `#{other_state}' does not exist")
+      def +(steps)
+        if steps < 0
+          new_position = state_position(self) + steps
+
+          # we don't want to allow the array index to wrap here so we return
+          # the first state instead
+          if new_position < 0
+            new_state = spec.states.keys.first
+          else
+            new_state = spec.states.keys.at(new_position)
+          end
+        else
+          new_state = spec.states.keys[state_position(self) + steps]
+
+          # we may have been told to access an out-of-bounds state
+          # return the last state
+          if new_state.blank?
+            new_state = spec.states.keys.last
+          end
         end
 
-        states.index(self.to_sym) <=> states.index(other_state.to_sym)
+        new_state
+      end
+
+      def -(steps)
+        if steps < 0
+          return self + steps.abs
+        else
+          return self + (-steps)
+        end
       end
 
       def to_s
@@ -35,6 +61,18 @@ module Stealth
       def to_sym
         name.to_sym
       end
+
+      private
+
+        def state_position(state)
+          states = spec.states.keys
+
+          unless states.include?(state.to_sym)
+            raise(ArgumentError, "state `#{state}' does not exist")
+          end
+
+          states.index(state.to_sym)
+        end
     end
   end
 end
