@@ -162,13 +162,13 @@ module Stealth
 
       def update_session(flow:, state:)
         @current_session = Stealth::Session.new(user_id: current_user_id)
-        @progressed = :stepped
+        @progressed = :updated_session
         @current_session.set(flow: flow, state: state)
       end
 
       def step(flow:, state:)
         update_session(flow: flow, state: state)
-        @progressed = :updated_session
+        @progressed = :stepped
         @current_flow = current_session.flow
 
         action(action: state)
