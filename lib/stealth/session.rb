@@ -6,7 +6,8 @@ module Stealth
 
     SLUG_SEPARATOR = '->'
 
-    attr_reader :session, :flow, :state, :user_id
+    attr_reader :flow, :state, :user_id
+    attr_accessor :session
 
     def initialize(user_id:)
       @user_id = user_id
@@ -64,6 +65,27 @@ module Stealth
 
     def blank?
       !present?
+    end
+
+    def +(steps)
+      return nil if flow.blank?
+      return self if steps.zero?
+
+      new_state = self.state + steps
+      new_session = Stealth::Session.new(user_id: self.user_id)
+      new_session.session = canonical_session_slug(flow: self.flow_string, state: new_state)
+
+      new_session
+    end
+
+    def -(steps)
+      return nil if flow.blank?
+
+      if steps < 0
+        return self + steps.abs
+      else
+        return self + (-steps)
+      end
     end
 
     private

@@ -17,7 +17,6 @@ class NewTodoFlow
 end
 
 describe "Stealth::Session" do
-
   let(:user_id) { '0xDEADBEEF' }
 
   it "should raise an error if $redis is not set" do
@@ -87,4 +86,31 @@ describe "Stealth::Session" do
     end
   end
 
+  describe "incrementing and decrementing" do
+    let(:session) { Stealth::Session.new(user_id: user_id) }
+
+    it "should increment the state" do
+      session.set(flow: 'NewTodo', state: 'get_due_date')
+      new_session = session + 1
+      expect(new_session.state_string).to eq('created')
+    end
+
+    it "should decrement the state" do
+      session.set(flow: 'NewTodo', state: 'error')
+      new_session = session - 2
+      expect(new_session.state_string).to eq('get_due_date')
+    end
+
+    it "should return the first state if the decrement is out of bounds" do
+      session.set(flow: 'NewTodo', state: 'get_due_date')
+      new_session = session - 5
+      expect(new_session.state_string).to eq('new')
+    end
+
+    it "should return the last state if the increment is out of bounds" do
+      session.set(flow: 'NewTodo', state: 'created')
+      new_session = session + 5
+      expect(new_session.state_string).to eq('error')
+    end
+  end
 end
