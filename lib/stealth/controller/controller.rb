@@ -5,6 +5,7 @@ module Stealth
   class Controller
 
     include Stealth::Controller::Callbacks
+    include Stealth::Controller::CatchAll
 
     attr_reader :current_message, :current_user_id, :current_flow,
                 :current_service, :flow_controller, :action_name
@@ -14,6 +15,7 @@ module Stealth
       @current_service = service_message.service
       @current_user_id = service_message.sender_id
       @current_flow = current_flow
+      @progressed = false
     end
 
     def has_location?
@@ -22,6 +24,10 @@ module Stealth
 
     def has_attachments?
       current_message.attachments.present?
+    end
+
+    def progressed?
+      @progressed.present?
     end
 
     def route
@@ -55,6 +61,8 @@ module Stealth
           end
         end
       end
+
+      @progressed = :sent_replies
     end
 
     def flow_controller
@@ -76,7 +84,12 @@ module Stealth
       @action_name ||= current_session.state_string
 
       run_callbacks :action do
-        flow_controller.send(@action_name)
+        begin
+          flow_controller.send(@action_name)
+          run_catch_all unless progressed?
+        rescue StandardError
+          run_catch_all
+        end
       end
     end
 
@@ -144,11 +157,13 @@ module Stealth
 
       def update_session(flow:, state:)
         @current_session = Stealth::Session.new(user_id: current_user_id)
+        @progressed = :stepped
         @current_session.set(flow: flow, state: state)
       end
 
       def step(flow:, state:)
         update_session(flow: flow, state: state)
+        @progressed = :updated_session
         @current_flow = current_session.flow
 
         action(action: state)
