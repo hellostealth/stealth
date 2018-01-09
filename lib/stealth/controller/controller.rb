@@ -8,8 +8,7 @@ module Stealth
     include Stealth::Controller::CatchAll
 
     attr_reader :current_message, :current_user_id, :current_flow,
-                :current_service, :flow_controller, :action_name,
-                :previous_session
+                :current_service, :flow_controller, :action_name
 
     def initialize(service_message:, current_flow: nil)
       @current_message = service_message
