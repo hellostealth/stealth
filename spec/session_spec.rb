@@ -91,25 +91,25 @@ describe "Stealth::Session" do
 
     it "should increment the state" do
       session.set(flow: 'NewTodo', state: 'get_due_date')
-      new_session = session + 1
+      new_session = session + 1.state
       expect(new_session.state_string).to eq('created')
     end
 
     it "should decrement the state" do
       session.set(flow: 'NewTodo', state: 'error')
-      new_session = session - 2
+      new_session = session - 2.states
       expect(new_session.state_string).to eq('get_due_date')
     end
 
     it "should return the first state if the decrement is out of bounds" do
       session.set(flow: 'NewTodo', state: 'get_due_date')
-      new_session = session - 5
+      new_session = session - 5.states
       expect(new_session.state_string).to eq('new')
     end
 
     it "should return the last state if the increment is out of bounds" do
       session.set(flow: 'NewTodo', state: 'created')
-      new_session = session + 5
+      new_session = session + 5.states
       expect(new_session.state_string).to eq('error')
     end
   end

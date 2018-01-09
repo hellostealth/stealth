@@ -45,25 +45,25 @@ describe Stealth::Flow::State do
   describe "state incrementing and decrementing" do
     it "should increment the state" do
       flow.init_state(:get_due_date)
-      new_state = flow.current_state + 1
+      new_state = flow.current_state + 1.state
       expect(new_state).to eq(:created)
     end
 
     it "should decrement the state" do
       flow.init_state(:error)
-      new_state = flow.current_state - 2
+      new_state = flow.current_state - 2.states
       expect(new_state).to eq(:get_due_date)
     end
 
     it "should return the first state if the decrement is out of bounds" do
       flow.init_state(:get_due_date)
-      new_state = flow.current_state - 5
+      new_state = flow.current_state - 5.states
       expect(new_state).to eq(:new)
     end
 
     it "should return the last state if the increment is out of bounds" do
       flow.init_state(:created)
-      new_state = flow.current_state + 5
+      new_state = flow.current_state + 5.states
       expect(new_state).to eq(:error)
     end
   end
