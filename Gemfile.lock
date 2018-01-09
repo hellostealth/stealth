@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    stealth (0.9.8)
+    stealth (0.10.0)
       activesupport (~> 5.1)
       multi_json (~> 1.12)
       puma (~> 3.10)
@@ -77,4 +77,4 @@ DEPENDENCIES
   stealth!
 
 BUNDLED WITH
-   1.16.0
+   1.16.1

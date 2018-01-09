@@ -6,12 +6,14 @@ module Stealth
 
     SLUG_SEPARATOR = '->'
 
-    attr_reader :session, :flow, :state, :user_id
+    attr_reader :flow, :state, :user_id, :previous
+    attr_accessor :session
 
-    def initialize(user_id:)
+    def initialize(user_id:, previous: false)
       @user_id = user_id
+      @previous = previous
 
-      unless defined?($redis)
+      unless defined?($redis) && $redis.present?
         raise(Stealth::Errors::RedisNotConfigured, "Please make sure REDIS_URL is configured before using sessions")
       end
 
@@ -27,7 +29,9 @@ module Stealth
     end
 
     def flow
-      @flow = begin
+      return nil if flow_string.blank?
+
+      @flow ||= begin
         flow_klass = [flow_string, 'flow'].join('_').classify.constantize
         flow = flow_klass.new.init_state(state_string)
         flow
@@ -35,7 +39,7 @@ module Stealth
     end
 
     def state
-      flow.current_state
+      flow&.current_state
     end
 
     def flow_string
@@ -47,12 +51,18 @@ module Stealth
     end
 
     def get
-      @session ||= $redis.get(user_id)
+      if previous?
+        @session ||= $redis.get(previous_session_key(user_id: user_id))
+      else
+        @session ||= $redis.get(user_id)
+      end
     end
 
     def set(flow:, state:)
+      store_current_to_previous
+
+      @flow = nil
       @session = canonical_session_slug(flow: flow, state: state)
-      flow
       $redis.set(user_id, session)
     end
 
@@ -64,10 +74,43 @@ module Stealth
       !present?
     end
 
+    def previous?
+      @previous
+    end
+
+    def +(steps)
+      return nil if flow.blank?
+      return self if steps.zero?
+
+      new_state = self.state + steps
+      new_session = Stealth::Session.new(user_id: self.user_id)
+      new_session.session = canonical_session_slug(flow: self.flow_string, state: new_state)
+
+      new_session
+    end
+
+    def -(steps)
+      return nil if flow.blank?
+
+      if steps < 0
+        return self + steps.abs
+      else
+        return self + (-steps)
+      end
+    end
+
     private
 
       def canonical_session_slug(flow:, state:)
         [flow, state].join(SLUG_SEPARATOR)
+      end
+
+      def previous_session_key(user_id:)
+        [user_id, 'previous'].join('-')
+      end
+
+      def store_current_to_previous
+        $redis.set(previous_session_key(user_id: user_id), session)
       end
 
   end

@@ -159,6 +159,8 @@ class OtherFlowTesterFlow
     state :other_action
     state :other_action2
     state :other_action3
+    state :other_action4
+    state :other_action5
   end
 end
 

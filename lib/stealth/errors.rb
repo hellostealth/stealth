@@ -34,5 +34,11 @@ module Stealth
     class ReplyNotFound < Errors
     end
 
+    class FlowError < Errors
+    end
+
+    class FlowDefinitionError < Errors
+    end
+
   end
 end

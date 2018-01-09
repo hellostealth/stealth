@@ -7,33 +7,51 @@ module Stealth
 
       include Comparable
 
-      attr_accessor :name, :events, :meta, :on_entry, :on_exit
-      attr_reader :spec
+      attr_accessor :name
+      attr_reader :spec, :fails_to
 
-      def initialize(name, spec, meta = {})
-        @name, @spec, @events, @meta = name, spec, EventCollection.new, meta
-      end
+      def initialize(name, spec, fails_to = nil)
+        if fails_to.present? && !fails_to.is_a?(Stealth::Flow::State)
+          raise(ArgumentError, 'fails_to state should be a Stealth::Flow::State')
+        end
 
-      def draw(graph)
-        defaults = {
-          :label => to_s,
-          :width => '1',
-          :height => '1',
-          :shape => 'ellipse'
-        }
-
-        node = graph.add_nodes(to_s, defaults.merge(meta))
-
-        # Add open arrow for initial state
-        # graph.add_edge(graph.add_node('starting_state', :shape => 'point'), node) if initial?
-
-        node
+        @name, @spec, @fails_to = name, spec, fails_to
       end
 
       def <=>(other_state)
-        states = spec.states.keys
-        raise ArgumentError, "state `#{other_state}' does not exist" unless states.include?(other_state.to_sym)
-        states.index(self.to_sym) <=> states.index(other_state.to_sym)
+        state_position(self) <=> state_position(other_state)
+      end
+
+      def +(steps)
+        if steps < 0
+          new_position = state_position(self) + steps
+
+          # we don't want to allow the array index to wrap here so we return
+          # the first state instead
+          if new_position < 0
+            new_state = spec.states.keys.first
+          else
+            new_state = spec.states.keys.at(new_position)
+          end
+        else
+          new_state = spec.states.keys[state_position(self) + steps]
+
+          # we may have been told to access an out-of-bounds state
+          # return the last state
+          if new_state.blank?
+            new_state = spec.states.keys.last
+          end
+        end
+
+        new_state
+      end
+
+      def -(steps)
+        if steps < 0
+          return self + steps.abs
+        else
+          return self + (-steps)
+        end
       end
 
       def to_s
@@ -43,6 +61,18 @@ module Stealth
       def to_sym
         name.to_sym
       end
+
+      private
+
+        def state_position(state)
+          states = spec.states.keys
+
+          unless states.include?(state.to_sym)
+            raise(ArgumentError, "state `#{state}' does not exist")
+          end
+
+          states.index(state.to_sym)
+        end
     end
   end
 end
