@@ -40,7 +40,7 @@ module Stealth
           end
 
           def error_slug
-            ['error', current_user_id, current_flow.flow_string, current_flow.state_string].join('-')
+            ['error', current_user_id, current_session.flow_string, current_session.state_string].join('-')
           end
 
           def catch_all_state(error_level)
