@@ -22,6 +22,12 @@ module Stealth
 
           def fetch_error_level
             if fail_attempts = $redis.get(error_slug)
+              begin
+                fail_attempts = Integer(fail_attempts)
+              rescue ArgumentError
+                fail_attempts = 1
+              end
+
               fail_attempts += 1
             else
               fail_attempts = 1
