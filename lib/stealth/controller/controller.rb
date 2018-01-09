@@ -90,9 +90,9 @@ module Stealth
       run_callbacks :action do
         begin
           flow_controller.send(@action_name)
-          run_catch_all unless progressed?
-        rescue StandardError
-          run_catch_all
+          run_catch_all(reason: 'Did not send replies, update session, or step') unless progressed?
+        rescue StandardError => e
+          run_catch_all(reason: e.message)
         end
       end
     end

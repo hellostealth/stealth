@@ -9,8 +9,9 @@ module Stealth
 
       included do
 
-        def run_catch_all
+        def run_catch_all(reason: nil)
           error_level = fetch_error_level
+          Stealth::Logger.l(topic: "catch_all", message: "CatchAll #{catch_all_state(error_level)} triggered for #{error_slug}: #{reason}")
 
           if defined?(CatchAllsController)
             step_to flow: 'catch_all', state: catch_all_state(error_level)
