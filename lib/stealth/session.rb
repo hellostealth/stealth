@@ -31,7 +31,7 @@ module Stealth
     def flow
       return nil if flow_string.blank?
 
-      @flow = begin
+      @flow ||= begin
         flow_klass = [flow_string, 'flow'].join('_').classify.constantize
         flow = flow_klass.new.init_state(state_string)
         flow
@@ -61,8 +61,8 @@ module Stealth
     def set(flow:, state:)
       store_current_to_previous
 
+      @flow = nil
       @session = canonical_session_slug(flow: flow, state: state)
-      flow
       $redis.set(user_id, session)
     end
 

@@ -42,8 +42,8 @@ module Stealth
       def init_state(state)
         raise(ArgumentError, 'No state was specified.') if state.blank?
 
-        new_state = spec.states[state.to_sym]
-        if new_state.nil?
+        new_state = state.to_sym
+        unless states.include?(new_state)
           raise(Stealth::Errors::InvalidStateTransition)
         end
         @flow_state = new_state

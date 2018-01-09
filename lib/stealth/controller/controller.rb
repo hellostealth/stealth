@@ -169,6 +169,7 @@ module Stealth
       def step(flow:, state:)
         update_session(flow: flow, state: state)
         @progressed = :stepped
+        @flow_controller = nil
         @current_flow = current_session.flow
 
         action(action: state)
