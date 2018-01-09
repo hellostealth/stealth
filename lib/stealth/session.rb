@@ -6,11 +6,12 @@ module Stealth
 
     SLUG_SEPARATOR = '->'
 
-    attr_reader :flow, :state, :user_id
+    attr_reader :flow, :state, :user_id, :previous
     attr_accessor :session
 
-    def initialize(user_id:)
+    def initialize(user_id:, previous: false)
       @user_id = user_id
+      @previous = previous
 
       unless defined?($redis) && $redis.present?
         raise(Stealth::Errors::RedisNotConfigured, "Please make sure REDIS_URL is configured before using sessions")
@@ -50,10 +51,16 @@ module Stealth
     end
 
     def get
-      @session ||= $redis.get(user_id)
+      if previous?
+        @session ||= $redis.get(previous_session_key(user_id: user_id))
+      else
+        @session ||= $redis.get(user_id)
+      end
     end
 
     def set(flow:, state:)
+      store_current_to_previous
+
       @session = canonical_session_slug(flow: flow, state: state)
       flow
       $redis.set(user_id, session)
@@ -65,6 +72,10 @@ module Stealth
 
     def blank?
       !present?
+    end
+
+    def previous?
+      @previous
     end
 
     def +(steps)
@@ -92,6 +103,14 @@ module Stealth
 
       def canonical_session_slug(flow:, state:)
         [flow, state].join(SLUG_SEPARATOR)
+      end
+
+      def previous_session_key(user_id:)
+        [user_id, 'previous'].join('-')
+      end
+
+      def store_current_to_previous
+        $redis.set(previous_session_key(user_id: user_id), session)
       end
 
   end
