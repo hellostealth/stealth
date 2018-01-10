@@ -59,7 +59,7 @@ module Stealth
     end
 
     def set(flow:, state:)
-      store_current_to_previous
+      store_current_to_previous(flow: flow, state: state)
 
       @flow = nil
       @session = canonical_session_slug(flow: flow, state: state)
@@ -109,8 +109,16 @@ module Stealth
         [user_id, 'previous'].join('-')
       end
 
-      def store_current_to_previous
-        $redis.set(previous_session_key(user_id: user_id), session)
+      def store_current_to_previous(flow:, state:)
+        new_session = canonical_session_slug(flow: flow, state: state)
+
+        # Prevent previous_session from becoming current_session
+        if new_session == session
+          Stealth::Logger.l(topic: "previous_session", message: "User #{user_id}: skipping setting to #{session} because it is the same as current_session")
+        else
+          Stealth::Logger.l(topic: "previous_session", message: "User #{user_id}: setting to #{session}")
+          $redis.set(previous_session_key(user_id: user_id), session)
+        end
       end
 
   end
