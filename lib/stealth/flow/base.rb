@@ -44,7 +44,7 @@ module Stealth
 
         new_state = state.to_sym
         unless states.include?(new_state)
-          raise(Stealth::Errors::InvalidStateTransition)
+          raise(Stealth::Errors::InvalidStateTransition, "Unknown state '#{state}' for #{self.class.to_s}")
         end
         @flow_state = new_state
 
