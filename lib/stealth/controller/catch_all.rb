@@ -11,10 +11,17 @@ module Stealth
 
         def run_catch_all(reason: nil)
           error_level = fetch_error_level
-          Stealth::Logger.l(topic: "catch_all", message: "CatchAll #{catch_all_state(error_level)} triggered for #{error_slug}: #{reason}")
+          Stealth::Logger.l(topic: "catch_all", message: "CatchAll #{calculate_catch_all_state(error_level)} triggered for #{error_slug}: #{reason}")
 
-          if defined?(CatchAllsController)
-            step_to flow: 'catch_all', state: catch_all_state(error_level)
+          if defined?(CatchAllsController) && defined?(CatchAllFlow)
+            catch_all_state = calculate_catch_all_state(error_level)
+
+            if CatchAllFlow.flow_spec.states.keys.include?(catch_all_state.to_sym)
+              step_to flow: 'catch_all', state: catch_all_state
+            else
+              # Jump to the last catch_all state if we are out of bounds
+              step_to flow: 'catch_all', state: CatchAllFlow.flow_spec.states.keys.last.to_s
+            end
           end
         end
 
@@ -43,7 +50,7 @@ module Stealth
             ['error', current_user_id, current_session.flow_string, current_session.state_string].join('-')
           end
 
-          def catch_all_state(error_level)
+          def calculate_catch_all_state(error_level)
             "level#{error_level}"
           end
 
