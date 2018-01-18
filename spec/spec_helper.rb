@@ -12,5 +12,5 @@ Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 $redis = MockRedis.new
 
 RSpec.configure do |config|
-
+  ENV['STEALTH_ENV'] = 'test'
 end
