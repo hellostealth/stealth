@@ -5,7 +5,9 @@ module Stealth
   class Logger
 
     def self.log(topic:, message:)
-      puts "[#{topic.upcase}] #{message}"
+      unless ENV['STEALTH_ENV'] == 'test'
+        puts "[#{topic.upcase}] #{message}"
+      end
     end
 
     class << self
