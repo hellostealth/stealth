@@ -6,6 +6,7 @@ module Stealth
 
     include Stealth::Controller::Callbacks
     include Stealth::Controller::CatchAll
+    include Stealth::Controller::Helpers
 
     attr_reader :current_message, :current_user_id, :current_flow,
                 :current_service, :flow_controller, :action_name
