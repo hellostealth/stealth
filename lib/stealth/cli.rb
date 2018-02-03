@@ -78,5 +78,17 @@ module Stealth
       service_setup_klass = "Stealth::Services::#{service.classify}::Setup".constantize
       service_setup_klass.trigger
     end
+
+
+    desc 'clear_sessions', 'Clears all sessions in development'
+    long_desc <<-EOS
+    `stealth clear_sessions` clears all sessions from Redis in development.
+
+    $ > stealth clear_sessions
+    EOS
+    def clear_sessions
+      Stealth.load_environment
+      $redis.flushdb if ENV['STEALTH_ENV'] == 'development'
+    end
   end
 end
