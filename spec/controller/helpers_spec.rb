@@ -25,6 +25,10 @@ describe "Stealth::Controller helpers" do
     end
   end
 
+  class BaseController < Stealth::Controller
+
+  end
+
   class AllHelpersController < Stealth::Controller
     helper :all
   end
@@ -59,7 +63,7 @@ describe "Stealth::Controller helpers" do
   let(:all_helper_methods) { [:hello_world, :baz, :generate_pdf_name] }
 
   describe "loading" do
-    
+
     it "should load all helpers if none are specified by default" do
       expect(BaseController._helpers.instance_methods).to match_array(all_helper_methods)
     end
