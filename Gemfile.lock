@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    stealth (0.10.2)
+    stealth (0.10.3)
       activesupport (~> 5.2.0.rc1)
       multi_json (~> 1.12)
       puma (~> 3.10)
@@ -62,7 +62,7 @@ GEM
     thor (0.20.0)
     thread_safe (0.3.6)
     tilt (2.0.8)
-    tzinfo (1.2.5)
+    tzinfo (1.2.4)
       thread_safe (~> 0.1)
 
 PLATFORMS
