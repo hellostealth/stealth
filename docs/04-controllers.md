@@ -6,7 +6,7 @@ The power of three. Lorem ipsum dolor sit amet, consectetur adipisicing elit, se
 
 #### `bot_controller.rb`
 
-```
+```ruby
 class BotController < Stealth::Controller
 
   before_action :current_user

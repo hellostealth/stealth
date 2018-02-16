@@ -4,7 +4,7 @@ title: Replies
 
 Welcome to our Views.
 
-```
+```yml
 - reply_type: text
   text: "Hello. Welcome to our Bot."
 - reply_type: delay
@@ -28,7 +28,7 @@ Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor 
 
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 
-```
+```ruby
 def say_contact_us
   send_replies
 end
