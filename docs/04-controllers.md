@@ -4,7 +4,7 @@ title: Controllers
 
 The power of three. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 
-#### `bot_controller.rb`
+## `bot_controller.rb`
 
 ```ruby
 class BotController < Stealth::Controller
@@ -42,10 +42,10 @@ The power of three. Lorem ipsum dolor sit amet, consectetur adipisicing elit, se
 
 The power of three. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 
-#### `handle_payloads`
+## `handle_payloads`
 
 The power of three. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 
-#### `current_user`
+## `current_user`
 
 The power of three. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
