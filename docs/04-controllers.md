@@ -2,7 +2,7 @@
 title: Controllers
 ---
 
-The power of three. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Controllers are responsible for handling incoming requests and providing a appropriate user response (reply). Every Stealth project comes with a default `bot_controller.rb`
 
 ## `bot_controller.rb`
 
@@ -43,9 +43,5 @@ The power of three. Lorem ipsum dolor sit amet, consectetur adipisicing elit, se
 The power of three. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 
 ## `handle_payloads`
-
-The power of three. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-
-## `current_user`
 
 The power of three. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.

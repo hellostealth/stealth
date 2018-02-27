@@ -4,8 +4,16 @@ title: Sessions
 
 ## State Machines
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+TODO Need to understand more about how Stealth handles the it's session around State Machines.
 
 ## Redis Backed Sessions
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+TODO Need to understand how redis fits in here.
+
+## `current_user`
+
+The user is available to you at anytime using `current_user`.
+
+## `current_session`
+
+The users' session is available to you at anytime using `current_session`.

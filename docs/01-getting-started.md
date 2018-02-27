@@ -2,24 +2,23 @@
 title: Getting Started
 ---
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-
-
-Install Stealth at the command prompt if you haven't yet:
+To get started install Stealth at the command prompt:
 
   ```
   gem install stealth
   ```
 
-At the command prompt, create a new Stealth bot:
+After, create yourself a new Stealth bot:
 
   ```
   stealth new mybot
   ```
 
-Change directory to `mybot` and start the server:
+Change direcotry into to `mybot` and start the server:
 
   ```
   cd mybot
   stealth server
   ```
+
+You now have a functional Stealth both working
