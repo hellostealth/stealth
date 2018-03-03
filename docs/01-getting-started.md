@@ -21,4 +21,4 @@ Change direcotry into to `mybot` and start the server:
   stealth server
   ```
 
-You now have a functional Stealth both working
+You now have default Stealth bot ready for you to start adding functionality to.
