@@ -25,7 +25,9 @@ mybot
 │   └───models
 │       │   ...
 │   └───replies
-│       │   ...
+│       │   hellos
+|   │   └───replies
+|   │       │   hellos
 │   
 └───config
 │    │   file021.txt
@@ -37,9 +39,9 @@ mybot
 
 ## Flows
 
-A `Flow` is a general term to describe a complete user interaction. For example, if a user was using your bot to retrieve a insurance quote. This could be referred to as a `Quotes Flow`.
+A `Flow` is a general term to describe a complete user interaction. For example, if a user was using your bot to retrieve a insurance quote. This could be referred to as a `Quotes` flows.
 
-A flow always has a controller file and it's associated reply files. It could also include a model file as well.
+A flow always has a controller file and it's associated reply files. It could also include a model file if you're interacting with data.
 
 ## Default Flows
 
@@ -47,8 +49,8 @@ When you generate a new Stealth bot it comes packaged with a few default flows t
 
 ## Hello & Goodbye
 
-The first ones are the `Hello` and `Goodbye` flows.
+The first ones are the `Hell` and `Goodbye` flows. Think of these as blank examples on how to greet and dismiss your users.
 
 ## Catch All
 
-TODO: Need to figure out how to explain this.
+Stealth also comes packaged with a multi-level `Catch All` flow. See the Catch All section for more information on how Stealth handles `Catch All` flows.
