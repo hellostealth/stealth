@@ -4,10 +4,21 @@
 require 'thor'
 require 'stealth/cli_base'
 require 'stealth/commands/console'
+require 'stealth/generators/bot_builder'
 
 module Stealth
   class Cli < Thor
     extend CliBase
+
+    desc 'new', 'Creates a new Stealth bot'
+    long_desc <<-EOS
+    `stealth new <name>` creates a new Stealth both with the given name.
+
+    $ > stealth new new_bot
+    EOS
+    def new(name)
+      Stealth::Generators::BotBuilder.start([name])
+    end
 
     desc 'version', 'Prints stealth version'
     long_desc <<-EOS

@@ -1,0 +1,17 @@
+class <%= name.capitalize %>Flow
+
+  include Stealth::Flow
+
+  flow :hello do
+    state :hello
+  end
+
+  flow :goodbye do
+    state :goodbye
+  end
+
+  flow :catch_all do
+    state :first
+  end
+
+end
