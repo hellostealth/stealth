@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.name = 'stealth'
   s.summary = 'Ruby framework for conversational bots'
   s.description = 'Ruby framework for building conversational bots.'
-  s.homepage = 'https://github.com/whoisblackops/stealth'
+  s.homepage = 'https://github.com/hellostealth/stealth'
   s.licenses = ['MIT']
   s.version = version
   s.author = 'Mauricio Gomes'
