@@ -19,8 +19,9 @@ module Stealth
             if CatchAllFlow.flow_spec.states.keys.include?(catch_all_state.to_sym)
               step_to flow: 'catch_all', state: catch_all_state
             else
-              # Jump to the last catch_all state if we are out of bounds
-              step_to flow: 'catch_all', state: CatchAllFlow.flow_spec.states.keys.last.to_s
+              # We are out of bounds, do nothing to prevent an infinite loop
+              Stealth::Logger.l(topic: "catch_all", message: "Stopping; we've exceeded the number of defined catch_all states.")
+              return false
             end
           end
         end
