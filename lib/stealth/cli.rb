@@ -23,9 +23,9 @@ module Stealth
 
     desc 'generate', 'Generates scaffold Stealth files'
     long_desc <<-EOS
-    `stealth generate <name> <args>` generates scaffold Stealth files
+    `stealth generate <generator> <name>` generates scaffold Stealth files
 
-    $ > stealth generate flow Quote
+    $ > stealth generate flow quote
     EOS
     def generate(generator, name)
       Stealth::Generators::Generate.start([generator, name])

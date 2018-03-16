@@ -1,0 +1,9 @@
+- reply_type: text
+  text: "Welcome to you brand new Stealth flow."
+- reply_type: delay
+  duration: 2
+- reply_type: text
+  text: 'That was pretty easy huh?'
+  suggestions:
+    - text: "Yes"
+    - text: "No"
