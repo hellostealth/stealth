@@ -3,15 +3,15 @@ class <%= name.capitalize %>Flow
   include Stealth::Flow
 
   flow :hello do
-    state :hello
+    state :say_hello
   end
 
   flow :goodbye do
-    state :goodbye
+    state :say_goodbye
   end
 
-  flow :catch_all do
-    state :first
+  flow :catchall do
+    state :level1
   end
 
 end

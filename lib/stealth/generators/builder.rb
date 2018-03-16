@@ -2,13 +2,13 @@ require 'thor/group'
 
 module Stealth
   module Generators
-    class BotBuilder < Thor::Group
+    class Builder < Thor::Group
       include Thor::Actions
 
       argument :name
 
       def self.source_root
-        File.dirname(__FILE__) + "/bot_builder"
+        File.dirname(__FILE__) + "/builder"
       end
 
       def create_bot_directory

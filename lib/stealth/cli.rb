@@ -4,7 +4,8 @@
 require 'thor'
 require 'stealth/cli_base'
 require 'stealth/commands/console'
-require 'stealth/generators/bot_builder'
+require 'stealth/generators/builder'
+require 'stealth/generators/generate'
 
 module Stealth
   class Cli < Thor
@@ -17,7 +18,17 @@ module Stealth
     $ > stealth new new_bot
     EOS
     def new(name)
-      Stealth::Generators::BotBuilder.start([name])
+      Stealth::Generators::Builder.start([name])
+    end
+
+    desc 'generate', 'Generates scaffold Stealth files'
+    long_desc <<-EOS
+    `stealth generate <name> <args>` generates scaffold Stealth files
+
+    $ > stealth generate flow Quote
+    EOS
+    def generate(generator, name)
+      Stealth::Generators::Generate.start([generator, name])
     end
 
     desc 'version', 'Prints stealth version'
