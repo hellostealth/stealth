@@ -1,5 +1,5 @@
 - reply_type: text
-  text: "Welcome to you brand new Stealth flow."
+  text: "Welcome to your brand new Stealth flow."
 - reply_type: delay
   duration: 2
 - reply_type: text
