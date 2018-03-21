@@ -25,7 +25,7 @@ module Stealth
         # Miscellaneous Files
         copy_file "config.ru", "#{name}/config.ru"
         copy_file "Gemfile", "#{name}/Gemfile"
-        copy_file "readme.md", "#{name}/readme.md"
+        copy_file "readme.md", "#{name}/README.md"
       end
 
       def change_directory_bundle
