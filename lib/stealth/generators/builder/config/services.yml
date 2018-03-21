@@ -1,0 +1,36 @@
+default: &default
+  # ==========================================
+  # ===== Example Facebook Service Setup =====
+  # ==========================================
+  # facebook:
+  #   verify_token: XXXFACEBOOK_VERIFY_TOKENXXX
+  #   page_access_token: XXXFACEBOOK_ACCESS_TOKENXXX
+  #   setup:
+  #     greeting: # Greetings are broken up by locale
+  #       - locale: default
+  #         text: "Welcome to the Stealth bot 🤖"
+  #     persistent_menu:
+  #       - type: payload
+  #         text: Main Menu
+  #         payload: main_menu
+  #       - type: url
+  #         text: Visit our website
+  #         url: https://example.com
+  #       - type: call
+  #         text: Call us
+  #         payload: "+4155330000"
+  #
+  # ===========================================
+  # ======== Example SMS Service Setup ========
+  # ===========================================
+  # twilio:
+  #   account_sid: XXXTWILIO_ACCOUNT_SIDXXX
+  #   auth_token: XXXTWILIO_AUTH_TOKENXXX
+  #   from_phone: +14155330000
+
+production:
+  <<: *default
+development:
+  <<: *default
+test:
+  <<: *default

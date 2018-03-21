@@ -1,0 +1,2 @@
+module <%= name.camelize %>Helper < BotHelper
+end
