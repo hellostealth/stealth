@@ -28,15 +28,53 @@ class BotController < Stealth::Controller
 end
 ```
 
-The power of three. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 
 ## Stepping, Jumping and Updating Sessions
 
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 
-## Get, Ask, and Say
+## Say, Ask, Get
 
-The power of three. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+### SAY
+
+*SAY* Stealth Actions are for _saying_ something to the user.
+
+For example:
+
+```ruby
+  def say_hello
+    send_replies
+  end
+```
+
+### ASK
+
+*ASK* Stealth Actions are for _asking_ something from the user.
+
+For example:
+
+```ruby
+  def ask_weather
+    send_replies
+    update_session_to state: 'get_weather_reponse'
+  end
+```
+
+### GET
+
+*GET* Stealth Actions are for _getting_ and parsing the reponse from the user.
+
+For example:
+
+```ruby
+  def get_weather_reponse
+    if current_message.message == 'Sunny'
+      step_to state: "say_wear_sunglasses"
+    elsif current_message.message == 'Raining'
+      step_to state: "say_dont_forget_umbrella"
+    end
+  end
+```
 
 ## Callbacks
 
