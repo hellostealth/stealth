@@ -1,0 +1,11 @@
+source 'https://rubygems.org'
+
+ruby '2.5.0'
+
+gem 'stealth', '~> 0.10.0'
+
+# Uncomment to enable the Stealth Facebook Driver
+# gem 'stealth-facebook'
+
+# Uncomment to enable the Stealth Twilio SMS Driver
+# gem 'stealth-twilio'

@@ -4,10 +4,32 @@
 require 'thor'
 require 'stealth/cli_base'
 require 'stealth/commands/console'
+require 'stealth/generators/builder'
+require 'stealth/generators/generate'
 
 module Stealth
   class Cli < Thor
     extend CliBase
+
+    desc 'new', 'Creates a new Stealth bot'
+    long_desc <<-EOS
+    `stealth new <name>` creates a new Stealth both with the given name.
+
+    $ > stealth new new_bot
+    EOS
+    def new(name)
+      Stealth::Generators::Builder.start([name])
+    end
+
+    desc 'generate', 'Generates scaffold Stealth files'
+    long_desc <<-EOS
+    `stealth generate <generator> <name>` generates scaffold Stealth files
+
+    $ > stealth generate flow quote
+    EOS
+    def generate(generator, name)
+      Stealth::Generators::Generate.start([generator, name])
+    end
 
     desc 'version', 'Prints stealth version'
     long_desc <<-EOS
