@@ -9,11 +9,11 @@ Stealth is extensible. All service integrations are split out into separate Ruby
 Currently, there are gems for:
 
 ### Message Services
-* [Facebook Messenger](https://github.org/hellostealth/stealth-facebook)
-* [Twilio SMS](https://github.org/hellostealth/stealth-twilio)
+* [Facebook Messenger](https://github.com/hellostealth/stealth-facebook)
+* [Twilio SMS](https://github.com/hellostealth/stealth-twilio)
 
 ### Analytics
-* [Mixpanel](https://github.org/hellostealth/stealth-mixpanel)
+* [Mixpanel](https://github.com/hellostealth/stealth-mixpanel)
 
 ## Docs
 
