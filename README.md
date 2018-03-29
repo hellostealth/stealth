@@ -1,1 +1,35 @@
-# Stealth
+# <a href='https://hellostealth.org'><img src='https://raw.githubusercontent.com/hellostealth/stealth/master/logo.svg' height='100' alt='Stealth Logo' aria-label='hellostealth.org' /></a>
+
+Stealth is a Ruby based framework for creating conversational (voice & chat) bots. It's design is inspired by Ruby on Rails and it even sports an MVC architecture.
+
+## Service Integrations
+
+Stealth is extensible. All service integrations are split out into separate Ruby Gems. Things like analytics and natural language processing ([NLP](https://en.wikipedia.org/wiki/Natural-language_processing)) can be added in as gems as well.
+
+Currently, there are gems for:
+
+### Message Services
+* [Facebook Messenger](https://github.org/hellostealth/stealth-facebook)
+* [Twilio SMS](https://github.org/hellostealth/stealth-twilio)
+
+### Analytics
+* [Mixpanel](https://github.org/hellostealth/stealth-mixpanel)
+
+## Docs
+
+Please check out our docs [here](https://docs.hellostealth.org).
+
+## Thanks
+
+Stealth wouldn't exist without the great work of many other open source projects including:
+
+* [Ruby](https://www.ruby-lang.org/) for creating our favorite programming language;
+* [Ruby on Rails](http://rubyonrails.org) for projects like `ActiveRecord` and serving as an inspiration;
+* [Thor](http://whatisthor.com) for providing us with CLI tools and generators;
+* [Sinatra](http://sinatrarb.com) for providing a fantastic, modular way for handling HTTP requests;
+* [Sidekiq](https://sidekiq.org) for the super quick background jobs;
+* Anthony Hopkins a.k.a. Dr. Robert Ford.
+
+## License
+
+MIT
