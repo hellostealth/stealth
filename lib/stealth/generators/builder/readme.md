@@ -1,4 +1,4 @@
-# <a href='https://hellostealth.org'><img src='logo.svg' height='120' alt='Stealth Logo' aria-label='hellostealth.org' /></a>
+# <a href='https://hellostealth.org'><img src='http://assets.blackops.nyc/stealth/logo.svg' height='120' alt='Stealth Logo' aria-label='hellostealth.org' /></a>
 
 To boot this bot locally, we recommend the following:
 
