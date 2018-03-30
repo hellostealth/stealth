@@ -32,4 +32,6 @@ Stealth wouldn't exist without the great work of many other open source projects
 
 ## License
 
-MIT
+"Stealth" and the Stealth logo are copyright (c) 2018 Black Ops Bureau Inc.
+
+Stealth source code is released under the MIT License.
