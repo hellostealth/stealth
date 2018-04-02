@@ -1,6 +1,15 @@
 # <a href='https://hellostealth.org'><img src='logo.svg' height='120' alt='Stealth Logo' aria-label='hellostealth.org' /></a>
 
-Stealth is a Ruby based framework for creating conversational (voice & chat) bots. It's design is inspired by Ruby on Rails and it even sports an MVC architecture.
+Stealth is a Ruby based framework for creating conversational (voice & chat) bots. It's design is inspired by Ruby on Rails's philosophy of convention over configuration. It has an MVC architecture with the slight caveat that `views` are aptly named `replies`.
+
+## Getting Started
+
+Getting started with Stealth is simple:
+
+```
+> gem install stealth
+> stealth new <bot>
+```
 
 ## Service Integrations
 
@@ -8,7 +17,7 @@ Stealth is extensible. All service integrations are split out into separate Ruby
 
 Currently, there are gems for:
 
-### Message Services
+### Messaging
 * [Facebook Messenger](https://github.com/hellostealth/stealth-facebook)
 * [Twilio SMS](https://github.com/hellostealth/stealth-twilio)
 
