@@ -2,7 +2,7 @@
 title: Controllers
 ---
 
-Controllers are responsible for handling incoming requests and providing a appropriate user response (reply). Every Stealth project comes with a default `bot_controller.rb`
+Controllers are responsible for handling incoming requests and providing a appropriate response back to the user (replies). Every Stealth project comes with a default `bot_controller.rb`
 
 ## `bot_controller.rb`
 
