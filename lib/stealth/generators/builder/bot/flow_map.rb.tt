@@ -1,4 +1,4 @@
-class <%= name.capitalize %>Flow
+class <%= name.capitalize.underscore.classify %>Flow
 
   include Stealth::Flow
 
