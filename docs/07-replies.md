@@ -20,15 +20,4 @@ Welcome to our Views.
     - text: "No"
 ```
 
-
-## `send_replies`
-
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-
-```ruby
-def say_contact_us
-  send_replies
-end
-```
-
 The power of three. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
