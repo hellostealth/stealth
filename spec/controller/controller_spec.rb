@@ -3,7 +3,7 @@
 
 require File.expand_path(File.join(File.dirname(__FILE__), '..', '/spec_helper'))
 
-describe "Stealth::Controller state transitions" do
+describe "Stealth::Controller" do
 
   class MrRobotsController < BotController
     def my_action
