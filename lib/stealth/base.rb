@@ -11,21 +11,6 @@ require 'stealth/version'
 require 'stealth/errors'
 require 'stealth/logger'
 require 'stealth/configuration'
-require 'stealth/jobs'
-require 'stealth/dispatcher'
-require 'stealth/server'
-require 'stealth/reply'
-require 'stealth/scheduled_reply'
-require 'stealth/service_reply'
-require 'stealth/service_message'
-require 'stealth/session'
-require 'stealth/controller/callbacks'
-require 'stealth/controller/replies'
-require 'stealth/controller/catch_all'
-require 'stealth/controller/helpers'
-require 'stealth/controller/controller'
-require 'stealth/flow/base'
-require 'stealth/services/base_client'
 
 module Stealth
 
@@ -90,3 +75,19 @@ module Stealth
     end
 
 end
+
+require 'stealth/jobs'
+require 'stealth/dispatcher'
+require 'stealth/server'
+require 'stealth/reply'
+require 'stealth/scheduled_reply'
+require 'stealth/service_reply'
+require 'stealth/service_message'
+require 'stealth/session'
+require 'stealth/controller/callbacks'
+require 'stealth/controller/replies'
+require 'stealth/controller/catch_all'
+require 'stealth/controller/helpers'
+require 'stealth/controller/controller'
+require 'stealth/flow/base'
+require 'stealth/services/base_client'
