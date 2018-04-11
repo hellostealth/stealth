@@ -4,18 +4,21 @@
 module Stealth
   class ServiceReply
 
-    attr_accessor :recipient_id, :replies
+    attr_accessor :recipient_id, :replies, :yaml_reply, :context
 
-    def initialize(recipient_id:, yaml_reply:, context:)
+    def initialize(recipient_id:, yaml_reply:, context:, preprocessor: :none)
       @recipient_id = recipient_id
+      @yaml_reply = yaml_reply
+      @context = context
 
-      begin
-        erb_reply = ERB.new(yaml_reply).result(context)
-      rescue NameError => e
-        raise(Stealth::Errors::UndefinedVariable, e.message)
+      processed_reply = case preprocessor
+      when :erb
+        preprocess_erb
+      when :none
+        @yaml_reply
       end
 
-      @replies = load_replies(YAML.load(erb_reply))
+      @replies = load_replies(YAML.load(processed_reply))
     end
 
     private
@@ -23,6 +26,14 @@ module Stealth
       def load_replies(unstructured_replies)
         unstructured_replies.collect do |reply|
           Stealth::Reply.new(unstructured_reply: reply)
+        end
+      end
+
+      def preprocess_erb
+        begin
+          ERB.new(yaml_reply).result(context)
+        rescue NameError => e
+          raise(Stealth::Errors::UndefinedVariable, e.message)
         end
       end
 

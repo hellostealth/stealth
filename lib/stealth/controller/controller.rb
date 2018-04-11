@@ -102,36 +102,6 @@ module Stealth
 
     private
 
-      def reply_handler
-        begin
-          Kernel.const_get("Stealth::Services::#{current_service.classify}::ReplyHandler")
-        rescue NameError
-          raise(Stealth::Errors::ServiceNotRecognized, "The service '#{current_service}' was not recognized")
-        end
-      end
-
-      def service_client
-        begin
-          Kernel.const_get("Stealth::Services::#{current_service.classify}::Client")
-        rescue NameError
-          raise(Stealth::Errors::ServiceNotRecognized, "The service '#{current_service}' was not recognized")
-        end
-      end
-
-      def replies_folder
-        current_session.flow_string.underscore.pluralize
-      end
-
-      def action_replies
-        reply_file_path = File.join(Stealth.root, 'bot', 'replies', replies_folder, "#{current_session.state_string}.yml")
-
-        begin
-          File.read(reply_file_path)
-        rescue Errno::ENOENT
-          raise(Stealth::Errors::ReplyNotFound, "Could not find a reply in #{reply_file_path}")
-        end
-      end
-
       def update_session(flow:, state:)
         Stealth::Logger.l(topic: "session", message: "User #{current_user_id}: updating session to #{flow}->#{state}")
 

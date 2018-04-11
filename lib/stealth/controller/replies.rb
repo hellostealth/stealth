@@ -9,10 +9,16 @@ module Stealth
 
       included do
 
+        class_attribute :_preprocessors, default: [:erb]
+        class_attribute :_replies_path, default: [Stealth.root, 'bot', 'replies']
+
         def send_replies
+          yaml_reply, preprocessor = action_replies
+
           service_reply = Stealth::ServiceReply.new(
             recipient_id: current_user_id,
-            yaml_reply: action_replies,
+            yaml_reply: yaml_reply,
+            preprocessor: preprocessor,
             context: binding
           )
 
@@ -40,7 +46,53 @@ module Stealth
           @progressed = :sent_replies
         end
 
-      end
+        private
+
+          def service_client
+            begin
+              Kernel.const_get("Stealth::Services::#{current_service.classify}::Client")
+            rescue NameError
+              raise(Stealth::Errors::ServiceNotRecognized, "The service '#{current_service}' was not recognized")
+            end
+          end
+
+          def reply_handler
+            begin
+              Kernel.const_get("Stealth::Services::#{current_service.classify}::ReplyHandler")
+            rescue NameError
+              raise(Stealth::Errors::ServiceNotRecognized, "The service '#{current_service}' was not recognized")
+            end
+          end
+
+          def replies_folder
+            current_session.flow_string.underscore.pluralize
+          end
+
+          def action_replies
+            reply_dir = [*self._replies_path, replies_folder]
+            reply_filename = "#{current_session.state_string}.yml"
+            reply_file_path = File.join(*reply_dir, reply_filename)
+            selected_preprocessor = :none
+
+            for preprocessor in self.class._preprocessors do
+              selected_filepath = File.join(*reply_dir, [reply_filename, preprocessor.to_s].join('.'))
+              if File.exists?(selected_filepath)
+                reply_file_path = selected_filepath
+                selected_preprocessor = preprocessor
+                break
+              end
+            end
+
+            begin
+              file_contents = File.read(reply_file_path)
+            rescue Errno::ENOENT
+              raise(Stealth::Errors::ReplyNotFound, "Could not find a reply in #{reply_file_path}")
+            end
+
+            return file_contents, selected_preprocessor
+          end
+
+      end # instance methods
 
     end
   end
