@@ -80,6 +80,17 @@ module Stealth
       Stealth::Logger.l(topic: "session", message: "User #{current_user_id}: scheduled session step to #{flow}->#{state} in #{delay} seconds")
     end
 
+    def step_to_at(timestamp, session: nil, flow: nil, state: nil)
+      flow, state = get_flow_and_state(session: session, flow: flow, state: state)
+
+      unless timestamp.is_a?(DateTime)
+        raise ArgumentError, "Please specify your step_to_at `timestamp` parameter as a DateTime"
+      end
+
+      Stealth::ScheduledReplyJob.perform_at(timestamp, current_service, current_user_id, flow, state)
+      Stealth::Logger.l(topic: "session", message: "User #{current_user_id}: scheduled session step to #{flow}->#{state} at #{timestamp.iso8601}")
+    end
+
     def step_to(session: nil, flow: nil, state: nil)
       flow, state = get_flow_and_state(session: session, flow: flow, state: state)
       step(flow: flow, state: state)
