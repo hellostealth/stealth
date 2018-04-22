@@ -122,7 +122,7 @@ module Stealth
 
         if flow.present?
           if state.blank?
-            flow_klass = [flow, 'flow'].join('_').classify.constantize
+            flow_klass = [flow.to_s, 'flow'].join('_').classify.constantize
             state = flow_klass.flow_spec.states.keys.first
           end
 
@@ -130,7 +130,7 @@ module Stealth
         end
 
         if state.present?
-          return current_session.flow_string, state
+          return current_session.flow_string, state.to_s
         end
       end
 
