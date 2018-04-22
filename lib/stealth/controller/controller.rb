@@ -90,16 +90,6 @@ module Stealth
       update_session(flow: flow, state: state)
     end
 
-    def step_to_next
-      flow, state = get_next_state
-      step(flow: flow, state: state)
-    end
-
-    def update_session_to_next
-      flow, state = get_next_state
-      update_session(flow: flow, state: state)
-    end
-
     private
 
       def update_session(flow:, state:)
@@ -142,19 +132,6 @@ module Stealth
         if state.present?
           return current_session.flow_string, state
         end
-      end
-
-      def get_next_state
-        current_state_index = current_session.flow.states.index(current_session.state_string.to_sym)
-        next_state = current_session.flow.states[current_state_index + 1]
-        if next_state.nil?
-          raise(
-            Stealth::Errors::InvalidStateTransitions,
-            "The next state after #{current_session.state_string} has not yet been defined"
-          )
-        end
-
-        return current_session.flow_string, next_state
       end
 
   end
