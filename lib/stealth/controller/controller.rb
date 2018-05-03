@@ -104,16 +104,12 @@ module Stealth
     private
 
       def update_session(flow:, state:)
-        Stealth::Logger.l(topic: "session", message: "User #{current_user_id}: updating session to #{flow}->#{state}")
-
         @current_session = Stealth::Session.new(user_id: current_user_id)
         @progressed = :updated_session
         @current_session.set(flow: flow, state: state)
       end
 
       def step(flow:, state:)
-        Stealth::Logger.l(topic: "session", message: "User #{current_user_id}: stepping to #{flow}->#{state}")
-
         update_session(flow: flow, state: state)
         @progressed = :stepped
         @flow_controller = nil
