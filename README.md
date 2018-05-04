@@ -21,6 +21,9 @@ Currently, there are gems for:
 * [Facebook Messenger](https://github.com/hellostealth/stealth-facebook)
 * [Twilio SMS](https://github.com/hellostealth/stealth-twilio)
 
+### Natural Language Processing
+* [AWS Comprehend](https://github.com/hellostealth/stealth-aws-comprehend)
+
 ### Analytics
 * [Mixpanel](https://github.com/hellostealth/stealth-mixpanel)
 
