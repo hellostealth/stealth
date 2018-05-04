@@ -71,6 +71,8 @@ module Stealth
   def self.load_environment
     require File.join(Stealth.root, 'config', 'boot')
     require_directory("config/initializers")
+    # Require explicitly to ensure it loads first
+    require File.join(Stealth.root, 'bot', 'controllers', 'bot_controller')
     require_directory("bot")
   end
 
