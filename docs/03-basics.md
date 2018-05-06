@@ -59,3 +59,48 @@ For example, let's say you *ask* the user for their 5 digit zip code and the use
 It's recommend that bot designers and developers spend sufficient time strategizing around these flows.
 
 See the Catch All (#catchalls) section for more information on how Stealth handles `Catch All` flows.
+
+## Say, Ask, Get
+
+Stealth recommends follows the Say, Ask, Get prefix for both controller actions and replies.
+
+### SAY
+
+*SAY* Stealth actions are for _saying_ something to the user.
+
+For example:
+
+```ruby
+  def say_hello
+    send_replies
+  end
+```
+
+### ASK
+
+*ASK* Stealth actions are for _asking_ something from the user.
+
+For example:
+
+```ruby
+  def ask_weather
+    send_replies
+    update_session_to state: 'get_weather_reponse'
+  end
+```
+
+### GET
+
+*GET* Stealth actions are for _getting_ and parsing the reponse from the user.
+
+For example:
+
+```ruby
+  def get_weather_reponse
+    if current_message.message == 'Sunny'
+      step_to state: "say_wear_sunglasses"
+    elsif current_message.message == 'Raining'
+      step_to state: "say_dont_forget_umbrella"
+    end
+  end
+```
