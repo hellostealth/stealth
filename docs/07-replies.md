@@ -2,7 +2,9 @@
 title: Replies
 ---
 
-Welcome to our Views.
+Stealth replies are used to send one or many *reply types* back to the user. Reply types are dependent on the specific messaging service you're using. Each messaging integration will detail it's supported reply types in it's respective docs.
+
+However, here is a generic reply using text, delays, and suggestions.
 
 ```yml
 - reply_type: text
@@ -19,5 +21,3 @@ Welcome to our Views.
     - text: "Yes"
     - text: "No"
 ```
-
-The power of three. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
