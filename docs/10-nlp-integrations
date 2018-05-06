@@ -2,24 +2,18 @@
 title: NLP Integrations
 ---
 
-The power of three. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Stealth also has official support for NLP and Machine Learning using Amazon Comprehend.
 
-## Services
+This gem adds the following methods to `current_message`:
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+1. `language` identifies text written in over 100 languages and returns the dominant language in `current_message` with a confidence score
 
-## `services.yml`
+2. `entities` returns the named entities ("People," "Places," "Locations," etc.) present in `current_message`
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+3. `key_phrases` returns the key phrases or talking points and a confidence score to support for the `current_message`
 
-## `sealth setup`
+4. `sentiment` returns the overall sentiment (Positive, Negative, Neutral, or Mixed) for the `current_message`
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+5. `sentiment_score` returns the scoring for each sentiment (Positive, Negative, Neutral, or Mixed) for the `current_message`
 
-## Officially Supported
-
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-
-* Facebook Messenger
-* SMS (Twillio)
-* Alexa
+Checkout the official [stealth-aws-comprehend](https://github.com/hellostealth/stealth-aws-comprehend) docs for more information.
