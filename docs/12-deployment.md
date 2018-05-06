@@ -2,11 +2,11 @@
 title: Deployment
 ---
 
-Stealth is a rack based web app. Which means it can be hosted on virtually anything. Virtual or Physical servers. Internally, our choice is Heroku. Check out the following for a step to step guide on deploying your Stealth bot to Heroku.
+Stealth is a rack based web app. Which means it can be hosted on virtually anything. Virtual or Physical servers. However, we recommend Heroku because of it's simplicity of deployment.
 
-## Heroku
+## Deploying on Heroku
 
-Since Stealth is a Ruby based Rack app, it supports deploying to [Heroku](http://herokuapp.com) out of the box.
+Since Stealth is a Ruby based Rack app, it supports deploying to [Heroku](http://herokuapp.com) out of the box. Here is quick guide to get you started.
 
 If you haven't, make sure to track your bot in Git
 
@@ -28,3 +28,11 @@ After you have your bot tracked with Git, you're ready to deploy to Heroku. Next
 ```
 $ heroku apps:create <BOT NAME>
 ```
+
+Then deploy your bot to Heroku.
+
+```
+$ git push heroku master
+```
+
+Once deployed, make sure to enable both the `Heroku Postgres` and `Heroku Redis` addons. Additionally, make sure you run any `stealth setup` commands to configure your messaging service webhooks for your new production environments.
