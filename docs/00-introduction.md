@@ -3,7 +3,7 @@ title: Introduction
 ---
 Stealth includes everything you need to quickly create powerful Text and Voice bots in Ruby.
 
-Stealth is inspired by the Model-View-Controller (MVC) pattern. However, rather than "Views" Stealth uses "Replies". Model-Reply-Controller (MRC).
+Stealth is inspired by the Model-View-Controller (MVC) pattern. However, rather than *Views* Stealth uses *Replies*. Model-Reply-Controller (MRC).
 
 The [Model](#models) layer represents your domain model (such as Account, User, Quote, etc.) and encapsulates the business logic that is specific to your bot. Stealth uses [ActiveRecord](#models.active_record)
 
