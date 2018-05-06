@@ -1,3 +1,6 @@
+# coding: utf-8
+# frozen_string_literal: true
+
 require 'thor/group'
 
 module Stealth
@@ -25,7 +28,8 @@ module Stealth
         # Miscellaneous Files
         copy_file "config.ru", "#{name}/config.ru"
         copy_file "Gemfile", "#{name}/Gemfile"
-        copy_file "readme.md", "#{name}/readme.md"
+        copy_file "README.md", "#{name}/README.md"
+        copy_file "Procfile.dev", "#{name}/Procfile.dev"
       end
 
       def change_directory_bundle

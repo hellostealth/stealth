@@ -63,6 +63,8 @@ module Stealth
 
       @flow = nil
       @session = canonical_session_slug(flow: flow, state: state)
+
+      Stealth::Logger.l(topic: "session", message: "User #{user_id}: setting session to #{flow}->#{state}")
       $redis.set(user_id, session)
     end
 

@@ -30,6 +30,7 @@ module Stealth
     def generate(generator, name)
       Stealth::Generators::Generate.start([generator, name])
     end
+    map 'g' => 'generate'
 
     desc 'version', 'Prints stealth version'
     long_desc <<-EOS
@@ -69,6 +70,7 @@ module Stealth
         Stealth::Commands::Server.new(options).start
       end
     end
+    map 's' => 'server'
 
 
     desc 'console', 'Starts a stealth console'
@@ -87,6 +89,7 @@ module Stealth
         Stealth::Commands::Console.new(options).start
       end
     end
+    map 'c' => 'console'
 
 
     desc 'setup', 'Runs setup tasks for a specified service'

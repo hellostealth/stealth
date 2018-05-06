@@ -5,6 +5,7 @@ module Stealth
   class Controller
 
     include Stealth::Controller::Callbacks
+    include Stealth::Controller::Replies
     include Stealth::Controller::CatchAll
     include Stealth::Controller::Helpers
 
@@ -33,37 +34,6 @@ module Stealth
 
     def route
       raise(Stealth::Errors::ControllerRoutingNotImplemented, "Please implement `route` method in BotController")
-    end
-
-    def send_replies
-      service_reply = Stealth::ServiceReply.new(
-        recipient_id: current_user_id,
-        yaml_reply: action_replies,
-        context: binding
-      )
-
-      for reply in service_reply.replies do
-        handler = reply_handler.new(
-          recipient_id: current_user_id,
-          reply: reply
-        )
-
-        translated_reply = handler.send(reply.reply_type)
-        client = service_client.new(reply: translated_reply)
-        client.transmit
-
-        # If this was a 'delay' type of reply, let's respect the delay
-        if reply.reply_type == 'delay'
-          begin
-            sleep_duration = Float(reply["duration"])
-            sleep(sleep_duration)
-          rescue ArgumentError, TypeError
-            raise(ArgumentError, 'Invalid duration specified. Duration must be a float')
-          end
-        end
-      end
-
-      @progressed = :sent_replies
     end
 
     def flow_controller
@@ -110,6 +80,17 @@ module Stealth
       Stealth::Logger.l(topic: "session", message: "User #{current_user_id}: scheduled session step to #{flow}->#{state} in #{delay} seconds")
     end
 
+    def step_to_at(timestamp, session: nil, flow: nil, state: nil)
+      flow, state = get_flow_and_state(session: session, flow: flow, state: state)
+
+      unless timestamp.is_a?(DateTime)
+        raise ArgumentError, "Please specify your step_to_at `timestamp` parameter as a DateTime"
+      end
+
+      Stealth::ScheduledReplyJob.perform_at(timestamp, current_service, current_user_id, flow, state)
+      Stealth::Logger.l(topic: "session", message: "User #{current_user_id}: scheduled session step to #{flow}->#{state} at #{timestamp.iso8601}")
+    end
+
     def step_to(session: nil, flow: nil, state: nil)
       flow, state = get_flow_and_state(session: session, flow: flow, state: state)
       step(flow: flow, state: state)
@@ -120,59 +101,15 @@ module Stealth
       update_session(flow: flow, state: state)
     end
 
-    def step_to_next
-      flow, state = get_next_state
-      step(flow: flow, state: state)
-    end
-
-    def update_session_to_next
-      flow, state = get_next_state
-      update_session(flow: flow, state: state)
-    end
-
     private
 
-      def reply_handler
-        begin
-          Kernel.const_get("Stealth::Services::#{current_service.classify}::ReplyHandler")
-        rescue NameError
-          raise(Stealth::Errors::ServiceNotRecognized, "The service '#{current_service}' was not recognized")
-        end
-      end
-
-      def service_client
-        begin
-          Kernel.const_get("Stealth::Services::#{current_service.classify}::Client")
-        rescue NameError
-          raise(Stealth::Errors::ServiceNotRecognized, "The service '#{current_service}' was not recognized")
-        end
-      end
-
-      def replies_folder
-        current_session.flow_string.underscore.pluralize
-      end
-
-      def action_replies
-        reply_file_path = File.join(Stealth.root, 'bot', 'replies', replies_folder, "#{current_session.state_string}.yml")
-
-        begin
-          File.read(reply_file_path)
-        rescue Errno::ENOENT
-          raise(Stealth::Errors::ReplyNotFound, "Could not find a reply in #{reply_file_path}")
-        end
-      end
-
       def update_session(flow:, state:)
-        Stealth::Logger.l(topic: "session", message: "User #{current_user_id}: updating session to #{flow}->#{state}")
-
         @current_session = Stealth::Session.new(user_id: current_user_id)
         @progressed = :updated_session
         @current_session.set(flow: flow, state: state)
       end
 
       def step(flow:, state:)
-        Stealth::Logger.l(topic: "session", message: "User #{current_user_id}: stepping to #{flow}->#{state}")
-
         update_session(flow: flow, state: state)
         @progressed = :stepped
         @flow_controller = nil
@@ -192,29 +129,16 @@ module Stealth
 
         if flow.present?
           if state.blank?
-            flow_klass = [flow, 'flow'].join('_').classify.constantize
-            state = flow_klass.flow_spec.states.keys.first
+            flow_klass = [flow.to_s, 'flow'].join('_').classify.constantize
+            state = flow_klass.flow_spec.states.keys.first.to_s
           end
 
-          return flow, state
+          return flow.to_s, state.to_s
         end
 
         if state.present?
-          return current_session.flow_string, state
+          return current_session.flow_string, state.to_s
         end
-      end
-
-      def get_next_state
-        current_state_index = current_session.flow.states.index(current_session.state_string.to_sym)
-        next_state = current_session.flow.states[current_state_index + 1]
-        if next_state.nil?
-          raise(
-            Stealth::Errors::InvalidStateTransitions,
-            "The next state after #{current_session.state_string} has not yet been defined"
-          )
-        end
-
-        return current_session.flow_string, next_state
       end
 
   end

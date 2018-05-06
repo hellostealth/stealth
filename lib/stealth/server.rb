@@ -13,7 +13,20 @@ module Stealth
     end
 
     get '/' do
-      "Welcome to stealth."
+      <<~WELCOME
+        <html>
+          <head>
+            <title>Stealth</title>
+          </head>
+          <body>
+            <center>
+              <a href='https://hellostealth.org'>
+                <img src='http://assets.blackops.nyc/stealth/logo.svg' height='120' alt='Stealth Logo' aria-label='hellostealth.org' />
+              </a>
+            </center>
+          </body>
+        </html>
+      WELCOME
     end
 
     get_or_post '/incoming/:service' do
