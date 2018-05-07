@@ -2,7 +2,7 @@
 title: NLP Integrations
 ---
 
-Stealth also has official support for NLP and Machine Learning using Amazon Comprehend.
+Like Messaging Inetegrations, Stealth also has official support for NLP and Machine Learning using Amazon Comprehend using our gem `stealth-aws-comprehend`
 
 This gem adds the following methods to `current_message`:
 
