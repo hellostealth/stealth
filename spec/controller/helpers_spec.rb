@@ -16,6 +16,10 @@ describe "Stealth::Controller helpers" do
       def say_hello_world
         hello_world
       end
+
+      def say_kaboom
+        hello_world2
+      end
     end
 
     class PdfController < Stealth::Controller
@@ -31,6 +35,12 @@ describe "Stealth::Controller helpers" do
 
   class AllHelpersController < Stealth::Controller
     helper :all
+  end
+
+  class InheritedHelpersController < AllHelpersController
+    def say_hello_world
+      hello_world
+    end
   end
 
   class SizzleController < Stealth::Controller
@@ -78,10 +88,26 @@ describe "Stealth::Controller helpers" do
       expect(AllHelpersController._helpers.instance_methods).to match_array(all_helper_methods)
     end
 
+    it "should load all helpers if parent class inherits all helpers" do
+      expect(InheritedHelpersController._helpers.instance_methods).to match_array(all_helper_methods)
+    end
+
+    it "should allow a controller that has inherited all helpers to access a helper method" do
+      expect {
+        InheritedHelpersController.new(service_message: facebook_message.message_with_text).say_hello_world
+      }.to_not raise_error
+    end
+
     it "should allow a controller that has loaded all helpers to access a helper method" do
       expect {
         Fun::GamesController.new(service_message: facebook_message.message_with_text).say_hello_world
       }.to_not raise_error
+    end
+
+    it "should raise an error if a helper method does not exist" do
+      expect {
+        Fun::GamesController.new(service_message: facebook_message.message_with_text).say_kaboom
+      }.to raise_error(NameError)
     end
 
     it "should allow a controller action to access a helper method" do
