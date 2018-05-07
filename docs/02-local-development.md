@@ -21,9 +21,9 @@ When developing locally, every messaging service requires access to your server.
 
 First, download ngrok here: https://ngrok.com/download
 
-After you download ngrok, start your Stealth server. Once Stealth is started, you can open up a public tunnel to your stealth server and port (default 3000) like this:
+After you download ngrok, start your Stealth server as detailed above. Once Stealth is started, you can open up a public tunnel to your Stealth server and port (default 5000) like this:
 
-`ngrok http 3000`
+`ngrok http 5000`
 
 ngrok should then display a unique ngrok local tunnel URL to your machine.
 
