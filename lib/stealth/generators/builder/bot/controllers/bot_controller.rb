@@ -1,5 +1,7 @@
 class BotController < Stealth::Controller
 
+  helper :all
+
   def route
     if current_session.present?
       step_to session: current_session
