@@ -7,13 +7,14 @@ require 'stealth/commands/command'
 module Stealth
   module Commands
     class Server < Command
-      def initialize(options)
-        super(options)
-        Stealth.load_environment
+      def initialize(port:)
+        @port = port
+        $stdout.sync = true
       end
 
       def start
-        Rack::Handler::Puma.run(Stealth::Server)
+        # Rack::Handler::Puma.run(Stealth::Server)
+        exec "foreman start -f Procfile.dev -p #{@port}"
       end
     end
   end

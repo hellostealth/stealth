@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    stealth (0.10.6)
+    stealth (1.0.0.pre1)
       activesupport (~> 5.2.0)
       multi_json (~> 1.12)
       puma (~> 3.10)
@@ -20,14 +20,14 @@ GEM
     concurrent-ruby (1.0.5)
     connection_pool (2.2.1)
     diff-lcs (1.3)
-    i18n (1.0.0)
+    i18n (1.0.1)
       concurrent-ruby (~> 1.0)
     minitest (5.11.3)
     mock_redis (0.17.3)
     multi_json (1.13.1)
     mustermann (1.0.2)
     oj (3.5.0)
-    puma (3.11.3)
+    puma (3.11.4)
     rack (2.0.4)
     rack-protection (2.0.1)
       rack

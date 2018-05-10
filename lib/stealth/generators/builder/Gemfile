@@ -9,3 +9,7 @@ gem 'stealth', '~> 0.10.0'
 
 # Uncomment to enable the Stealth Twilio SMS Driver
 # gem 'stealth-twilio'
+
+group :development do
+  gem 'foreman'
+end
