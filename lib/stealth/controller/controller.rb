@@ -129,8 +129,7 @@ module Stealth
 
         if flow.present?
           if state.blank?
-            flow_klass = [flow.to_s, 'flow'].join('_').classify.constantize
-            state = flow_klass.flow_spec.states.keys.first.to_s
+            state = FlowMap.flow_spec[flow.to_sym].states.keys.first.to_s
           end
 
           return flow.to_s, state.to_s

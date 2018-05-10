@@ -33,20 +33,16 @@ describe "Stealth::Controller" do
     end
   end
 
-  class MrRobotFlow
+  class FlowMap
     include Stealth::Flow
 
-    flow do
+    flow :mr_robot do
       state :my_action
       state :my_action2
       state :my_action3
     end
-  end
 
-  class MrTronFlow
-    include Stealth::Flow
-
-    flow do
+    flow :mr_tron do
       state :other_action
       state :other_action2
       state :other_action3

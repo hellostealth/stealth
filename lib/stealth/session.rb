@@ -31,11 +31,7 @@ module Stealth
     def flow
       return nil if flow_string.blank?
 
-      @flow ||= begin
-        flow_klass = [flow_string, 'flow'].join('_').classify.constantize
-        flow = flow_klass.new.init_state(state_string)
-        flow
-      end
+      @flow ||= FlowMap.new.init(flow: flow_string, state: state_string)
     end
 
     def state

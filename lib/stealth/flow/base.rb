@@ -13,39 +13,41 @@ module Stealth
     class_methods do
       attr_reader :flow_spec
 
-      def flow(&specification)
-        @flow_spec = Specification.new(&specification)
+      def flow(flow_name, &specification)
+        @flow_spec = {} unless @flow_spec.present?
+        @flow_spec[flow_name.to_sym] = Specification.new(&specification)
       end
     end
 
     included do
-      attr_accessor :flow_state, :user_id
+      attr_accessor :flow, :flow_state, :user_id
 
       def current_state
-        res = spec.states[@flow_state.to_sym] if @flow_state
-        res || spec.initial_state
+        res = self.spec.states[@flow_state.to_sym] if @flow_state
+        res || self.spec.initial_state
+      end
+
+      def current_flow
+        @flow || self.class.flow_spec.keys.first
       end
 
       def spec
-        # check the singleton class first
-        class << self
-          return flow_spec if flow_spec
-        end
-
-        self.class.flow_spec
+        self.class.flow_spec[current_flow]
       end
 
       def states
         self.spec.states.keys
       end
 
-      def init_state(state)
-        raise(ArgumentError, 'No state was specified.') if state.blank?
-
+      def init(flow:, state:)
+        new_flow = flow.to_sym
         new_state = state.to_sym
-        unless states.include?(new_state)
-          raise(Stealth::Errors::InvalidStateTransition, "Unknown state '#{state}' for #{self.class.to_s}")
+
+        unless state_exists?(potential_flow: new_flow, potential_state: new_state)
+          raise(Stealth::Errors::InvalidStateTransition, "Unknown state '#{new_state}' for '#{new_flow}' flow")
         end
+
+        @flow = new_flow
         @flow_state = new_state
 
         self
@@ -54,7 +56,11 @@ module Stealth
       private
 
         def flow_and_state
-          [self.class.to_s, current_state].join("->")
+          [current_flow, current_state].join("->")
+        end
+
+        def state_exists?(potential_flow:, potential_state:)
+          self.class.flow_spec[potential_flow].states.include?(potential_state)
         end
     end
 
