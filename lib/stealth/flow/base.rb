@@ -60,7 +60,11 @@ module Stealth
         end
 
         def state_exists?(potential_flow:, potential_state:)
-          self.class.flow_spec[potential_flow].states.include?(potential_state)
+          if self.class.flow_spec[potential_flow].present?
+            self.class.flow_spec[potential_flow].states.include?(potential_state)
+          else
+            raise(Stealth::Errors::InvalidStateTransition, "Unknown flow '#{potential_flow}'")
+          end
         end
     end
 
