@@ -11,15 +11,14 @@ module Stealth
     extend ActiveSupport::Concern
 
     class_methods do
-      attr_reader :flow_spec
-
       def flow(flow_name, &specification)
-        @flow_spec = {} unless @flow_spec.present?
-        @flow_spec[flow_name.to_sym] = Specification.new(&specification)
+        flow_spec[flow_name.to_sym] = Specification.new(&specification)
       end
     end
 
     included do
+      class_attribute :flow_spec, default: {}
+
       attr_accessor :flow, :flow_state, :user_id
 
       def current_state
