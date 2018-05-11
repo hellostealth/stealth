@@ -95,16 +95,16 @@ module Stealth
       service_setup_klass.trigger
     end
 
-
-    desc 'clear_sessions', 'Clears all sessions in development'
+    desc 'sessions:clear', 'Clears all sessions in development'
     long_desc <<-EOS
-    `stealth clear_sessions` clears all sessions from Redis in development.
+    `stealth sessions:clear` clears all sessions from Redis in development.
 
-    $ > stealth clear_sessions
+    $ > stealth sessions:clear
     EOS
-    def clear_sessions
+    define_method 'sessions:clear' do
       Stealth.load_environment
-      $redis.flushdb if ENV['STEALTH_ENV'] == 'development'
+      $redis.flushdb if Stealth.env == 'development'
     end
+
   end
 end
