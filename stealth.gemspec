@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.homepage = 'https://github.com/hellostealth/stealth'
   s.licenses = ['MIT']
   s.version = version
-  s.author = 'Mauricio Gomes'
+  s.authors = ['Mauricio Gomes', 'Matthew Black']
   s.email = 'mauricio@edge14.com'
 
   s.add_dependency 'sinatra', '~> 2.0'
