@@ -28,7 +28,7 @@ end
 
 ```yml
 - reply_type: text
-  text: Opps. It looks like something went wrong. Let's try that again
+  text: Oops. It looks like something went wrong. Let's try that again
 ```
 
 If you would like to expand the experience simply add a `level2` controller action and associated reply. You can go as far as you want. Catch Alls have no limit just make sure you increment using the standardized method names of `level1`, `level2`, `level3`, `level4`, etc.

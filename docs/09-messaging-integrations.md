@@ -63,9 +63,9 @@ test:
 
 ```
 
-## `sealth setup`
+## `stealth setup`
 
-Most Messaging integrations require a initial setup. For example, Facebook requires you to send a payload to define the default greeting and persistent menu. You can accomplish this by running the `stealth setup` followed by the integration. For example:
+Most messaging integrations require an initial setup. For example, Facebook requires you to send a payload to define the default greeting and persistent menu. You can accomplish this by running the `stealth setup` followed by the integration. For example:
 
 `stealth setup facebook`
 

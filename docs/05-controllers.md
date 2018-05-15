@@ -2,7 +2,7 @@
 title: Controllers
 ---
 
-Controllers are responsible for handling incoming requests and providing a appropriate response back to the user (replies). Every Stealth project comes with a default `bot_controller.rb`
+Controllers are responsible for handling incoming requests and providing an appropriate response back to the user (replies). Every Stealth project comes with a default `bot_controller.rb`
 
 ## `bot_controller.rb`
 
@@ -31,7 +31,7 @@ end
 
 ## Stepping and Updating Sessions
 
-Stealth provides a few built in methods to help you navigate a user through you bot.
+Stealth provides a few built in methods to help you navigate a user through your bot.
 
 ## `step_to`
 
@@ -47,11 +47,11 @@ The `step_to` is used to move the user to another flow and/or state. `step_to` c
 
 Similar to `step_to`, `update_session_to` is used to update the user's session to a current flow and/or state. It accepts the same parameters.
 
-`update_session_to flow: 'quote'` - This would update the users session to the `quote` flow and use the *first* state in that flow as defined by the `flow_map.rb` file
+`update_session_to flow: 'quote'` - This would update the user's session to the `quote` flow and use the *first* state in that flow as defined by the `flow_map.rb` file
 
-`update_session_to state: 'ask_zip_code'` - This would update the users session to the `ask_zip_code` state inside the current flow.
+`update_session_to state: 'ask_zip_code'` - This would update the user's session to the `ask_zip_code` state inside the current flow.
 
-`step_to flow: 'quote', state: 'ask_zip_code'` - This would update the users session to `quote` flow and the `ask_zip_code` state.
+`step_to flow: 'quote', state: 'ask_zip_code'` - This would update the user's session to `quote` flow and the `ask_zip_code` state.
 
 ## `send_replies`
 

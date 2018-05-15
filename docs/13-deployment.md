@@ -2,11 +2,11 @@
 title: Deployment
 ---
 
-Stealth is a rack based web app. Which means it can be hosted on virtually anything. Virtual or Physical servers. However, we recommend Heroku because of it's simplicity of deployment.
+Stealth is a rack based web app. Which means it can be hosted on virtually anything. Virtual or Physical servers. However, we recommend Heroku because of its simplicity of deployment.
 
 ## Deploying on Heroku
 
-Since Stealth is a Ruby based Rack app, it supports deploying to [Heroku](http://herokuapp.com) out of the box. Here is quick guide to get you started.
+Since Stealth is a Ruby based Rack app, it supports deploying to [Heroku](http://herokuapp.com) out of the box. Here is a quick guide to get you started.
 
 If you haven't, make sure to track your bot in Git
 
