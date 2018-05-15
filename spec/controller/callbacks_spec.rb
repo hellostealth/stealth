@@ -143,20 +143,16 @@ class OtherFlowTestersController < BotController
     end
 end
 
-class FlowTesterFlow
+class FlowMap
   include Stealth::Flow
 
-  flow do
+  flow :flow_tester do
     state :my_action
     state :my_action2
     state :my_action3
   end
-end
 
-class OtherFlowTesterFlow
-  include Stealth::Flow
-
-  flow do
+  flow :other_flow_tester do
     state :other_action
     state :other_action2
     state :other_action3

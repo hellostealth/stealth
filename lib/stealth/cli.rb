@@ -52,22 +52,13 @@ module Stealth
     $ > stealth server -p 4500
     EOS
     method_option :port, aliases: '-p', desc: 'The port to run the server on'
-    method_option :server, desc: 'Choose a specific Rack::Handler (webrick, thin, etc)'
-    method_option :rackup, desc: 'A rackup configuration file path to load (config.ru)'
-    method_option :host, desc: 'The host address to bind to'
-    method_option :debug, desc: 'Turn on debug output'
-    method_option :warn, desc: 'Turn on warnings'
-    method_option :daemonize, desc: 'If true, the server will daemonize itself (fork, detach, etc)'
-    method_option :pid, desc: 'Path to write a pid file after daemonize'
-    method_option :environment, desc: 'Path to environment configuration (config/environment.rb)'
-    method_option :code_reloading, desc: 'Code reloading', type: :boolean, default: true
     method_option :help, desc: 'Displays the usage message'
     def server
       if options[:help]
         invoke :help, ['server']
       else
         require 'stealth/commands/server'
-        Stealth::Commands::Server.new(options).start
+        Stealth::Commands::Server.new(port: options.fetch(:port) { 5000 }).start
       end
     end
     map 's' => 'server'
@@ -104,16 +95,16 @@ module Stealth
       service_setup_klass.trigger
     end
 
-
-    desc 'clear_sessions', 'Clears all sessions in development'
+    desc 'sessions:clear', 'Clears all sessions in development'
     long_desc <<-EOS
-    `stealth clear_sessions` clears all sessions from Redis in development.
+    `stealth sessions:clear` clears all sessions from Redis in development.
 
-    $ > stealth clear_sessions
+    $ > stealth sessions:clear
     EOS
-    def clear_sessions
+    define_method 'sessions:clear' do
       Stealth.load_environment
-      $redis.flushdb if ENV['STEALTH_ENV'] == 'development'
+      $redis.flushdb if Stealth.env == 'development'
     end
+
   end
 end

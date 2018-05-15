@@ -3,17 +3,18 @@
 
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
-class NewTodoFlow
+class FlowMap
   include Stealth::Flow
 
-  flow do
+  flow :new_todo do
     state :new
-
     state :get_due_date
-
     state :created, fails_to: :new
-
     state :error
+  end
+
+  flow :marco do
+    state :polo
   end
 end
 
@@ -50,22 +51,14 @@ describe "Stealth::Session" do
   end
 
   describe "with a session" do
-    class MarcoFlow
-      include Stealth::Flow
-
-      flow do
-        state :polo
-      end
-    end
-
     let(:session) do
       session = Stealth::Session.new(user_id: user_id)
-      session.set(flow: 'Marco', state: 'polo')
+      session.set(flow: 'marco', state: 'polo')
       session
     end
 
-    it "should return the flow" do
-      expect(session.flow).to be_a(MarcoFlow)
+    it "should return the FlowMap" do
+      expect(session.flow).to be_a(FlowMap)
     end
 
     it "should return the state" do
@@ -74,7 +67,7 @@ describe "Stealth::Session" do
     end
 
     it "should return the flow_string" do
-      expect(session.flow_string).to eq "Marco"
+      expect(session.flow_string).to eq "marco"
     end
 
     it "should return the state_string" do
@@ -91,25 +84,25 @@ describe "Stealth::Session" do
     let(:session) { Stealth::Session.new(user_id: user_id) }
 
     it "should increment the state" do
-      session.set(flow: 'NewTodo', state: 'get_due_date')
+      session.set(flow: 'new_todo', state: 'get_due_date')
       new_session = session + 1.state
       expect(new_session.state_string).to eq('created')
     end
 
     it "should decrement the state" do
-      session.set(flow: 'NewTodo', state: 'error')
+      session.set(flow: 'new_todo', state: 'error')
       new_session = session - 2.states
       expect(new_session.state_string).to eq('get_due_date')
     end
 
     it "should return the first state if the decrement is out of bounds" do
-      session.set(flow: 'NewTodo', state: 'get_due_date')
+      session.set(flow: 'new_todo', state: 'get_due_date')
       new_session = session - 5.states
       expect(new_session.state_string).to eq('new')
     end
 
     it "should return the last state if the increment is out of bounds" do
-      session.set(flow: 'NewTodo', state: 'created')
+      session.set(flow: 'new_todo', state: 'created')
       new_session = session + 5.states
       expect(new_session.state_string).to eq('error')
     end

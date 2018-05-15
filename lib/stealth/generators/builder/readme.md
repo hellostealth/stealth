@@ -2,8 +2,8 @@
 
 To boot this bot locally, we recommend the following:
 
-1. `gem install foreman`
-2. Start Redis
-3. `foreman start -f Procfile.dev`
+1. `bundle`
+2. Start your local Redis server
+3. `stealth s`
 
-Using `foreman` will start the web server and Sidekiq processes together.
+For more information, please check out the [Stealth documentation](https://hellostealth.org/docs).

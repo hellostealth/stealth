@@ -30,6 +30,7 @@ module Stealth
         copy_file "Gemfile", "#{name}/Gemfile"
         copy_file "README.md", "#{name}/README.md"
         copy_file "Procfile.dev", "#{name}/Procfile.dev"
+        copy_file ".gitignore", "#{name}/.gitignore"
       end
 
       def change_directory_bundle
