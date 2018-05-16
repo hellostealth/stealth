@@ -28,7 +28,15 @@ module Stealth
     $ > stealth generate flow quote
     EOS
     def generate(generator, name)
-      Stealth::Generators::Generate.start([generator, name])
+      case generator
+      when 'migration'
+        Stealth::Migrations::Generator.migration(name)
+      when 'flow'
+        Stealth::Generators::Generate.start([generator, name])
+      else
+        puts "Could not find generator '#{generator}'."
+        puts "Run `stealth help generate` for more options."
+      end
     end
     map 'g' => 'generate'
 
