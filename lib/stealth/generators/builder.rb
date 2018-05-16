@@ -19,14 +19,13 @@ module Stealth
       end
 
       def create_bot_structure
-        # Bot Directory
         directory('bot', "#{name}/bot")
-
-        # Config Directory
         directory('config', "#{name}/config")
+        directory('db', "#{name}/db")
 
         # Miscellaneous Files
         copy_file "config.ru", "#{name}/config.ru"
+        copy_file "Rakefile", "#{name}/Rakefile"
         copy_file "Gemfile", "#{name}/Gemfile"
         copy_file "README.md", "#{name}/README.md"
         copy_file "Procfile.dev", "#{name}/Procfile.dev"
