@@ -1,2 +1,2 @@
-class <%= name.capitalize.underscore.camelize %> < ActiveRecord::Base
+class <%= name.capitalize.underscore.camelize %> < BotRecord
 end
