@@ -40,7 +40,13 @@ When you open up your Stealth bot you will see the following file structure:
 
 A `Flow` is a general term to describe a complete user interaction with the bot. For example, if a user was using your bot to receive an  insurance quote. This would be referred to as a `Quotes` flows.
 
-A flow always has a controller file and its associated reply files. It could also include a model file if you're interacting with data.
+A flow always has a controller file and associated reply files. It could also include a model file if you're interacting with data.
+
+Flows can be generated using the following command:
+
+```
+  stealth generate flow <NAME>
+```
 
 ## Default Flows
 
