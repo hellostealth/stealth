@@ -1,29 +1,40 @@
 ---
 title: Local Development
 ---
+
+## Prerequisites
+
+Stealth bundles [Sidekiq](https://github.com/mperham/sidekiq) in order to process background jobs. Therefore, it is required to run Redis in order to boot up a Stealth server.
+
 ## Starting the Server
 
-Change directory into to `mybot`. To boot this bot locally run:
+Once you have made your current working directory your Stealth bot, you can install gems:
 
-`stealth server`
+```
+bundle install
+```
 
-Using [foreman](https://github.com/ddollar/foreman) will start the web server and Sidekiq processes together.
+To boot your bot:
 
-You now have default Stealth bot ready for you to start adding functionality to.
+```
+stealth server
+```
+
+You can also use `stealth s`. This will use the [foreman](https://github.com/ddollar/foreman) gem to start the web server and Sidekiq processes together. Redis will have to be running for the server to start.
+
+That's it! You are now running Stealth.
 
 ## Introspectable Tunnels to localhost
 
-When developing locally, every messaging service requires access to your server. We recommend downloading and using ngrok to create a local tunnel to your development machine. It's pretty easy.
+When developing locally, messaging services require access to your server in order to transmit user messages. We recommend downloading and using [ngrok](https://ngrok.com/download) to create a local tunnel to your development machine.
 
-First, download ngrok here: https://ngrok.com/download
+1. Download [ngrok](https://ngrok.com/download)
+2. Start your Stealth server as detailed above.
+3. Open up an ngrok tunnel to your Stealth server and port (default 5000) like this: `ngrok http 5000`. ngrok will output a unique ngrok local tunnel URL to your machine.
 
-After you download ngrok, start your Stealth server as detailed above. Once Stealth is started, you can open up a public tunnel to your Stealth server and port (default 5000) like this:
-
-`ngrok http 5000`
-
-ngrok should then display a unique ngrok local tunnel URL to your machine.
-
-When you provide your URL to the messaging service make sure to place `/incoming/<service>` after your URL. For example:
+When you provide your local ngrok URL to a messaging service, you will have to add `/incoming/<service>`. For example:
 
  * `https://abc1234.ngrok.io/incoming/facebook`
  * `https://abc1234.ngrok.io/incoming/twilio`
+
+More details on service specific settings can be found on the GitHub page for each service gem.
