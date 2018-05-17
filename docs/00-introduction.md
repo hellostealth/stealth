@@ -1,7 +1,7 @@
 ---
 title: Introduction
 ---
-Stealth includes everything you need to quickly create powerful, text and voice chatbots in Ruby.
+Stealth includes everything you need to build amazing chatbots with tools you know and love.
 
 Stealth is inspired by the Model-View-Controller (MVC) pattern. However, instead of calling them *Views* Stealth refers to them as *Replies* to better match the chatbot domain.
 
