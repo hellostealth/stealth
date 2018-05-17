@@ -35,10 +35,10 @@ module Stealth
       def initialize(options = {})
         default_schema = ENV['SCHEMA'] || ActiveRecord::Tasks::DatabaseTasks.schema_file(ActiveRecord::Base.schema_format)
         defaults = {
-          :config       => "db/config.yml",
-          :migrate_dir  => "db/migrate",
-          :seeds        => "db/seeds.rb",
-          :schema       => default_schema
+          config:       "config/database.yml",
+          migrate_dir:  "db/migrate",
+          seeds:        "db/seeds.rb",
+          schema:       default_schema
         }
         @options = defaults.merge(options)
 
