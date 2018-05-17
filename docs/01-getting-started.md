@@ -2,14 +2,20 @@
 title: Getting Started
 ---
 
-To get started install Stealth at the command prompt:
+## Ruby
+
+Stealth has been tested on Ruby (MRI) `2.4.x` and `2.5.x`. While we don't require any C-based Ruby gems, we haven't yet certified Stealth on other VMs (such as JRuby).
+
+## Installation
+
+You can install Stealth via RubyGems:
 
   ```
   gem install stealth
   ```
 
-After, create yourself a new Stealth bot:
+Next, you can create a new Stealth bot:
 
   ```
-  stealth new mybot
+  stealth new <bot_name>
   ```
