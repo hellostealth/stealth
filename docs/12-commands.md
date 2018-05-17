@@ -2,7 +2,7 @@
 title: Commands
 ---
 
-Stealth provides the `stealth` command-line program, used to generate bots, generate flows, start a console, run driver setup tasks and run the server.
+Stealth provides the `stealth` command-line program, used to generate bots, generate flows, start a console, run integration setup tasks and run the server.
 
 To view details for a command at any time use `stealth help`.
 
