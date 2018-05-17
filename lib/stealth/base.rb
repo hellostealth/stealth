@@ -7,6 +7,7 @@ require 'sidekiq'
 require 'active_support/all'
 
 begin
+  require "rails"
   require "active_record"
 rescue LoadError
   # Don't require ActiveRecord
@@ -71,7 +72,7 @@ module Stealth
     if ENV['DATABASE_URL'].present? && defined?(ActiveRecord)
       ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'])
     else
-      ActiveRecord::Base.establish_connection(YAML::load_file("db/config.yml")[Stealth.env])
+      ActiveRecord::Base.establish_connection(YAML::load_file("config/database.yml")[Stealth.env])
     end
   end
 
