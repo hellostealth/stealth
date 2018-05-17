@@ -1,4 +1,4 @@
-class <%= name.camelize.underscore.pluralize %>Controller < BotController
+class <%= name.capitalize.camelize.underscore.pluralize %>Controller < BotController
 
   def ask_example
     send_replies

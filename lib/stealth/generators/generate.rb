@@ -31,8 +31,14 @@ module Stealth
         template('helpers/helper.tt', "bot/helpers/#{name}_helper.rb")
       end
 
+      def create_model
+        template('models/model.tt', "bot/models/#{name}.rb")
+      end
+
       def edit_flow_map
-        # TODO
+        inject_into_file "config/flow_map.rb", after: "include Stealth::Flow\n" do
+          "\n\tflow :#{name} do\n\t\tstate :ask_example\n\t\tstate :get_example\n\t\tstate :say_yes_example\n\t\tstate :say_no_example\n\tend\n\n"
+        end
       end
 
     end

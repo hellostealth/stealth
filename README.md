@@ -40,6 +40,7 @@ Stealth wouldn't exist without the great work of many other open source projects
 * [Thor](http://whatisthor.com) for providing us with CLI tools and generators;
 * [Sinatra](http://sinatrarb.com) for providing a fantastic, modular way for handling HTTP requests;
 * [Sidekiq](https://sidekiq.org) for the super quick background jobs;
+* [standalone-migrations](https://github.com/thuss/standalone-migrations) for the help with Rails migrations;
 * [Dr. Robert Ford](http://westworld.wikia.com/wiki/Robert_Ford) a.k.a. Anthony Hopkins.
 
 ## License
