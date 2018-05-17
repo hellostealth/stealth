@@ -3,13 +3,9 @@ title: Local Development
 ---
 ## Starting the Server
 
-Change directory into to `mybot`. To boot this bot locally, we recommend the following:
+Change directory into to `mybot`. To boot this bot locally run:
 
-1. `gem install foreman`
-
-2. Start Redis
-
-3. `foreman start -f Procfile.dev`
+`stealth server`
 
 Using [foreman](https://github.com/ddollar/foreman) will start the web server and Sidekiq processes together.
 
