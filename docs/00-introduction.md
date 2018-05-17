@@ -7,7 +7,7 @@ Stealth includes everything you need to build amazing chatbots with tools you kn
 
 These docs are designed for intermediate Ruby developers who want to get started with the Stealth framework.
 
-Stealth bot framework running on the Ruby programming language. If you have no prior experience with Ruby, you might find it hard to jump into Stealth. We would recommend checking out these guides:
+If you do not yet have experience with Ruby, we would recommend checking out these guides first:
 
 - [Official Ruby website](https://www.ruby-lang.org/en/documentation/)
 - [List of Free Programming Books](https://github.com/EbookFoundation/free-programming-books/blob/master/free-programming-books.md#ruby)
