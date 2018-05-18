@@ -2,11 +2,11 @@
 title: Deployment
 ---
 
-Stealth is a rack based web app. Which means it can be hosted on virtually anything. Virtual or Physical servers. However, we recommend Heroku because of its simplicity of deployment.
+Stealth is a rack based application. That means it can be hosted on most platforms as well as taking advantage of existing tools such as Docker.
 
 ## Deploying on Heroku
 
-Since Stealth is a Ruby based Rack app, it supports deploying to [Heroku](http://herokuapp.com) out of the box. Here is a quick guide to get you started.
+Stealth supports [Heroku](http://herokuapp.com) out of the box. In fact, running a `stealth s` command locally boots `foreman` using a `Procfile.dev` file similar to what Heroku does. Here is a quick guide to get you started.
 
 If you haven't, make sure to track your bot in Git
 
@@ -29,10 +29,22 @@ After you have your bot tracked with Git, you're ready to deploy to Heroku. Next
 $ heroku apps:create <BOT NAME>
 ```
 
+You will want a production `Procfile` separate from your development `Procfile.dev`. We recommend adding:
+
+```
+web: bundle exec puma -C config/puma.rb
+sidekiq: bundle exec sidekiq -C config/sidekiq.yml -q webhooks -q default -r ./config/boot.rb
+release: bundle exec rake db:migrate
+```
+
 Then deploy your bot to Heroku.
 
 ```
 $ git push heroku master
 ```
 
-Once deployed, make sure to enable both the `Heroku Postgres` and `Heroku Redis` addons. Additionally, make sure you run any `stealth setup` commands to configure your messaging service webhooks for your new production environments.
+Once deployed:
+
+1. Make sure to enable both the `Heroku Postgres` (if you use a database) and `Heroku Redis` addons
+2. Make sure the `web` and `sidekiq` dynos are spun up
+3. Make sure you run any `stealth setup` commands to configure your messaging service
