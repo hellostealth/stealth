@@ -2,7 +2,7 @@
 title: Messaging Integrations
 ---
 
-Stealth is designed for your bot to support one or many Messaging Services. For example, this could be SMS or both SMS and Facebook messenger. Messaging Integrations can be attached to your Stealth bot by adding the messaging integration gem to your `Gemfile`.
+Stealth is designed for your bot to support one or more messaging integrations. For example, this could be just SMS or both SMS and Facebook Messenger. Messaging integrations can be attached to your Stealth bot by adding the messaging integration gem to your `Gemfile`.
 
 ## `Gemfile`
 
@@ -69,13 +69,11 @@ Most messaging integrations require an initial setup. For example, Facebook requ
 
 `stealth setup facebook`
 
-Make sure to reference the specific messaging integration for more specifics.
+Make sure to reference the respective messaging integration documentation for more specifics.
 
 ## Officially Supported
 
-Right now, Stealth officially supports Facebook Messenger and SMS through Twilio. While we plan to add more integrations in the future please feel free to add your own and let us know so we can keep this list updated. 😎
-
-Please check out the integration docs here:
-
 * [Facebook Messenger](https://github.com/hellostealth/stealth-facebook)
 * [SMS (Twillio)](https://github.com/hellostealth/stealth-twilio)
+
+While we plan to add more integrations in the future, please feel free to add your own and let us know so we can keep this list updated. 😎
