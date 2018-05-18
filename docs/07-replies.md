@@ -50,6 +50,8 @@ Reply templates currently support ERB:
 <% end %>
 ```
 
+With ERB in your reply templates, you can access controller instance variables and helper methods in your replies.
+
 ## Delays
 
 Delays are a common pattern of chatbot design. After a block of text, it's recommended to pause for a bit to give the user a chance to read the message. The duration of the delay depends on the length of the message sent.
