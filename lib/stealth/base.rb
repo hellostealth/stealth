@@ -6,25 +6,18 @@ require 'yaml'
 require 'sidekiq'
 require 'active_support/all'
 
+begin
+  require "rails"
+  require "active_record"
+rescue LoadError
+  # Don't require ActiveRecord
+end
+
 # core
 require 'stealth/version'
 require 'stealth/errors'
 require 'stealth/logger'
 require 'stealth/configuration'
-require 'stealth/jobs'
-require 'stealth/dispatcher'
-require 'stealth/server'
-require 'stealth/reply'
-require 'stealth/scheduled_reply'
-require 'stealth/service_reply'
-require 'stealth/service_message'
-require 'stealth/session'
-require 'stealth/controller/callbacks'
-require 'stealth/controller/catch_all'
-require 'stealth/controller/helpers'
-require 'stealth/controller/controller'
-require 'stealth/flow/base'
-require 'stealth/services/base_client'
 
 module Stealth
 
@@ -73,7 +66,14 @@ module Stealth
     require_directory("config/initializers")
     # Require explicitly to ensure it loads first
     require File.join(Stealth.root, 'bot', 'controllers', 'bot_controller')
+    require File.join(Stealth.root, 'config', 'flow_map')
     require_directory("bot")
+
+    if ENV['DATABASE_URL'].present? && defined?(ActiveRecord)
+      ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'])
+    else
+      ActiveRecord::Base.establish_connection(YAML::load_file("config/database.yml")[Stealth.env])
+    end
   end
 
   private
@@ -91,3 +91,23 @@ module Stealth
     end
 
 end
+
+require 'stealth/jobs'
+require 'stealth/dispatcher'
+require 'stealth/server'
+require 'stealth/reply'
+require 'stealth/scheduled_reply'
+require 'stealth/service_reply'
+require 'stealth/service_message'
+require 'stealth/session'
+require 'stealth/controller/callbacks'
+require 'stealth/controller/replies'
+require 'stealth/controller/catch_all'
+require 'stealth/controller/helpers'
+require 'stealth/controller/controller'
+require 'stealth/flow/base'
+require 'stealth/services/base_client'
+require 'stealth/migrations/configurator'
+require 'stealth/migrations/generators'
+require 'stealth/migrations/railtie_config'
+require 'stealth/migrations/tasks'

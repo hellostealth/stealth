@@ -27,7 +27,7 @@ module Stealth
 
       included do
         class_attribute :_helpers, default: Module.new
-        class_attribute :helpers_path, default: []
+        class_attribute :helpers_path, default: ["bot/helpers"]
         class_attribute :include_all_helpers, default: true
       end
 
@@ -53,6 +53,9 @@ module Stealth
         def modules_for_helpers(args)
           # Allow all helpers to be included
           args += all_bot_helpers if args.delete(:all)
+
+          # Add each helper_path to the LOAD_PATH
+          Array(helpers_path).each {|path| $:.unshift(path) }
 
           args.flatten.map! do |arg|
             case arg

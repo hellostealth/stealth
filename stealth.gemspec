@@ -6,10 +6,10 @@ Gem::Specification.new do |s|
   s.name = 'stealth'
   s.summary = 'Ruby framework for conversational bots'
   s.description = 'Ruby framework for building conversational bots.'
-  s.homepage = 'https://github.com/whoisblackops/stealth'
+  s.homepage = 'https://github.com/hellostealth/stealth'
   s.licenses = ['MIT']
   s.version = version
-  s.author = 'Mauricio Gomes'
+  s.authors = ['Mauricio Gomes', 'Matthew Black']
   s.email = 'mauricio@edge14.com'
 
   s.add_dependency 'sinatra', '~> 2.0'
@@ -17,7 +17,9 @@ Gem::Specification.new do |s|
   s.add_dependency 'thor', '~> 0.20'
   s.add_dependency 'multi_json', '~> 1.12'
   s.add_dependency 'sidekiq', '~> 5.0'
-  s.add_dependency 'activesupport', '~> 5.2.0.rc1'
+  s.add_dependency 'activesupport', '~> 5.2'
+  s.add_dependency 'activerecord', '~> 5.2'
+  s.add_dependency 'railties', '~> 5.2'
 
   s.add_development_dependency 'rspec', '~> 3.6'
   s.add_development_dependency 'rspec_junit_formatter', '~> 0.3'

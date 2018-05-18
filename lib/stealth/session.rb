@@ -31,11 +31,7 @@ module Stealth
     def flow
       return nil if flow_string.blank?
 
-      @flow ||= begin
-        flow_klass = [flow_string, 'flow'].join('_').classify.constantize
-        flow = flow_klass.new.init_state(state_string)
-        flow
-      end
+      @flow ||= FlowMap.new.init(flow: flow_string, state: state_string)
     end
 
     def state
@@ -63,6 +59,8 @@ module Stealth
 
       @flow = nil
       @session = canonical_session_slug(flow: flow, state: state)
+
+      Stealth::Logger.l(topic: "session", message: "User #{user_id}: setting session to #{flow}->#{state}")
       $redis.set(user_id, session)
     end
 

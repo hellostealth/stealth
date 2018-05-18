@@ -1,4 +1,4 @@
-class <%= name.capitalize.underscore.classify %>Flow
+class FlowMap
 
   include Stealth::Flow
 
@@ -10,7 +10,7 @@ class <%= name.capitalize.underscore.classify %>Flow
     state :say_goodbye
   end
 
-  flow :catchall do
+  flow :catch_all do
     state :level1
   end
 
