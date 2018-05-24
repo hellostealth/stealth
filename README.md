@@ -29,7 +29,7 @@ Currently, there are gems for:
 
 ## Docs
 
-You can find our full docs [here](https://docs.hellostealth.org).
+You can find our full docs [here](https://hellostealth.org/docs).
 
 ## Thanks
 
