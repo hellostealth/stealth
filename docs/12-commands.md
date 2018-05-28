@@ -46,7 +46,7 @@ stealth version             # Prints stealth version
 Examples:
 
   Start a new Stealth project.
-  $ steath new [BOT NAME]
+  $ stealth new [BOT NAME]
 
   Generate a new flow inside your Stealth project.
   $ stealth generate flow [FLOW NAME]
