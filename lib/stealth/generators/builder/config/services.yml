@@ -8,17 +8,16 @@ default: &default
   #   setup:
   #     greeting: # Greetings are broken up by locale
   #       - locale: default
-  #         text: "Welcome to the Stealth bot 🤖"
+  #         text: "Welcome to my Facebook Bot."
+  #     get_started:
+  #       payload: new_user
   #     persistent_menu:
-  #       - type: payload
-  #         text: Main Menu
-  #         payload: main_menu
-  #       - type: url
-  #         text: Visit our website
-  #         url: https://example.com
-  #       - type: call
-  #         text: Call us
-  #         payload: "+4155330000"
+  #       - locale: default
+  #         composer_input_disabled: false
+  #         call_to_actions:
+  #         - type: payload
+  #           text: Some Button
+  #           payload: some_button
   #
   # ===========================================
   # ======== Example SMS Service Setup ========
