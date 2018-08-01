@@ -346,8 +346,6 @@ describe "Stealth::Controller" do
   end
 
   describe "progressed?" do
-    before { allow(Sidekiq).to receive(:redis).and_return($redis) }
-
     it "should be truthy if an action calls step_to" do
       expect(controller.progressed?).to be_falsey
       controller.step_to flow: "mr_robot"
@@ -356,13 +354,19 @@ describe "Stealth::Controller" do
 
     it "should be falsey if an action only calls step_to_at" do
       expect(controller.progressed?).to be_falsey
+
+      expect(Stealth::ScheduledReplyJob).to receive(:perform_at)
       controller.step_to_at (DateTime.now + 10.hours), flow: 'mr_robot'
+
       expect(controller.progressed?).to be_falsey
     end
 
     it "should be falsey if an action only calls step_to_in" do
       expect(controller.progressed?).to be_falsey
+
+      expect(Stealth::ScheduledReplyJob).to receive(:perform_in)
       controller.step_to_in 100.seconds, flow: 'mr_robot'
+
       expect(controller.progressed?).to be_falsey
     end
 
