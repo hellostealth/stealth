@@ -345,4 +345,49 @@ describe "Stealth::Controller" do
     end
   end
 
+  describe "progressed?" do
+    it "should be truthy if an action calls step_to" do
+      expect(controller.progressed?).to be_falsey
+      controller.step_to flow: "mr_robot"
+      expect(controller.progressed?).to be_truthy
+    end
+
+    it "should be falsey if an action only calls step_to_at" do
+      expect(controller.progressed?).to be_falsey
+      controller.step_to_at (DateTime.now + 10.hours), flow: 'mr_robot'
+      expect(controller.progressed?).to be_falsey
+    end
+
+    it "should be falsey if an action only calls step_to_in" do
+      expect(controller.progressed?).to be_falsey
+      controller.step_to_in 100.seconds, flow: 'mr_robot'
+      expect(controller.progressed?).to be_falsey
+    end
+
+    it "should be truthy if an action calls update_session_to" do
+      expect(controller.progressed?).to be_falsey
+      controller.update_session_to flow: "mr_robot"
+      expect(controller.progressed?).to be_truthy
+    end
+
+    it "should be truthy if an action sends replies" do
+      expect(controller.progressed?).to be_falsey
+
+      # Stub out a service reply -- we just want send_replies to succeed here
+      stubbed_service_reply = double("service_reply")
+      allow(controller).to receive(:action_replies).and_return([], :erb)
+      allow(stubbed_service_reply).to receive(:replies).and_return([])
+      allow(Stealth::ServiceReply).to receive(:new).and_return(stubbed_service_reply)
+
+      controller.send_replies
+      expect(controller.progressed?).to be_truthy
+    end
+
+    it "should be falsey otherwise" do
+      expect(controller.progressed?).to be_falsey
+      controller.action(action: :other_action)
+      expect(controller.progressed?).to be_falsey
+    end
+  end
+
 end
