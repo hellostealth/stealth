@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    stealth (1.0.2)
+    stealth (1.0.3)
       activerecord (~> 5.2)
       activesupport (~> 5.2)
       multi_json (~> 1.12)
@@ -56,7 +56,7 @@ GEM
     mock_redis (0.17.3)
     multi_json (1.13.1)
     mustermann (1.0.2)
-    nokogiri (1.8.3)
+    nokogiri (1.8.4)
       mini_portile2 (~> 2.3.0)
     oj (3.5.0)
     puma (3.11.4)
