@@ -346,6 +346,8 @@ describe "Stealth::Controller" do
   end
 
   describe "progressed?" do
+    before { allow(Sidekiq).to receive(:redis).and_return($redis) }
+
     it "should be truthy if an action calls step_to" do
       expect(controller.progressed?).to be_falsey
       controller.step_to flow: "mr_robot"
