@@ -34,6 +34,21 @@ describe "Stealth::Controller replies" do
     def say_offer
       send_replies
     end
+
+    def say_uh_oh
+      send_replies
+    end
+  end
+
+  describe "missing reply" do
+    it "should raise a Stealth::Errors::ReplyNotFound" do
+      allow(controller.current_session).to receive(:flow_string).and_return("message")
+      allow(controller.current_session).to receive(:state_string).and_return("say_uh_oh")
+
+      expect {
+        controller.send_replies
+      }.to raise_error(Stealth::Errors::ReplyNotFound)
+    end
   end
 
   describe "class attributes" do
