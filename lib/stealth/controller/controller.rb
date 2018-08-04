@@ -63,7 +63,7 @@ module Stealth
           flow_controller.send(@action_name)
           run_catch_all(reason: 'Did not send replies, update session, or step') unless flow_controller.progressed?
         rescue StandardError => e
-          Stealth::Logger.l(topic: "catch_all", message: e.backtrace)
+          Stealth::Logger.l(topic: "catch_all", message: e.backtrace.join("\n"))
           run_catch_all(reason: e.message)
         end
       end
