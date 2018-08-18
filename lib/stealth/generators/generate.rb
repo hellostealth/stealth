@@ -21,23 +21,16 @@ module Stealth
 
       def create_replies
         # Sample Ask Reply
-        template('replies/ask_reply.tt', "bot/replies/#{name.pluralize}/ask_example.yml")
-        # Sample Say Replies
-        template('replies/say_yes_reply.tt', "bot/replies/#{name.pluralize}/say_yes_example.yml")
-        template('replies/say_no_reply.tt', "bot/replies/#{name.pluralize}/say_no_example.yml")
+        template('replies/ask_example.tt', "bot/replies/#{name.pluralize}/ask_example.yml.erb")
       end
 
       def create_helper
         template('helpers/helper.tt', "bot/helpers/#{name}_helper.rb")
       end
 
-      def create_model
-        template('models/model.tt', "bot/models/#{name}.rb")
-      end
-
       def edit_flow_map
         inject_into_file "config/flow_map.rb", after: "include Stealth::Flow\n" do
-          "\n\tflow :#{name} do\n\t\tstate :ask_example\n\t\tstate :get_example\n\t\tstate :say_yes_example\n\t\tstate :say_no_example\n\tend\n\n"
+          "\n\tflow :#{name} do\n\t\tstate :ask_example\n\tend\n"
         end
       end
 
