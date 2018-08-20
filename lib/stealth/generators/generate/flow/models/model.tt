@@ -1,2 +1,0 @@
-class <%= name.capitalize.underscore.camelize %> < BotRecord
-end
