@@ -17,6 +17,8 @@ module Stealth
         end
 
         def load_tasks
+          return unless defined?(ActiveRecord)
+
           configure
 
           Configurator.environments_config do |proxy|

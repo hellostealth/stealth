@@ -72,10 +72,12 @@ module Stealth
     require File.join(Stealth.root, 'config', 'flow_map')
     require_directory("bot")
 
-    if ENV['DATABASE_URL'].present? && defined?(ActiveRecord)
-      ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'])
-    else
-      ActiveRecord::Base.establish_connection(YAML::load_file("config/database.yml")[Stealth.env])
+    if defined?(ActiveRecord)
+      if ENV['DATABASE_URL'].present?
+        ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'])
+      else
+        ActiveRecord::Base.establish_connection(YAML::load_file("config/database.yml")[Stealth.env])
+      end
     end
   end
 
@@ -110,7 +112,10 @@ require 'stealth/controller/helpers'
 require 'stealth/controller/controller'
 require 'stealth/flow/base'
 require 'stealth/services/base_client'
-require 'stealth/migrations/configurator'
-require 'stealth/migrations/generators'
-require 'stealth/migrations/railtie_config'
-require 'stealth/migrations/tasks'
+
+if defined?(ActiveRecord)
+  require 'stealth/migrations/configurator'
+  require 'stealth/migrations/generators'
+  require 'stealth/migrations/railtie_config'
+  require 'stealth/migrations/tasks'
+end
