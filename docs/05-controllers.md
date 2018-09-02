@@ -174,6 +174,6 @@ Returns `true` or `false` depending on whether or not the `current_message` cont
 
 Returns `true` or `false` depending on whether or not the `current_message` contains attachments.
 
-### current_user_id
+### current_session_id (previously current_user_id)
 
-A convenience method for accessing the user's ID.
+A convenience method for accessing the session's ID.

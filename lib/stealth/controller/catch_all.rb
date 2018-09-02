@@ -48,7 +48,7 @@ module Stealth
           end
 
           def error_slug
-            ['error', current_user_id, current_session.flow_string, current_session.state_string].join('-')
+            ['error', current_session_id, current_session.flow_string, current_session.state_string].join('-')
           end
 
           def calculate_catch_all_state(error_level)

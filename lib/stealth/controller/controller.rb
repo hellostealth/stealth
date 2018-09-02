@@ -10,12 +10,13 @@ module Stealth
     include Stealth::Controller::Helpers
 
     attr_reader :current_message, :current_user_id, :current_flow,
-                :current_service, :flow_controller, :action_name
+                :current_service, :flow_controller, :action_name,
+                :current_session_id
 
     def initialize(service_message:, current_flow: nil)
       @current_message = service_message
       @current_service = service_message.service
-      @current_user_id = service_message.sender_id
+      @current_user_id = @current_session_id = service_message.sender_id
       @current_flow = current_flow
       @progressed = false
     end
@@ -47,11 +48,11 @@ module Stealth
     end
 
     def current_session
-      @current_session ||= Stealth::Session.new(user_id: current_user_id)
+      @current_session ||= Stealth::Session.new(user_id: current_session_id)
     end
 
     def previous_session
-      @previous_session ||= Stealth::Session.new(user_id: current_user_id, previous: true)
+      @previous_session ||= Stealth::Session.new(user_id: current_session_id, previous: true)
     end
 
     def action(action: nil)
@@ -76,8 +77,8 @@ module Stealth
         raise ArgumentError, "Please specify your step_to_in `delay` parameter using ActiveSupport::Duration, e.g. `1.day` or `5.hours`"
       end
 
-      Stealth::ScheduledReplyJob.perform_in(delay, current_service, current_user_id, flow, state)
-      Stealth::Logger.l(topic: "session", message: "User #{current_user_id}: scheduled session step to #{flow}->#{state} in #{delay} seconds")
+      Stealth::ScheduledReplyJob.perform_in(delay, current_service, current_session_id, flow, state)
+      Stealth::Logger.l(topic: "session", message: "User #{current_session_id}: scheduled session step to #{flow}->#{state} in #{delay} seconds")
     end
 
     def step_to_at(timestamp, session: nil, flow: nil, state: nil)
@@ -87,8 +88,8 @@ module Stealth
         raise ArgumentError, "Please specify your step_to_at `timestamp` parameter as a DateTime"
       end
 
-      Stealth::ScheduledReplyJob.perform_at(timestamp, current_service, current_user_id, flow, state)
-      Stealth::Logger.l(topic: "session", message: "User #{current_user_id}: scheduled session step to #{flow}->#{state} at #{timestamp.iso8601}")
+      Stealth::ScheduledReplyJob.perform_at(timestamp, current_service, current_session_id, flow, state)
+      Stealth::Logger.l(topic: "session", message: "User #{current_session_id}: scheduled session step to #{flow}->#{state} at #{timestamp.iso8601}")
     end
 
     def step_to(session: nil, flow: nil, state: nil)
@@ -104,7 +105,7 @@ module Stealth
     private
 
       def update_session(flow:, state:)
-        @current_session = Stealth::Session.new(user_id: current_user_id)
+        @current_session = Stealth::Session.new(user_id: current_session_id)
         @progressed = :updated_session
         @current_session.set(flow: flow, state: state)
       end
