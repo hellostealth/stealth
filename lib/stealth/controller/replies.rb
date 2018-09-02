@@ -16,7 +16,7 @@ module Stealth
           yaml_reply, preprocessor = action_replies
 
           service_reply = Stealth::ServiceReply.new(
-            recipient_id: current_user_id,
+            recipient_id: current_session_id,
             yaml_reply: yaml_reply,
             preprocessor: preprocessor,
             context: binding
@@ -24,7 +24,7 @@ module Stealth
 
           for reply in service_reply.replies do
             handler = reply_handler.new(
-              recipient_id: current_user_id,
+              recipient_id: current_session_id,
               reply: reply
             )
 
