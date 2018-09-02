@@ -52,6 +52,68 @@ describe "Stealth::Controller" do
   let(:facebook_message) { SampleMessage.new(service: 'facebook') }
   let(:controller) { MrTronsController.new(service_message: facebook_message.message_with_text) }
 
+  describe "convenience methods" do
+    it "should make the session ID accessible via current_session_id" do
+      controller.current_session.set(flow: 'mr_tron', state: 'other_action')
+
+      expect(controller.current_session_id).to eq(facebook_message.sender_id)
+    end
+
+    it "should make the session ID accessible via current_user_id" do
+      controller.current_session.set(flow: 'mr_tron', state: 'other_action')
+
+      expect(controller.current_user_id).to eq(facebook_message.sender_id)
+    end
+
+    it "should make the message available in current_message.message" do
+      expect(controller.current_message.message).to eq(facebook_message.message)
+    end
+
+    it "should make the payload available in current_message.payload" do
+      message_with_payload = facebook_message.message_with_payload
+      expect(controller.current_message.payload).to eq(message_with_payload.payload)
+    end
+
+    describe "current_service" do
+      let(:twilio_message) { SampleMessage.new(service: 'twilio') }
+      let(:controller_with_twilio_message) { MrTronsController.new(service_message: twilio_message.message_with_text) }
+
+      it "should detect a Facebook message" do
+        expect(controller.current_service).to eq('facebook')
+      end
+
+      it "should detect a Twilio message" do
+        expect(controller_with_twilio_message.current_service).to eq('twilio')
+      end
+    end
+
+    describe "messages with location" do
+      let(:message_with_location) { facebook_message.message_with_location }
+      let(:controller_with_location) { MrTronsController.new(service_message: message_with_location) }
+
+      it "should make the location available in current_message.location" do
+        expect(controller_with_location.current_message.location).to eq(message_with_location.location)
+      end
+
+      it "should return true for current_message.has_location?" do
+        expect(controller_with_location.has_location?).to be true
+      end
+    end
+
+    describe "messages with attachments" do
+      let(:message_with_attachments) { facebook_message.message_with_attachments }
+      let(:controller_with_attachment) { MrTronsController.new(service_message: message_with_attachments) }
+
+      it "should make the attachments available in current_message.attachments" do
+        expect(controller_with_attachment.current_message.attachments).to eq(message_with_attachments.attachments)
+      end
+
+      it "should return true for current_message.has_attachments?" do
+        expect(controller_with_attachment.has_attachments?).to be true
+      end
+    end
+  end
+
   describe "step_to" do
     it "should raise an ArgumentError if a session, flow, or state is not specified" do
       expect {
@@ -128,7 +190,7 @@ describe "Stealth::Controller" do
     it "should update session to controller's corresponding action when a session is provided" do
       expect_any_instance_of(MrRobotsController).to_not receive(:my_action3)
 
-      session = Stealth::Session.new(user_id: controller.current_user_id)
+      session = Stealth::Session.new(user_id: controller.current_session_id)
       session.set(flow: 'mr_robot', state: 'my_action3')
 
       controller.update_session_to session: session
@@ -164,7 +226,7 @@ describe "Stealth::Controller" do
       expect(Stealth::ScheduledReplyJob).to receive(:perform_in).with(
         100.seconds,
         controller.current_service,
-        controller.current_user_id,
+        controller.current_session_id,
         'mr_robot',
         'my_action'
       )
@@ -182,7 +244,7 @@ describe "Stealth::Controller" do
       expect(Stealth::ScheduledReplyJob).to receive(:perform_in).with(
         100.seconds,
         controller.current_service,
-        controller.current_user_id,
+        controller.current_session_id,
         'mr_tron',
         'other_action3'
       )
@@ -198,7 +260,7 @@ describe "Stealth::Controller" do
       expect(Stealth::ScheduledReplyJob).to receive(:perform_in).with(
         100.seconds,
         controller.current_service,
-        controller.current_user_id,
+        controller.current_session_id,
         'mr_robot',
         'my_action3'
       )
@@ -211,13 +273,13 @@ describe "Stealth::Controller" do
     it "should update session to controller's corresponding action when a session is provided" do
       expect_any_instance_of(MrRobotsController).to_not receive(:my_action)
 
-      session = Stealth::Session.new(user_id: controller.current_user_id)
+      session = Stealth::Session.new(user_id: controller.current_session_id)
       session.set(flow: 'mr_robot', state: 'my_action3')
 
       expect(Stealth::ScheduledReplyJob).to receive(:perform_in).with(
         100.seconds,
         controller.current_service,
-        controller.current_user_id,
+        controller.current_session_id,
         'mr_robot',
         'my_action3'
       )
@@ -233,7 +295,7 @@ describe "Stealth::Controller" do
       expect(Stealth::ScheduledReplyJob).to receive(:perform_in).with(
         100.seconds,
         controller.current_service,
-        controller.current_user_id,
+        controller.current_session_id,
         'mr_robot',
         'my_action3'
       )
@@ -265,7 +327,7 @@ describe "Stealth::Controller" do
       expect(Stealth::ScheduledReplyJob).to receive(:perform_at).with(
         future_timestamp,
         controller.current_service,
-        controller.current_user_id,
+        controller.current_session_id,
         'mr_robot',
         'my_action'
       )
@@ -283,7 +345,7 @@ describe "Stealth::Controller" do
       expect(Stealth::ScheduledReplyJob).to receive(:perform_at).with(
         future_timestamp,
         controller.current_service,
-        controller.current_user_id,
+        controller.current_session_id,
         'mr_tron',
         'other_action3'
       )
@@ -299,7 +361,7 @@ describe "Stealth::Controller" do
       expect(Stealth::ScheduledReplyJob).to receive(:perform_at).with(
         future_timestamp,
         controller.current_service,
-        controller.current_user_id,
+        controller.current_session_id,
         'mr_robot',
         'my_action3'
       )
@@ -312,13 +374,13 @@ describe "Stealth::Controller" do
     it "should update session to controller's corresponding action when a session is provided" do
       expect_any_instance_of(MrRobotsController).to_not receive(:my_action)
 
-      session = Stealth::Session.new(user_id: controller.current_user_id)
+      session = Stealth::Session.new(user_id: controller.current_session_id)
       session.set(flow: 'mr_robot', state: 'my_action3')
 
       expect(Stealth::ScheduledReplyJob).to receive(:perform_at).with(
         future_timestamp,
         controller.current_service,
-        controller.current_user_id,
+        controller.current_session_id,
         'mr_robot',
         'my_action3'
       )
@@ -334,7 +396,7 @@ describe "Stealth::Controller" do
       expect(Stealth::ScheduledReplyJob).to receive(:perform_at).with(
         future_timestamp,
         controller.current_service,
-        controller.current_user_id,
+        controller.current_session_id,
         'mr_robot',
         'my_action3'
       )
