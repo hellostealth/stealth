@@ -26,7 +26,7 @@ GEM
     mock_redis (0.18.0)
     multi_json (1.13.1)
     mustermann (1.0.3)
-    oj (3.6.2)
+    oj (3.6.10)
     puma (3.12.0)
     rack (2.0.5)
     rack-protection (2.0.3)
@@ -69,7 +69,7 @@ PLATFORMS
 
 DEPENDENCIES
   mock_redis (~> 0.17)
-  oj (~> 3.3)
+  oj (~> 3.6)
   rack-test (~> 0.7)
   rspec (~> 3.6)
   rspec_junit_formatter (~> 0.3)
