@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency 'rspec', '~> 3.6'
   s.add_development_dependency 'rspec_junit_formatter', '~> 0.3'
-  s.add_development_dependency 'rack-test', '~> 0.7'
+  s.add_development_dependency 'rack-test', '~> 1.1'
   s.add_development_dependency 'mock_redis', '~> 0.17'
 
   s.files         = `git ls-files`.split("\n")

@@ -31,7 +31,7 @@ GEM
     rack (2.0.5)
     rack-protection (2.0.3)
       rack
-    rack-test (0.8.3)
+    rack-test (1.1.0)
       rack (>= 1.0, < 3)
     redis (4.0.2)
     rspec (3.8.0)
@@ -70,7 +70,7 @@ PLATFORMS
 DEPENDENCIES
   mock_redis (~> 0.17)
   oj (~> 3.6)
-  rack-test (~> 0.7)
+  rack-test (~> 1.1)
   rspec (~> 3.6)
   rspec_junit_formatter (~> 0.3)
   stealth!
