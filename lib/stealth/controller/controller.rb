@@ -5,6 +5,7 @@ module Stealth
   class Controller
 
     include Stealth::Controller::Callbacks
+    include Stealth::Controller::DynamicDelay
     include Stealth::Controller::Replies
     include Stealth::Controller::CatchAll
     include Stealth::Controller::Helpers

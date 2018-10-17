@@ -37,6 +37,10 @@ module Stealth
     @configuration
   end
 
+  def self.set_config_defaults(config)
+    config.dynamic_delay_muliplier = 1.0
+  end
+
   # Loads the services.yml configuration unless one has already been loaded
   def self.load_services_config(services_yaml)
     @semaphore ||= Mutex.new
@@ -49,7 +53,10 @@ module Stealth
           raise Stealth::Errors::ConfigurationError, "Could not find services.yml configuration for #{env} environment"
         end
 
-        Stealth::Configuration.new(services_config[env])
+        config = Stealth::Configuration.new(services_config[env])
+        set_config_defaults(config)
+
+        config
       end
     end
   end
@@ -109,6 +116,7 @@ require 'stealth/controller/callbacks'
 require 'stealth/controller/replies'
 require 'stealth/controller/catch_all'
 require 'stealth/controller/helpers'
+require 'stealth/controller/dynamic_delay'
 require 'stealth/controller/controller'
 require 'stealth/flow/base'
 require 'stealth/services/base_client'
