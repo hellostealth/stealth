@@ -22,7 +22,7 @@ module Stealth
             context: binding
           )
 
-          for reply in service_reply.replies do
+          service_reply.replies.each_with_index do |reply, i|
             handler = reply_handler.new(
               recipient_id: current_session_id,
               reply: reply
@@ -35,7 +35,18 @@ module Stealth
             # If this was a 'delay' type of reply, we insert the delay
             if reply.reply_type == 'delay'
               begin
-                sleep_duration = Float(reply["duration"])
+                if reply['duration'] == 'dynamic'
+                  m = Stealth.config.dynamic_delay_muliplier
+                  duration = dynamic_delay(
+                    service_replies: service_reply.replies,
+                    position: i
+                  )
+
+                  sleep_duration = Stealth.config.dynamic_delay_muliplier * duration
+                else
+                  sleep_duration = Float(reply['duration'])
+                end
+
                 sleep(sleep_duration)
               rescue ArgumentError, TypeError
                 raise(ArgumentError, 'Invalid duration specified. Duration must be a float')
