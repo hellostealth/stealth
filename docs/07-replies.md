@@ -58,6 +58,31 @@ Delays are a common pattern of chatbot design. After a block of text, it's recom
 
 Stealth will pause for the duration specified. For service integrations that support it (like Facebook), Stealth will send a typing indicator while it is paused.
 
+### Dynamic Delays
+
+Rather than specifying an explicit delay duration, you can optionally choose to specify a dynamic duration:
+
+```yaml
+- reply_type: delay
+  duration: dynamic
+```
+
+The dynamic delay uses a heuristic to dynamically determine the length of the delay. The previous message sent to the user is examined and depending on it's type and text length (in the case of text replies), an optimal duration is computed.
+
+If you find that the dynamic delays are too fast for your taste, you can slow them down by setting the multiplier value to something between 0 and 1:
+
+```ruby
+Stealth.config.dynamic_delay_muliplier = 0.5
+```
+
+If you find them to be too slow, you can speed them up by setting the multipler to a value greater than 1:
+
+```ruby
+Stealth.config.dynamic_delay_muliplier = 2.5
+```
+
+You can set this option by setting the above value in an intializer file, i.e., `config/dynamic_delay_config.rb`.
+
 ## Naming Conventions
 
 Replies are named after a flow's state (which is also the controller's action). So for a given controller:
