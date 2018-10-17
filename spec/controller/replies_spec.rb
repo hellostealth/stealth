@@ -143,7 +143,7 @@ describe "Stealth::Controller replies" do
 
     it "should translate each reply_type in the reply" do
       allow(stubbed_client).to receive(:transmit).and_return(true)
-      allow(controller).to receive(:sleep).and_return(true)
+      allow(controller).to receive(:sleep).and_return(true).with(2.0)
 
       expect(stubbed_handler).to receive(:text).exactly(2).times
       expect(stubbed_handler).to receive(:delay).exactly(1).times
@@ -153,7 +153,7 @@ describe "Stealth::Controller replies" do
     it "should transmit each reply_type in the reply" do
       allow(stubbed_handler).to receive(:text).exactly(2).times
       allow(stubbed_handler).to receive(:delay).exactly(1).times
-      allow(controller).to receive(:sleep).and_return(true)
+      allow(controller).to receive(:sleep).and_return(true).with(2.0)
 
       expect(stubbed_client).to receive(:transmit).exactly(3).times
       controller.say_offer
@@ -164,7 +164,7 @@ describe "Stealth::Controller replies" do
       allow(stubbed_handler).to receive(:delay).exactly(1).times
       allow(stubbed_client).to receive(:transmit).exactly(3).times
 
-      expect(controller).to receive(:sleep).exactly(1).times
+      expect(controller).to receive(:sleep).exactly(1).times.with(2.0)
       controller.say_offer
     end
   end
