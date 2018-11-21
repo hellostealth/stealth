@@ -4,7 +4,7 @@
 module Stealth
 
   class ScheduledReplyJob < Stealth::Jobs
-    sidekiq_options queue: :webhooks, retry: false
+    sidekiq_options queue: :stealth_replies, retry: false
 
     def perform(service, user_id, flow, state)
       service_message = ServiceMessage.new(service: service)
