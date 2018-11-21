@@ -23,6 +23,7 @@ Currently, there are gems for:
 ### Messaging
 * [Facebook Messenger](https://github.com/hellostealth/stealth-facebook)
 * [Twilio SMS](https://github.com/hellostealth/stealth-twilio)
+* [Smooch](https://github.com/hellostealth/stealth-smooch)
 
 ### Natural Language Processing
 * [AWS Comprehend](https://github.com/hellostealth/stealth-aws-comprehend)
