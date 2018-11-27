@@ -98,6 +98,10 @@ module Stealth
     end
 
     private
+    def self.is_a_session_string?(string)
+      session_regex = /(.+)(#{SLUG_SEPARATOR})(.+)/
+      !!string.match(session_regex)
+    end
 
       def canonical_session_slug(flow:, state:)
         [flow, state].join(SLUG_SEPARATOR)
