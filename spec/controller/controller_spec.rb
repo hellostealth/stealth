@@ -46,6 +46,8 @@ describe "Stealth::Controller" do
       state :other_action
       state :other_action2
       state :other_action3
+      state :deprecated_action, redirects_to: :other_action
+      state :deprecated_action2, redirects_to: 'mr_robot->my_action'
     end
   end
 
@@ -111,6 +113,31 @@ describe "Stealth::Controller" do
       it "should return true for current_message.has_attachments?" do
         expect(controller_with_attachment.has_attachments?).to be true
       end
+    end
+  end
+
+  describe "states with redirect_to specified" do
+    it "should step_to the specified redirect state when only a state is specified" do
+      controller.current_session.session = Stealth::Session.canonical_session_slug(flow: 'mr_tron', state: 'deprecated_action')
+      expect(MrTronsController).to receive(:new).and_return(controller)
+      expect(controller).to receive(:other_action)
+      controller.action(action: :deprecated_action)
+    end
+
+    it "should step_to the specified redirect flow and state when a session is specified" do
+      controller.current_session.session = Stealth::Session.canonical_session_slug(flow: 'mr_tron', state: 'deprecated_action2')
+      mr_robot_controller = MrTronsController.new(service_message: facebook_message.message_with_text)
+
+      expect(MrRobotsController).to receive(:new).and_return(mr_robot_controller)
+      expect(mr_robot_controller).to receive(:my_action)
+      controller.action(action: :deprecated_action2)
+    end
+
+    it "should NOT call the redirected controller action method" do
+      controller.current_session.session = Stealth::Session.canonical_session_slug(flow: 'mr_tron', state: 'deprecated_action')
+      expect(MrTronsController).to receive(:new).and_return(controller)
+      expect(controller).to_not receive(:deprecated_action)
+      controller.action(action: :deprecated_action)
     end
   end
 
