@@ -2,7 +2,7 @@
 title: Replies
 ---
 
-Stealth replies can send one or more replies to a user. Reply types are dependent on the specific messaging service you're using. Each service integration will detail it's supported reply types in it's respective docs.
+Stealth replies can send one or more replies to a user. The supported reply types will depend on the specific messaging service you're using. Each service integration will detail it's supported reply types in it's respective docs.
 
 However, here is a generic reply using text, delays, and suggestions.
 
@@ -21,6 +21,22 @@ However, here is a generic reply using text, delays, and suggestions.
     - text: "Yes"
     - text: "No"
 ```
+
+## Reply Variants
+
+By default, Stealth will look for your replies in the folder corresponding to your controller name. So, for example, if you have a `MessagesController`, Stealth will look for replies in `bot/replies/messages`.
+
+If you have an action named `say_hello`, it will look for a reply file named `bot/replies/messages/say_hello.yml.erb` first, and then if that is not found, it will look for `bot/replies/messages/say_hello.yml`. If neither of these files are found, Stealth will raise a `Stealth::Errors::ReplyNotFound`.
+
+In addition to these two naming conventions, Stealth 1.1+ supports Reply Variants. By adding the name of the service to your reply filename, Stealth will reply to users from that service using the designated reply file. That's a mouthful. Let's try an example.
+
+For example, if the bot is replying to a message via an action called `hello`:
+
+Facebook users would receive the reply in `hello.yml+facebook.erb`.
+Twilio SMS users would receive the reply in `hello.yml+twilio.erb`.
+Every other service would receive the reply in `hello.yml.erb`.
+
+This allows you to take advantage of things like Facebook Messenger Cards while still maintaining compatibility for users using SMS.
 
 ## Format
 

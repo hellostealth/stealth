@@ -79,25 +79,48 @@ module Stealth
             current_session.flow_string.underscore.pluralize
           end
 
-          def action_replies
-            reply_dir = [*self._replies_path, replies_folder]
-            reply_filename = "#{current_session.state_string}.yml"
-            reply_file_path = File.join(*reply_dir, reply_filename)
-            selected_preprocessor = :none
+          def reply_dir
+            [*self._replies_path, replies_folder]
+          end
 
+          def base_reply_filename
+            "#{current_session.state_string}.yml"
+          end
+
+          def reply_filenames
+            service_filename = [base_reply_filename, current_service].join('+')
+
+            # Service-specific filenames take precedance (returned first)
+            [service_filename, base_reply_filename]
+          end
+
+          def find_reply_and_preprocessor
+            selected_preprocessor = :none
+            reply_file_path = File.join(*reply_dir, base_reply_filename)
+
+            # Cycles through possible preprocessor and variant combinations
+            # Early returns for performance
             for preprocessor in self.class._preprocessors do
-              selected_filepath = File.join(*reply_dir, [reply_filename, preprocessor.to_s].join('.'))
-              if File.exists?(selected_filepath)
-                reply_file_path = selected_filepath
-                selected_preprocessor = preprocessor
-                break
+              for reply_filename in reply_filenames do
+                selected_filepath = File.join(*reply_dir, [reply_filename, preprocessor.to_s].join('.'))
+                if File.exist?(selected_filepath)
+                  reply_file_path = selected_filepath
+                  selected_preprocessor = preprocessor
+                  return reply_file_path, selected_preprocessor
+                end
               end
             end
+
+            return reply_file_path, selected_preprocessor
+          end
+
+          def action_replies
+            reply_file_path, selected_preprocessor = find_reply_and_preprocessor
 
             begin
               file_contents = File.read(reply_file_path)
             rescue Errno::ENOENT
-              raise(Stealth::Errors::ReplyNotFound, "Could not find a reply in #{reply_file_path}")
+              raise(Stealth::Errors::ReplyNotFound, "Could not find a reply in #{reply_dir}")
             end
 
             return file_contents, selected_preprocessor

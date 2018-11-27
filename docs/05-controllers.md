@@ -110,7 +110,7 @@ class ContactsController < BotController
 end
 ```
 
-This would render the reply contained in `replies/contacts/say_contact_us.yml`.
+This would render the reply contained in `replies/contacts/say_contact_us.yml`. See [Reply Variants](#variants) for additional naming options.
 
 ## `step_to_in`
 
