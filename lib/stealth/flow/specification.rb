@@ -19,16 +19,36 @@ module Stealth
 
       private
 
-        def state(name, fails_to: nil)
-          fail_state = nil
-          if fails_to.present?
-            fail_state = Stealth::Flow::State.new(fails_to, self)
-          end
+        def state(name, fails_to: nil, redirects_to: nil)
+          fail_state = get_fail_or_redirect_state(fails_to)
+          redirect_state = get_fail_or_redirect_state(redirects_to)
 
-          new_state = Stealth::Flow::State.new(name, self, fail_state)
+          new_state = Stealth::Flow::State.new(
+            name: name,
+            spec: self,
+            fails_to: fail_state,
+            redirects_to: redirect_state
+          )
+
           @initial_state = new_state if @states.empty?
           @states[name.to_sym] = new_state
-          @scoped_state = new_state
+        end
+
+        def get_fail_or_redirect_state(specified_state)
+          if specified_state.present?
+            session = Stealth::Session.new
+
+            if Stealth::Session.is_a_session_string?(specified_state)
+              session.session = specified_state
+            else
+              session.session = Stealth::Session.canonical_session_slug(
+                flow: flow_name,
+                state: specified_state
+              )
+            end
+
+            return session
+          end
         end
 
     end
