@@ -8,7 +8,8 @@
 
 * [Controllers] `current_session_id` now references the session ID in controllers
 * [Replies] Added support for dynamic delays
-* [Models] ActiveRecord is part of the generated bot Gemfile and can be removed
+* [Replies] Added support for service-specific variants
+* [Models] ActiveRecord is now part of the generated bot Gemfile and can be removed from bots
 * [Errors] Backtraces are now more readable in logs
 
 ## Bug Fixes
