@@ -9,15 +9,18 @@ module Stealth
     attr_reader :flow, :state, :user_id, :previous
     attr_accessor :session
 
-    def initialize(user_id:, previous: false)
+    def initialize(user_id: nil, previous: false)
       @user_id = user_id
       @previous = previous
 
-      unless defined?($redis) && $redis.present?
-        raise(Stealth::Errors::RedisNotConfigured, "Please make sure REDIS_URL is configured before using sessions")
+      if user_id.present?
+        unless defined?($redis) && $redis.present?
+          raise(Stealth::Errors::RedisNotConfigured, "Please make sure REDIS_URL is configured before using sessions")
+        end
+
+        get
       end
 
-      get
       self
     end
 
