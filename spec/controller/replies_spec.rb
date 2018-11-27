@@ -213,4 +213,36 @@ describe "Stealth::Controller replies" do
     end
   end
 
+  describe "variants" do
+    let(:twilio_message) { SampleMessage.new(service: 'twilio') }
+    let(:twilio_controller) { MessagesController.new(service_message: twilio_message.message_with_text) }
+
+    let(:epsilon_message) { SampleMessage.new(service: 'epsilon') }
+    let(:epsilon_controller) { MessagesController.new(service_message: epsilon_message.message_with_text) }
+
+    it "should load the Facebook reply variant if current_service == facebook" do
+      allow(controller.current_session).to receive(:flow_string).and_return("message")
+      allow(controller.current_session).to receive(:state_string).and_return("say_hola")
+      file_contents, selected_preprocessor = controller.send(:action_replies)
+
+      expect(file_contents).to eq(File.read(File.expand_path("../replies/messages/say_hola.yml+facebook.erb", __dir__)))
+    end
+
+    it "should load the Twilio reply variant if current_service == twilio" do
+      allow(twilio_controller.current_session).to receive(:flow_string).and_return("message")
+      allow(twilio_controller.current_session).to receive(:state_string).and_return("say_hola")
+      file_contents, selected_preprocessor = twilio_controller.send(:action_replies)
+
+      expect(file_contents).to eq(File.read(File.expand_path("../replies/messages/say_hola.yml+twilio.erb", __dir__)))
+    end
+
+    it "should load the base reply variant if current_service does not have a custom variant" do
+      allow(epsilon_controller.current_session).to receive(:flow_string).and_return("message")
+      allow(epsilon_controller.current_session).to receive(:state_string).and_return("say_hola")
+      file_contents, selected_preprocessor = epsilon_controller.send(:action_replies)
+
+      expect(file_contents).to eq(File.read(File.expand_path("../replies/messages/say_hola.yml.erb", __dir__)))
+    end
+  end
+
 end
