@@ -61,7 +61,7 @@ module Stealth
       store_current_to_previous(flow: flow, state: state)
 
       @flow = nil
-      @session = canonical_session_slug(flow: flow, state: state)
+      @session = self.class.canonical_session_slug(flow: flow, state: state)
 
       Stealth::Logger.l(topic: "session", message: "User #{user_id}: setting session to #{flow}->#{state}")
       $redis.set(user_id, session)
@@ -85,7 +85,7 @@ module Stealth
 
       new_state = self.state + steps
       new_session = Stealth::Session.new(user_id: self.user_id)
-      new_session.session = canonical_session_slug(flow: self.flow_string, state: new_state)
+      new_session.session = self.class.canonical_session_slug(flow: self.flow_string, state: new_state)
 
       new_session
     end
@@ -100,22 +100,23 @@ module Stealth
       end
     end
 
-    private
     def self.is_a_session_string?(string)
       session_regex = /(.+)(#{SLUG_SEPARATOR})(.+)/
       !!string.match(session_regex)
     end
 
-      def canonical_session_slug(flow:, state:)
-        [flow, state].join(SLUG_SEPARATOR)
-      end
+    def self.canonical_session_slug(flow:, state:)
+      [flow, state].join(SLUG_SEPARATOR)
+    end
+
+    private
 
       def previous_session_key(user_id:)
         [user_id, 'previous'].join('-')
       end
 
       def store_current_to_previous(flow:, state:)
-        new_session = canonical_session_slug(flow: flow, state: state)
+        new_session = self.class.canonical_session_slug(flow: flow, state: state)
 
         # Prevent previous_session from becoming current_session
         if new_session == session
