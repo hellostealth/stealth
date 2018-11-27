@@ -117,13 +117,13 @@ The `fails_to` option allows you to specify a state that a user should be redire
 
 A freshly generated bot will contain sample `CatchAll` code for redirecting a user to a `fails_to` state.
 
-The `fails_to` option takes a state name (string or symbol) or a session key. See [Redis Backed Sessions](#sessions.redis_backed_sessions) for more info about session keys. By specifying a session key, you can fail to a completely different flow from the one where the error occurred.
+The `fails_to` option takes a state name (string or symbol) or a session key. See [Redis Backed Sessions](#sessions.redis_backed_sessions) (or in the FlowMap example above) for more info about session keys. By specifying a session key, you can fail to a completely different flow from the one where the error occurred.
 
 ## redirects_to
 
 The `redirects_to` option allows you specify a state that a user should be redirected to. This is useful if you have deprecated a state where existing users may still have open sessions pointing to the state. When a user returns to your bot, they will be redirected to the flow and state specified by this option.
 
-Like `fails_to` above, the `redirects_to` option takes a state name (string or symbol) or a session key. See [Redis Backed Sessions](#sessions.redis_backed_sessions) for more info about session keys. By specifying a session key, you can fail to a completely different flow from the one where the error occurred.
+Like `fails_to` above, the `redirects_to` option takes a state name (string or symbol) or a session key. See [Redis Backed Sessions](#sessions.redis_backed_sessions) (or in the FlowMap example above) for more info about session keys. By specifying a session key, you can fail to a completely different flow from the one where the error occurred.
 
 ## Say, Ask, Get
 
