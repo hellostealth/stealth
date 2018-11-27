@@ -4,10 +4,12 @@
 module Stealth
   module Flow
     class Specification
+      attr_reader :flow_name
       attr_accessor :states, :initial_state
 
-      def initialize(&specification)
+      def initialize(flow_name, &specification)
         @states = Hash.new
+        @flow_name = flow_name
         instance_eval(&specification)
       end
 
