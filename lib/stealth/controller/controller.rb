@@ -62,6 +62,10 @@ module Stealth
 
       # Check if the user needs to be redirected
       if current_session.flow.current_state.redirects_to.present?
+        Stealth::Logger.l(
+          topic: "redirect",
+          message: "From #{current_session.session} to #{current_session.flow.current_state.redirects_to.session}"
+        )
         step_to(session: current_session.flow.current_state.redirects_to)
         return
       end
