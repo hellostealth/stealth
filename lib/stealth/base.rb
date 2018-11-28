@@ -39,6 +39,7 @@ module Stealth
 
   def self.set_config_defaults(config)
     config.dynamic_delay_muliplier = 1.0
+    config.session_ttl = 0
   end
 
   # Loads the services.yml configuration unless one has already been loaded
