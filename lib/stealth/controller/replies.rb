@@ -97,6 +97,13 @@ module Stealth
           def find_reply_and_preprocessor
             selected_preprocessor = :none
             reply_file_path = File.join(*reply_dir, base_reply_filename)
+            service_reply_path = File.join(*reply_dir, reply_filenames.first)
+
+            # Check if the service_filename exists
+            # If so, we can skip checking for a preprocessor
+            if File.exist?(service_reply_path)
+              return service_reply_path, selected_preprocessor
+            end
 
             # Cycles through possible preprocessor and variant combinations
             # Early returns for performance

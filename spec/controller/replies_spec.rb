@@ -220,6 +220,9 @@ describe "Stealth::Controller replies" do
     let(:epsilon_message) { SampleMessage.new(service: 'epsilon') }
     let(:epsilon_controller) { MessagesController.new(service_message: epsilon_message.message_with_text) }
 
+    let(:gamma_message) { SampleMessage.new(service: 'twitter') }
+    let(:gamma_controller) { MessagesController.new(service_message: gamma_message.message_with_text) }
+
     it "should load the Facebook reply variant if current_service == facebook" do
       allow(controller.current_session).to receive(:flow_string).and_return("message")
       allow(controller.current_session).to receive(:state_string).and_return("say_hola")
@@ -242,6 +245,14 @@ describe "Stealth::Controller replies" do
       file_contents, selected_preprocessor = epsilon_controller.send(:action_replies)
 
       expect(file_contents).to eq(File.read(File.expand_path("../replies/messages/say_hola.yml.erb", __dir__)))
+    end
+
+    it "should load the correct variant when there is no preprocessor" do
+      allow(gamma_controller.current_session).to receive(:flow_string).and_return("message")
+      allow(gamma_controller.current_session).to receive(:state_string).and_return("say_yo")
+      file_contents, selected_preprocessor = gamma_controller.send(:action_replies)
+
+      expect(file_contents).to eq(File.read(File.expand_path("../replies/messages/say_yo.yml+twitter", __dir__)))
     end
   end
 
