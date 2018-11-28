@@ -60,6 +60,12 @@ module Stealth
       @action_name = action
       @action_name ||= current_session.state_string
 
+      # Check if the user needs to be redirected
+      if current_session.flow.current_state.redirects_to.present?
+        step_to(session: current_session.flow.current_state.redirects_to)
+        return
+      end
+
       run_callbacks :action do
         begin
           flow_controller.send(@action_name)

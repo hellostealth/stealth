@@ -75,6 +75,8 @@ class FlowMap
     state :say_hello
     state :ask_name
     state :get_name, fails_to: :ask_name
+    state :say_wow, redirects_to: :say_hello
+    state :say_bye, redirects_to: 'goodbye->say_goodbye'
   end
 
   flow :goodbye do
@@ -89,9 +91,9 @@ class FlowMap
 end
 ```
 
-Here we have defined three flows: `hello`, `goodbye`, and `catch_all`. For the most part, these are default flows that are generated automatically when you create a new bot but we have made a few changes to highlight some functionality.
+Here we have defined three flows: `hello`, `goodbye`, and `catch_all`. These are the default flows that are generated for you when you create a new bot. We have made a few changes above to highlight some functionality.
 
-In the `hello` flow, the second state asks a user for their name. In the third state of `hello`, you see another option: `fails_to`. This is used to tell Stealth to return the user to the specified state if the `get_name` state raises an error or fails in another way. There are more details in the `CatchAll` section below.
+Each flow consists of an arbitrary number of states. These states should each have a corresponding controller action by the same name. States also support two additional options: `fails_to` and `redirects_to` which we explain below.
 
 ## Default Flows
 
@@ -108,6 +110,20 @@ Stealth also comes packaged with a `catch_all` flow. Stealth CatchAlls are desig
 Error handling is one of the most important parts of building great bots. We recommend that bot designers and developers spend sufficient time building the CatchAll states.
 
 See the Catch All (#catchalls) section for more information on how Stealth handles `catch_all` flows.
+
+## fails_to
+
+The `fails_to` option allows you to specify a state that a user should be redirected to in case of an error. The `CatchAllsController` will still be responsible for determining how to handle the error, but by specifying a `fails_to` state here, the `CatchAllsController` is able to redirect accordingly.
+
+A freshly generated bot will contain sample `CatchAll` code for redirecting a user to a `fails_to` state.
+
+The `fails_to` option takes a state name (string or symbol) or a session key. See [Redis Backed Sessions](#sessions.redis_backed_sessions) (or in the FlowMap example above) for more info about session keys. By specifying a session key, you can fail to a completely different flow from the one where the error occurred.
+
+## redirects_to
+
+The `redirects_to` option allows you specify a state that a user should be redirected to. This is useful if you have deprecated a state where existing users may still have open sessions pointing to the state. When a user returns to your bot, they will be redirected to the flow and state specified by this option.
+
+Like `fails_to` above, the `redirects_to` option takes a state name (string or symbol) or a session key. See [Redis Backed Sessions](#sessions.redis_backed_sessions) (or in the FlowMap example above) for more info about session keys. By specifying a session key, you can fail to a completely different flow from the one where the error occurred.
 
 ## Say, Ask, Get
 

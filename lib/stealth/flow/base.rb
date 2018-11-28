@@ -12,7 +12,7 @@ module Stealth
 
     class_methods do
       def flow(flow_name, &specification)
-        flow_spec[flow_name.to_sym] = Specification.new(&specification)
+        flow_spec[flow_name.to_sym] = Specification.new(flow_name, &specification)
       end
     end
 

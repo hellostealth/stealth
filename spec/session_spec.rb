@@ -107,4 +107,21 @@ describe "Stealth::Session" do
       expect(new_session.state_string).to eq('error')
     end
   end
+
+  describe "self.is_a_session_string?" do
+    it "should return false for state strings" do
+      session_string = 'say_hello'
+      expect(Stealth::Session.is_a_session_string?(session_string)).to be false
+    end
+
+    it "should return false for an incomplete session string" do
+      session_string = 'hello->'
+      expect(Stealth::Session.is_a_session_string?(session_string)).to be false
+    end
+
+    it "should return true for a complete session string" do
+      session_string = 'hello->say_hello'
+      expect(Stealth::Session.is_a_session_string?(session_string)).to be true
+    end
+  end
 end
