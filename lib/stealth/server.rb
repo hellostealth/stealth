@@ -45,6 +45,8 @@ module Stealth
       )
 
       dispatcher.coordinate
+
+      status 202
     end
 
   end
