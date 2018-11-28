@@ -4,7 +4,7 @@ class CatchAllsController < BotController
     send_replies
 
     if fail_session.present?
-      step_to session: fails_to_session
+      step_to session: fail_session
     else
       step_to session: previous_session - 2.states
     end
