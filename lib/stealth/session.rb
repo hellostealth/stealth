@@ -50,10 +50,14 @@ module Stealth
     end
 
     def get
-      if previous?
-        @session ||= $redis.get(previous_session_key(user_id: user_id))
-      else
-        @session ||= $redis.get(user_id)
+      prev_key = previous_session_key(user_id: user_id)
+
+      @session ||= begin
+        if sessions_expire?
+          previous? ? getex(prev_key) : getex(user_id)
+        else
+          previous? ? $redis.get(prev_key) : $redis.get(user_id)
+        end
       end
     end
 
@@ -64,7 +68,12 @@ module Stealth
       @session = self.class.canonical_session_slug(flow: flow, state: state)
 
       Stealth::Logger.l(topic: "session", message: "User #{user_id}: setting session to #{flow}->#{state}")
-      $redis.set(user_id, session)
+
+      if sessions_expire?
+        $redis.setex(user_id, Stealth.config.session_ttl, session)
+      else
+        $redis.set(user_id, session)
+      end
     end
 
     def present?
@@ -124,6 +133,17 @@ module Stealth
         else
           Stealth::Logger.l(topic: "previous_session", message: "User #{user_id}: setting to #{session}")
           $redis.set(previous_session_key(user_id: user_id), session)
+        end
+      end
+
+      def sessions_expire?
+        Stealth.config.session_ttl > 0
+      end
+
+      def getex(key)
+        $redis.multi do
+          $redis.expire(key, Stealth.config.session_ttl)
+          $redis.get(key)
         end
       end
 
