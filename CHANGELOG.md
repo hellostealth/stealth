@@ -14,6 +14,7 @@
 * [Flows] Added support for `redirects_to` during state declaration. If specified, will automatically step a user to the specified state or session.
 * [Flows] `redirects_to` and `fails_to` now support a session string as an argument (`my_flow->some_state`). This allows you to fail and redirect to other flows. A state name specified as a string or symbol is still allowed.
 * [Errors] Backtraces are now more readable in logs
+* [Sessions] Sessions can now be configured to expire after a specified period of inactivity.
 
 ## Bug Fixes
 
