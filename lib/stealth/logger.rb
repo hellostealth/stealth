@@ -39,6 +39,8 @@ module Stealth
         colorize(topic_string, color: :yellow)
       when :facebook, :twilio
         colorize(topic_string, color: :blue)
+      when :smooch
+        colorize(topic_string, color: :magenta)
       when :catch_all
         colorize(topic_string, color: :red)
       else
