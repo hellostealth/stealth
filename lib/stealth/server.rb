@@ -41,13 +41,21 @@ module Stealth
       dispatcher = Stealth::Dispatcher.new(
         service: params[:service],
         params: params,
-        headers: request.env
+        headers: get_helpers_from_request(request)
       )
 
       dispatcher.coordinate
 
       status 202
     end
+
+    private
+
+      def get_helpers_from_request(request)
+        request.env.reject do |header, value|
+          header.match(/rack\.|puma\.|sinatra\./)
+        end
+      end
 
   end
 end
