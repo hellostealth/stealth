@@ -34,7 +34,11 @@ module Stealth
   end
 
   def self.config
-    @configuration
+    Thread.current[:configuration] ||= load_services_config
+  end
+
+  def self.configuration=(config)
+    Thread.current[:configuration] = config
   end
 
   def self.set_config_defaults(config)
@@ -49,7 +53,7 @@ module Stealth
       File.read(File.join(Stealth.root, 'config', 'services.yml'))
     )
 
-    @configuration ||= begin
+    Thread.current[:configuration] ||= begin
       @semaphore.synchronize do
         services_config = YAML.load(ERB.new(services_yaml).result)
 
@@ -67,11 +71,8 @@ module Stealth
 
   # Same as `load_services_config` but forces the loading even if one has
   # already been loaded
-    @configuration = nil
   def self.load_services_config!(services_yaml=nil)
-    services_yaml ||= Stealth.load_services_config(
-      File.read(File.join(Stealth.root, 'config', 'services.yml'))
-    )
+    Thread.current[:configuration] = nil
     load_services_config(services_yaml)
   end
 
