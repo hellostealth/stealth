@@ -33,7 +33,7 @@ Currently, there are gems for:
 
 ## Docs
 
-You can find our full docs [here](https://hellostealth.org/docs).
+You can find our full docs [here](https://hellostealth.org/docs). If something is not clear in the docs, please file an issue! We consider all shortcomings in the docs as bugs.
 
 ## Thanks
 
