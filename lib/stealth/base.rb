@@ -43,8 +43,11 @@ module Stealth
   end
 
   # Loads the services.yml configuration unless one has already been loaded
-  def self.load_services_config(services_yaml)
+  def self.load_services_config(services_yaml=nil)
     @semaphore ||= Mutex.new
+    services_yaml ||= Stealth.load_services_config(
+      File.read(File.join(Stealth.root, 'config', 'services.yml'))
+    )
 
     @configuration ||= begin
       @semaphore.synchronize do
@@ -64,8 +67,11 @@ module Stealth
 
   # Same as `load_services_config` but forces the loading even if one has
   # already been loaded
-  def self.load_services_config!(services_yaml)
     @configuration = nil
+  def self.load_services_config!(services_yaml=nil)
+    services_yaml ||= Stealth.load_services_config(
+      File.read(File.join(Stealth.root, 'config', 'services.yml'))
+    )
     load_services_config(services_yaml)
   end
 
