@@ -75,5 +75,6 @@ Make sure to reference the respective messaging integration documentation for mo
 
 * [Facebook Messenger](https://github.com/hellostealth/stealth-facebook)
 * [SMS (Twillio)](https://github.com/hellostealth/stealth-twilio)
+* [Smooch (many platforms, including a web widget)](https://github.com/hellostealth/stealth-smooch)
 
 While we plan to add more integrations in the future, please feel free to add your own and let us know so we can keep this list updated. 😎
