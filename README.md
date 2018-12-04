@@ -1,9 +1,18 @@
 # <a href='https://hellostealth.org'><img src='logo.svg' height='120' alt='Stealth Logo' aria-label='hellostealth.org' /></a>
 
-Stealth is a Ruby based framework for creating conversational (voice & chat) bots. It's design is inspired by Ruby on Rails's philosophy of convention over configuration. It has an MVC architecture with the slight caveat that `views` are aptly named `replies`.
+Stealth is a Ruby based framework for creating voice & text chatbots. It's design is inspired by Ruby on Rails's philosophy of convention over configuration. It has an MVC architecture with the slight caveat that `views` are aptly named `replies`.
 
 [![Gem Version](https://badge.fury.io/rb/stealth.svg)](https://badge.fury.io/rb/stealth)
 [![CircleCI](https://circleci.com/gh/hellostealth/stealth/tree/master.svg?style=shield)](https://circleci.com/gh/hellostealth/stealth/tree/master)
+
+## Features
+
+* Deploy anywhere, it's just a Rack app
+* Variants allow you to use a single codebase on multiple messaging platforms
+* Structured, universal reply format
+* Sessions utilize a state-machine concept and are Redis backed
+* Highly scalable. Incoming webhooks are processed via a Sidekiq queue
+* Built-in best practices: catch-alls (error handling), hello flows, goodbye flows
 
 ## Getting Started
 
