@@ -1,3 +1,9 @@
+# Changelog for Stealth v1.1.1
+
+## Bug Fixes
+
+* [Server] Does not auto-return an HTTP 202. Leaves it up to the drivers again.
+
 # Changelog for Stealth v1.1.0
 
 ## Breaking Changes
