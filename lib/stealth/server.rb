@@ -33,7 +33,7 @@ module Stealth
       Stealth::Logger.l(topic: "incoming", message: "Received webhook from #{params[:service]}")
 
       # JSON params need to be parsed and added to the params
-      if request.env['CONTENT_TYPE'] == 'application/json'
+      if request.env['CONTENT_TYPE'].match(/application\/json/i)
         json_params = MultiJson.load(request.body.read)
         params.merge!(json_params)
       end
