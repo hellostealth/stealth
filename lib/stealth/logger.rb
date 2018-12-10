@@ -5,14 +5,15 @@ module Stealth
   class Logger
 
     COLORS = ::Hash[
-      black:   30,
-      red:     31,
-      green:   32,
-      yellow:  33,
-      blue:    34,
-      magenta: 35,
-      cyan:    36,
-      gray:    37,
+      black:        30,
+      red:          31,
+      green:        32,
+      yellow:       33,
+      blue:         34,
+      magenta:      35,
+      cyan:         36,
+      gray:         37,
+      light_cyan:   96
     ].freeze
 
     def self.color_code(code)
@@ -41,6 +42,8 @@ module Stealth
         colorize(topic_string, color: :blue)
       when :smooch
         colorize(topic_string, color: :magenta)
+      when :alexa
+        colorize(topic_string, color: :light_cyan)
       when :catch_all
         colorize(topic_string, color: :red)
       else
