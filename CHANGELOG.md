@@ -4,6 +4,10 @@
 
 * [Server] Handle cases where CONTENT_TYPE is missing from incoming requests.
 
+## Enhancements
+
+* [CI] Added Ruby 2.6 to build.
+
 # Changelog for Stealth v1.1.1
 
 ## Bug Fixes
