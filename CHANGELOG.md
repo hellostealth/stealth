@@ -1,3 +1,9 @@
+# Changelog for Stealth v1.1.2
+
+## Bug Fixes
+
+* [Server] Handle cases where CONTENT_TYPE is missing from incoming requests.
+
 # Changelog for Stealth v1.1.1
 
 ## Bug Fixes
