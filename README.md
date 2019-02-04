@@ -34,6 +34,9 @@ Currently, there are gems for:
 * [Twilio SMS](https://github.com/hellostealth/stealth-twilio)
 * [Smooch](https://github.com/hellostealth/stealth-smooch)
 
+### Voice
+* [Alexa Skill](https://github.com/hellostealth/stealth-alexa) (Early alpha)
+
 ### Natural Language Processing
 * [AWS Comprehend](https://github.com/hellostealth/stealth-aws-comprehend)
 
