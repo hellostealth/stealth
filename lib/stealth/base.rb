@@ -81,6 +81,8 @@ module Stealth
     require_directory("config/initializers")
 
     # Require explicitly to ensure it loads first
+    require_directory File.join(Stealth.root, 'bot', 'controllers', 'concerns')
+    require_directory File.join(Stealth.root, 'bot', 'models', 'concerns')
     require File.join(Stealth.root, 'bot', 'controllers', 'bot_controller')
     require File.join(Stealth.root, 'bot', 'models', 'bot_record')
 
