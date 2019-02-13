@@ -24,7 +24,7 @@ module Stealth
 
           service_reply.replies.each_with_index do |reply, i|
             handler = reply_handler.new(
-              recipient_id: current_session_id,
+              recipient_id: current_message.sender_id,
               reply: reply
             )
 
