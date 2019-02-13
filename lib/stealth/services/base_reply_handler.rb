@@ -8,8 +8,8 @@ module Stealth
       attr_reader :recipient_id, :reply
 
       def initialize(recipient_id:, reply:)
-        @client = client
-        @options = options
+        @recipient_id = recipient_id
+        @reply = reply
       end
 
       def text
