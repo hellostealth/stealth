@@ -1,3 +1,21 @@
+# Changelog for Stealth v1.1.5
+
+## Enhancements
+
+* [Replies] Replies will now always send the `sender_id` that came in to the service drivers. This ensures `current_session_id` hasn't been modified which would cause replies to fail to send.
+
+# Changelog for Stealth v1.1.4
+
+## Bug Fixes
+
+* [General] Fixed controller and model concern load order. Previously files in the concerns folder were not loading before their respective controllers or models causing LoadErrors.
+
+# Changelog for Stealth v1.1.3
+
+## Bug Fixes
+
+* [Server] Additional CONTENT_TYPE fixes that would cause the server to 500 when it was missing.
+
 # Changelog for Stealth v1.1.2
 
 ## Bug Fixes
