@@ -73,7 +73,9 @@ module Stealth
       run_callbacks :action do
         begin
           flow_controller.send(@action_name)
-          run_catch_all(reason: 'Did not send replies, update session, or step') unless flow_controller.progressed?
+          unless flow_controller.progressed?
+            run_catch_all(reason: 'Did not send replies, update session, or step')
+          end
         rescue StandardError => e
           Stealth::Logger.l(topic: "catch_all", message: e.backtrace.join("\n"))
           run_catch_all(reason: e.message)
@@ -111,6 +113,10 @@ module Stealth
     def update_session_to(session: nil, flow: nil, state: nil)
       flow, state = get_flow_and_state(session: session, flow: flow, state: state)
       update_session(flow: flow, state: state)
+    end
+
+    def do_nothing
+      @progressed = :do_nothing
     end
 
     private

@@ -31,6 +31,10 @@ describe "Stealth::Controller" do
     def other_action3
 
     end
+
+    def other_action4
+      do_nothing
+    end
   end
 
   class FlowMap
@@ -46,6 +50,7 @@ describe "Stealth::Controller" do
       state :other_action
       state :other_action2
       state :other_action3
+      state :other_action4
       state :deprecated_action, redirects_to: :other_action
       state :deprecated_action2, redirects_to: 'mr_robot->my_action'
     end
@@ -479,9 +484,19 @@ describe "Stealth::Controller" do
     end
 
     it "should be falsey otherwise" do
+      allow(controller).to receive(:flow_controller).and_return(controller)
       expect(controller.progressed?).to be_falsey
       controller.action(action: :other_action)
       expect(controller.progressed?).to be_falsey
+    end
+  end
+
+  describe "do_nothing" do
+    it "should set progressed to truthy when called" do
+      allow(controller).to receive(:flow_controller).and_return(controller)
+      expect(controller.progressed?).to be_falsey
+      controller.action(action: :other_action4)
+      expect(controller.progressed?).to be_truthy
     end
   end
 
