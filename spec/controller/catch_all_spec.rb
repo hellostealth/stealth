@@ -15,7 +15,7 @@ describe "Stealth::Controller::CatchAll" do
     end
 
     def my_action3
-
+      do_nothing
     end
   end
 
@@ -97,6 +97,13 @@ describe "Stealth::Controller::CatchAll" do
       controller.step_to flow: :vader, state: :my_action
       expect(controller.current_session.flow_string).to eq("vader")
       expect(controller.current_session.state_string).to eq("my_action")
+    end
+
+    it "should NOT run the catch_all if do_nothing is called" do
+      controller.current_session.session = Stealth::Session.canonical_session_slug(flow: 'vader', state: 'my_action3')
+      controller.action(action: :my_action3)
+      expect(controller.current_session.flow_string).to eq("vader")
+      expect(controller.current_session.state_string).to eq("my_action3")
     end
   end
 end

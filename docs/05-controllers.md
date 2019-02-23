@@ -136,6 +136,18 @@ step_to_at DateTime.strptime("01/23/23 20:23", "%m/%d/%y %H:%M"), flow: 'hello',
 
 This will set the user's session to the `hello` flow and `say_hello` state on `Jan 23, 2023 @ 20:23`. It will then immediately call that responsible controller action.
 
+## `do_nothing`
+
+This method is available as a convenience for when you do not wish to send a reply nor send the user to another state. It's useful for states that trap the user (like a reminder or the last level of your `catch_all` flow).
+
+For example:
+
+```ruby
+def level3
+  do_nothing
+end
+```
+
 ## Available Data
 
 Within each controller action, you have access to a few objects containing information about the session and the message the being processed.
