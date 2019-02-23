@@ -42,6 +42,14 @@ describe "Stealth::Controller replies" do
     def say_uh_oh
       send_replies
     end
+
+    def say_randomize_text
+      send_replies
+    end
+
+    def say_randomize_speech
+      send_replies
+    end
   end
 
   describe "missing reply" do
@@ -253,6 +261,49 @@ describe "Stealth::Controller replies" do
       file_contents, selected_preprocessor = gamma_controller.send(:action_replies)
 
       expect(file_contents).to eq(File.read(File.expand_path("../replies/messages/say_yo.yml+twitter", __dir__)))
+    end
+  end
+
+  describe "randomized replies" do
+    let(:stubbed_handler) { double("handler") }
+    let(:stubbed_client) { double("client") }
+
+    before(:each) do
+      allow(Stealth::Services::Facebook::Client).to receive(:new).and_return(stubbed_client)
+    end
+
+    describe "text replies" do
+      before(:each) do
+        allow(controller.current_session).to receive(:flow_string).and_return("message")
+        allow(controller.current_session).to receive(:state_string).and_return("say_randomize_text")
+      end
+
+      it "should receive a single text string" do
+        allow(Stealth::Services::Facebook::ReplyHandler).to receive(:new) do |*args|
+          expect(args.first[:reply]['text']).to be_a(String)
+          stubbed_handler
+        end
+        allow(stubbed_handler).to receive(:text).exactly(1).times
+        expect(stubbed_client).to receive(:transmit).exactly(1).times
+        controller.say_randomize_text
+      end
+    end
+
+    describe "text replies" do
+      before(:each) do
+        allow(controller.current_session).to receive(:flow_string).and_return("message")
+        allow(controller.current_session).to receive(:state_string).and_return("say_randomize_speech")
+      end
+
+      it "should receive a single text string" do
+        allow(Stealth::Services::Facebook::ReplyHandler).to receive(:new) do |*args|
+          expect(args.first[:reply]['text']).to be_a(String)
+          stubbed_handler
+        end
+        allow(stubbed_handler).to receive(:speech).exactly(1).times
+        expect(stubbed_client).to receive(:transmit).exactly(1).times
+        controller.say_randomize_speech
+      end
     end
   end
 

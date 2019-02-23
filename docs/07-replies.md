@@ -99,6 +99,21 @@ Stealth.config.dynamic_delay_muliplier = 2.5
 
 You can set this option by setting the above value in an intializer file, i.e., `config/dynamic_delay_config.rb`.
 
+### Randomized Text
+
+If you wish to have your bot cycle through an Array of available text replies, you can specify the text value as an Array. This works for `text` and `speech` replies.
+
+Here's what a sample `text` reply utilizing randomized replies would look like:
+
+```yml
+- reply_type: text
+  text:
+    - Welcome!
+    - Bienvenido!
+    - Bem vindo!
+    - Benvenuto!
+```
+
 ## Naming Conventions
 
 Replies are named after a flow's state (which is also the controller's action). So for a given controller:
