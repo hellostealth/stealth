@@ -15,5 +15,9 @@ module Stealth
       @reply[key]
     end
 
+    def []=(key, value)
+      @reply[key] = value
+    end
+
   end
 end
