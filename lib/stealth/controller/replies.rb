@@ -23,6 +23,12 @@ module Stealth
           )
 
           service_reply.replies.each_with_index do |reply, i|
+            # Support randomized replies for text and speech replies.
+            # We select one before handing the reply off to the driver.
+            if reply['text'].is_a?(Array)
+              reply['text'] = reply['text'].sample
+            end
+
             handler = reply_handler.new(
               recipient_id: current_message.sender_id,
               reply: reply

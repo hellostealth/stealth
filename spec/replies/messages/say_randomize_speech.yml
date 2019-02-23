@@ -1,0 +1,10 @@
+- reply_type: speech
+  text:
+    - Build amazing chatbots with tools you know and love.
+    - Stealth is an open source Ruby framework for voice and text chatbots.
+    - From our MVC architecture to our convention over configuration philosophy, you'll feel right at home with Stealth.
+    - Every service integration in Stealth is a Ruby gem.
+    - From web servers to continuous integration testing, Stealth is built to take advantage of all the great work done by the web development community.
+    - Stealth is a Rack application.
+    - Stealth already powers bots for large, well-known brands.
+    - Stealth is MIT licensed to ensure you own your bot.

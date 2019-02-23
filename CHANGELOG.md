@@ -3,6 +3,7 @@
 ## Enhancements
 
 * [Controller] Added a `do_nothing` method that prevents `catch_all` from firing when a controller action doesn't send replies nor progresses the session.
+* [Replies] If `text` and `speech` replies are specified as an Array, Stealth will now randomize the selected text.
 
 # Changelog for Stealth v1.1.5
 
