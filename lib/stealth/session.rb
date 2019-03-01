@@ -144,7 +144,7 @@ module Stealth
         $redis.multi do
           $redis.expire(key, Stealth.config.session_ttl)
           $redis.get(key)
-        end
+        end.last
       end
 
   end
