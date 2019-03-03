@@ -4,6 +4,12 @@
 
 * [Controller] Added a `do_nothing` method that prevents `catch_all` from firing when a controller action doesn't send replies nor progresses the session.
 * [Replies] If `text` and `speech` replies are specified as an Array, Stealth will now randomize the selected text.
+* [Generators] Added sample payload handling to generated bots since it can be tricky.
+* [Generators] Added `inflections.rb` to generators since we rely on `ActiveSupport::Inflector` to derive flow and controller names.
+
+## Bug Fixes
+
+* [Sessions] Sessions retrieved when session expiration was enabled would return as an Array rather than a slug.
 
 # Changelog for Stealth v1.1.5
 
