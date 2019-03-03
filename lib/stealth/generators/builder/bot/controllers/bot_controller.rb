@@ -5,6 +5,7 @@ class BotController < Stealth::Controller
   def route
     if current_message.payload.present?
       handle_payloads
+      # Clear out the payload to prevent duplicate handling
       current_message.payload = nil
       return
     end
