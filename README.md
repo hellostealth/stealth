@@ -3,7 +3,7 @@
 Stealth is a Ruby based framework for creating voice & text chatbots. It's design is inspired by Ruby on Rails's philosophy of convention over configuration. It has an MVC architecture with the slight caveat that `views` are aptly named `replies`.
 
 [![Gem Version](https://badge.fury.io/rb/stealth.svg)](https://badge.fury.io/rb/stealth)
-[![CircleCI](https://circleci.com/gh/hellostealth/stealth/tree/master.svg?style=shield)](https://circleci.com/gh/hellostealth/stealth/tree/master)
+[![CircleCI](https://circleci.com/gh/whoisblackops/stealth/tree/master.svg?style=shield)](https://circleci.com/gh/whoisblackops/stealth/tree/master)
 
 ## Features
 
