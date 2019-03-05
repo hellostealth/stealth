@@ -74,6 +74,7 @@ module Stealth
       else
         $redis.set(user_id, session)
       end
+      persist_session(key: user_id, value: session)
     end
 
     def present?
@@ -131,8 +132,15 @@ module Stealth
         if new_session == session
           Stealth::Logger.l(topic: "previous_session", message: "User #{user_id}: skipping setting to #{session} because it is the same as current_session")
         else
-          Stealth::Logger.l(topic: "previous_session", message: "User #{user_id}: setting to #{session}")
-          $redis.set(previous_session_key(user_id: user_id), session)
+          Stealth::Logger.l(
+            topic: "previous_session",
+            message: "User #{user_id}: setting to #{new_session}"
+          )
+
+          persist_session(
+            key: previous_session_key(user_id: user_id),
+            value: session
+          )
         end
       end
 
@@ -145,6 +153,14 @@ module Stealth
           $redis.expire(key, Stealth.config.session_ttl)
           $redis.get(key)
         end.last
+      end
+
+      def persist_session(key:, value:)
+        if sessions_expire?
+          $redis.setex(key, Stealth.config.session_ttl, value)
+        else
+          $redis.set(key, value)
+        end
       end
 
   end
