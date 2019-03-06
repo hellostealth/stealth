@@ -8,6 +8,7 @@
 * [Generators] Added `inflections.rb` to generators since we rely on `ActiveSupport::Inflector` to derive flow and controller names.
 * [Sessions] previous_session log entries now appear below current_session entries.
 * [Logging] Add option, `Stealth.config.transcript_logging`, to log incoming and outgoing messages.
+* [Server] The only HTTP header passed along to `handle_message_job` is now `HTTP_HOST`.
 
 ## Bug Fixes
 
