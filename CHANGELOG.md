@@ -6,10 +6,12 @@
 * [Replies] If `text` and `speech` replies are specified as an Array, Stealth will now randomize the selected text.
 * [Generators] Added sample payload handling to generated bots since it can be tricky.
 * [Generators] Added `inflections.rb` to generators since we rely on `ActiveSupport::Inflector` to derive flow and controller names.
+* [Sessions] previous_session log entries now appear below current_session entries.
 
 ## Bug Fixes
 
 * [Sessions] Sessions retrieved when session expiration was enabled would return as an Array rather than a slug.
+* [Sessions] previous_session now respects session_ttl values.
 
 # Changelog for Stealth v1.1.5
 
