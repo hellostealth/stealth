@@ -15,7 +15,10 @@ module Stealth
 
       if user_id.present?
         unless defined?($redis) && $redis.present?
-          raise(Stealth::Errors::RedisNotConfigured, "Please make sure REDIS_URL is configured before using sessions")
+          raise(
+            Stealth::Errors::RedisNotConfigured,
+            "Please make sure REDIS_URL is configured before using sessions"
+          )
         end
 
         get
@@ -61,19 +64,22 @@ module Stealth
       end
     end
 
-    def set(flow:, state:)
-      store_current_to_previous(flow: flow, state: state)
+    def set(new_flow:, new_state:)
+      @flow = nil # override @flow's memoization
+      existing_session = session # tmp backup
+      @session = self.class.canonical_session_slug(
+        flow: new_flow,
+        state: new_state
+      )
 
-      @flow = nil
-      @session = self.class.canonical_session_slug(flow: flow, state: state)
+      Stealth::Logger.l(
+        topic: "session",
+        message: "User #{user_id}: setting session to #{new_flow}->#{new_state}"
+      )
 
-      Stealth::Logger.l(topic: "session", message: "User #{user_id}: setting session to #{flow}->#{state}")
+      store_current_to_previous(existing_session: existing_session)
 
-      if sessions_expire?
-        $redis.setex(user_id, Stealth.config.session_ttl, session)
-      else
-        $redis.set(user_id, session)
-      end
+      persist_session(key: user_id, value: session)
     end
 
     def present?
@@ -94,7 +100,10 @@ module Stealth
 
       new_state = self.state + steps
       new_session = Stealth::Session.new(user_id: self.user_id)
-      new_session.session = self.class.canonical_session_slug(flow: self.flow_string, state: new_state)
+      new_session.session = self.class.canonical_session_slug(
+        flow: self.flow_string,
+        state: new_state
+      )
 
       new_session
     end
@@ -124,15 +133,24 @@ module Stealth
         [user_id, 'previous'].join('-')
       end
 
-      def store_current_to_previous(flow:, state:)
-        new_session = self.class.canonical_session_slug(flow: flow, state: state)
-
+      def store_current_to_previous(existing_session:)
         # Prevent previous_session from becoming current_session
-        if new_session == session
-          Stealth::Logger.l(topic: "previous_session", message: "User #{user_id}: skipping setting to #{session} because it is the same as current_session")
+        if session == existing_session
+          Stealth::Logger.l(
+            topic: "previous_session",
+            message: "User #{user_id}: skipping setting to #{session}"\
+                     'because it is the same as current_session'
+          )
         else
-          Stealth::Logger.l(topic: "previous_session", message: "User #{user_id}: setting to #{session}")
-          $redis.set(previous_session_key(user_id: user_id), session)
+          Stealth::Logger.l(
+            topic: "previous_session",
+            message: "User #{user_id}: setting to #{existing_session}"
+          )
+
+          persist_session(
+            key: previous_session_key(user_id: user_id),
+            value: existing_session
+          )
         end
       end
 
@@ -145,6 +163,14 @@ module Stealth
           $redis.expire(key, Stealth.config.session_ttl)
           $redis.get(key)
         end.last
+      end
+
+      def persist_session(key:, value:)
+        if sessions_expire?
+          $redis.setex(key, Stealth.config.session_ttl, value)
+        else
+          $redis.set(key, value)
+        end
       end
 
   end

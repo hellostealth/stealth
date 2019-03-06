@@ -61,13 +61,13 @@ describe "Stealth::Controller" do
 
   describe "convenience methods" do
     it "should make the session ID accessible via current_session_id" do
-      controller.current_session.set(flow: 'mr_tron', state: 'other_action')
+      controller.current_session.set(new_flow: 'mr_tron', new_state: 'other_action')
 
       expect(controller.current_session_id).to eq(facebook_message.sender_id)
     end
 
     it "should make the session ID accessible via current_user_id" do
-      controller.current_session.set(flow: 'mr_tron', state: 'other_action')
+      controller.current_session.set(new_flow: 'mr_tron', new_state: 'other_action')
 
       expect(controller.current_user_id).to eq(facebook_message.sender_id)
     end
@@ -161,7 +161,7 @@ describe "Stealth::Controller" do
     it "should call a controller's corresponding action when only a state is provided" do
       expect_any_instance_of(MrTronsController).to receive(:other_action3)
 
-      controller.current_session.set(flow: 'mr_tron', state: 'other_action')
+      controller.current_session.set(new_flow: 'mr_tron', new_state: 'other_action')
 
       controller.step_to state: "other_action3"
     end
@@ -204,7 +204,7 @@ describe "Stealth::Controller" do
     it "should update session to controller's corresponding action when only a state is provided" do
       expect_any_instance_of(MrTronsController).to_not receive(:other_action3)
 
-      controller.current_session.set(flow: 'mr_tron', state: 'other_action')
+      controller.current_session.set(new_flow: 'mr_tron', new_state: 'other_action')
 
       controller.update_session_to state: "other_action3"
       expect(controller.current_session.flow_string).to eq('mr_tron')
@@ -223,7 +223,7 @@ describe "Stealth::Controller" do
       expect_any_instance_of(MrRobotsController).to_not receive(:my_action3)
 
       session = Stealth::Session.new(user_id: controller.current_session_id)
-      session.set(flow: 'mr_robot', state: 'my_action3')
+      session.set(new_flow: 'mr_robot', new_state: 'my_action3')
 
       controller.update_session_to session: session
       expect(controller.current_session.flow_string).to eq('mr_robot')
@@ -271,7 +271,7 @@ describe "Stealth::Controller" do
     it "should schedule a transition to controller's corresponding action when only a state is provided" do
       expect_any_instance_of(MrRobotsController).to_not receive(:my_action)
 
-      controller.current_session.set(flow: 'mr_tron', state: 'other_action')
+      controller.current_session.set(new_flow: 'mr_tron', new_state: 'other_action')
 
       expect(Stealth::ScheduledReplyJob).to receive(:perform_in).with(
         100.seconds,
@@ -306,7 +306,7 @@ describe "Stealth::Controller" do
       expect_any_instance_of(MrRobotsController).to_not receive(:my_action)
 
       session = Stealth::Session.new(user_id: controller.current_session_id)
-      session.set(flow: 'mr_robot', state: 'my_action3')
+      session.set(new_flow: 'mr_robot', new_state: 'my_action3')
 
       expect(Stealth::ScheduledReplyJob).to receive(:perform_in).with(
         100.seconds,
@@ -372,7 +372,7 @@ describe "Stealth::Controller" do
     it "should schedule a transition to controller's corresponding action when only a state is provided" do
       expect_any_instance_of(MrRobotsController).to_not receive(:my_action)
 
-      controller.current_session.set(flow: 'mr_tron', state: 'other_action')
+      controller.current_session.set(new_flow: 'mr_tron', new_state: 'other_action')
 
       expect(Stealth::ScheduledReplyJob).to receive(:perform_at).with(
         future_timestamp,
@@ -407,7 +407,7 @@ describe "Stealth::Controller" do
       expect_any_instance_of(MrRobotsController).to_not receive(:my_action)
 
       session = Stealth::Session.new(user_id: controller.current_session_id)
-      session.set(flow: 'mr_robot', state: 'my_action3')
+      session.set(new_flow: 'mr_robot', new_state: 'my_action3')
 
       expect(Stealth::ScheduledReplyJob).to receive(:perform_at).with(
         future_timestamp,
