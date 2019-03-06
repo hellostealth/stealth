@@ -38,6 +38,10 @@ module Stealth
             client = service_client.new(reply: translated_reply)
             client.transmit
 
+            if Stealth.config.transcript_logging
+              log_reply(reply)
+            end
+
             # If this was a 'delay' type of reply, we insert the delay
             if reply.reply_type == 'delay'
               begin
@@ -137,6 +141,22 @@ module Stealth
             end
 
             return file_contents, selected_preprocessor
+          end
+
+          def log_reply(reply)
+            message = case reply.reply_type
+                      when 'text', 'speech'
+                        reply['text']
+                      when 'delay'
+                        '<typing indicator>'
+                      else
+                        "<#{reply.reply_type}>"
+                      end
+
+            Stealth::Logger.l(
+              topic: current_service,
+              message: "User #{current_session_id} -> Sending: #{message}"
+            )
           end
 
       end # instance methods
