@@ -50,8 +50,8 @@ module Stealth
     private
 
       def get_helpers_from_request(request)
-        request.env.reject do |header, value|
-          header.match(/rack\.|puma\.|sinatra\./)
+        request.env.select do |header, value|
+          %w[HTTP_HOST].include?(header)
         end
       end
 
