@@ -1,4 +1,4 @@
-# Changelog for Stealth v1.2.0
+# Changelog for Stealth v2.0.0
 
 ## Enhancements
 
@@ -7,6 +7,7 @@
 * [Generators] Added sample payload handling to generated bots since it can be tricky.
 * [Generators] Added `inflections.rb` to generators since we rely on `ActiveSupport::Inflector` to derive flow and controller names.
 * [Sessions] previous_session log entries now appear below current_session entries.
+* [Logging] Add option, `Stealth.config.transcript_logging`, to log incoming and outgoing messages.
 
 ## Bug Fixes
 

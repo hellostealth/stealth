@@ -30,6 +30,11 @@ module Stealth
 
     def process
       service_message = message_handler.process
+
+      if Stealth.config.transcript_logging
+        log_incoming_message(service_message)
+      end
+
       bot_controller = BotController.new(service_message: service_message)
       bot_controller.route
     end
@@ -42,6 +47,23 @@ module Stealth
         rescue NameError
           raise(Stealth::Errors::ServiceNotRecognized, "The service '#{service}' was not recognized")
         end
+      end
+
+      def log_incoming_message(service_message)
+        message = if service_message.location.present?
+                    "Received: <user shared location>"
+                  elsif service_message.attachments.present?
+                    "Received: <user sent attachment>"
+                  elsif service_message.payload.present?
+                    "Received Payload: #{service_message.payload}"
+                  else
+                    "Received Message: #{service_message.message}"
+                  end
+
+        Stealth::Logger.l(
+          topic: "user",
+          message: "User #{service_message.sender_id} -> #{message}"
+        )
       end
 
   end

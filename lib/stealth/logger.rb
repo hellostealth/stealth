@@ -13,7 +13,8 @@ module Stealth
       magenta:      35,
       cyan:         36,
       gray:         37,
-      light_cyan:   96
+      light_cyan:   96,
+      white:        97
     ].freeze
 
     def self.color_code(code)
@@ -33,22 +34,26 @@ module Stealth
     def self.print_topic(topic)
       topic_string = "[#{topic}]"
 
-      case topic.to_sym
-      when :session
-        colorize(topic_string, color: :green)
-      when :previous_session
-        colorize(topic_string, color: :yellow)
-      when :facebook, :twilio
-        colorize(topic_string, color: :blue)
-      when :smooch
-        colorize(topic_string, color: :magenta)
-      when :alexa
-        colorize(topic_string, color: :light_cyan)
-      when :catch_all
-        colorize(topic_string, color: :red)
-      else
-        colorize(topic_string, color: :gray)
-      end
+      color = case topic.to_sym
+              when :session
+                :green
+              when :previous_session
+                :yellow
+              when :facebook, :twilio
+                :blue
+              when :smooch
+                :magenta
+              when :alexa
+                :light_cyan
+              when :catch_all
+                :red
+              when :user
+                :white
+              else
+                :gray
+              end
+
+      colorize(topic_string, color: color)
     end
 
     class << self
