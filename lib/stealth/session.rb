@@ -74,14 +74,10 @@ module Stealth
 
       Stealth::Logger.l(
         topic: "session",
-        message: "User #{user_id}: setting session to #{flow}->#{state}"
+        message: "User #{user_id}: setting session to #{new_flow}->#{new_state}"
       )
 
-      store_current_to_previous(
-        new_flow: new_flow,
-        new_state: new_state,
-        existing_session: existing_session
-      )
+      store_current_to_previous(existing_session: existing_session)
 
       persist_session(key: user_id, value: session)
     end
@@ -137,28 +133,23 @@ module Stealth
         [user_id, 'previous'].join('-')
       end
 
-      def store_current_to_previous(new_flow:, new_state:, existing_session:)
-        new_session = self.class.canonical_session_slug(
-          flow: new_flow,
-          state: new_state
-        )
-
+      def store_current_to_previous(existing_session:)
         # Prevent previous_session from becoming current_session
-        if new_session == existing_session
+        if session == existing_session
           Stealth::Logger.l(
             topic: "previous_session",
-            message: "User #{user_id}: skipping setting to #{new_session}"\
+            message: "User #{user_id}: skipping setting to #{session}"\
                      'because it is the same as current_session'
           )
         else
           Stealth::Logger.l(
             topic: "previous_session",
-            message: "User #{user_id}: setting to #{new_session}"
+            message: "User #{user_id}: setting to #{existing_session}"
           )
 
           persist_session(
             key: previous_session_key(user_id: user_id),
-            value: session
+            value: existing_session
           )
         end
       end
