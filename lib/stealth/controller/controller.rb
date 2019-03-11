@@ -104,19 +104,29 @@ module Stealth
     end
 
     def step_to(session: nil, flow: nil, state: nil)
-      flow, state = get_flow_and_state(session: session, flow: flow, state: state)
+      flow, state = get_flow_and_state(
+        session: session,
+        flow: flow,
+        state: state
+      )
       step(flow: flow, state: state)
     end
 
     def update_session_to(session: nil, flow: nil, state: nil)
-      flow, state = get_flow_and_state(session: session, flow: flow, state: state)
+      flow, state = get_flow_and_state(
+        session: session,
+        flow: flow,
+        state: state
+      )
       update_session(flow: flow, state: state)
     end
 
-    def set_back_to(flow: nil, state:)
-      # scope it to where this was called if not explicitly defined
-      flow ||= current_session.flow_string
-
+    def set_back_to(session: nil, flow: nil, state:)
+      flow, state = get_flow_and_state(
+        session: session,
+        flow: flow,
+        state: state
+      )
       store_back_to_session(flow: flow, state: state)
     end
 
