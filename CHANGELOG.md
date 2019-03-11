@@ -15,6 +15,10 @@
 * [Sessions] Sessions retrieved when session expiration was enabled would return as an Array rather than a slug.
 * [Sessions] previous_session now respects session_ttl values.
 
+## Deprecations
+
+* [Controllers] current_user_id has now been completely removed since becoming deprecated in 1.1.0.
+
 # Changelog for Stealth v1.1.5
 
 ## Enhancements

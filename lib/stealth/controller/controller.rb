@@ -10,15 +10,14 @@ module Stealth
     include Stealth::Controller::CatchAll
     include Stealth::Controller::Helpers
 
-    attr_reader :current_message, :current_user_id, :current_flow,
-                :current_service, :flow_controller, :action_name,
-                :current_session_id
+    attr_reader :current_message, :current_service, :flow_controller,
+                :action_name, :current_session_id
 
     def initialize(service_message:, current_flow: nil)
       @current_message = service_message
       @current_service = service_message.service
-      @current_user_id = @current_session_id = service_message.sender_id
       @current_flow = current_flow
+      @current_session_id = service_message.sender_id
       @progressed = false
     end
 

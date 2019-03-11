@@ -66,12 +66,6 @@ describe "Stealth::Controller" do
       expect(controller.current_session_id).to eq(facebook_message.sender_id)
     end
 
-    it "should make the session ID accessible via current_user_id" do
-      controller.current_session.set(new_flow: 'mr_tron', new_state: 'other_action')
-
-      expect(controller.current_user_id).to eq(facebook_message.sender_id)
-    end
-
     it "should make the message available in current_message.message" do
       expect(controller.current_message.message).to eq(facebook_message.message)
     end
