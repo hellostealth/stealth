@@ -46,6 +46,10 @@ Currently, there are gems for:
 
 You can find our full docs [here](/whoisblackops/stealth/wiki). If something is not clear in the docs, please file an issue! We consider all shortcomings in the docs as bugs.
 
+## Versioning
+
+Stealth is versioned uses [Semantic Versioning](https://semver.org), but it's more like the Linux Kernel. Major version releases are just as arbitrary as minor version releases. We strive to never break anything with any version change. Patches are still issues as the "third dot" in the version string.
+
 ## License
 
 "Stealth" and the Stealth logo are copyright (c) 2018 The Black Ops Bureau Inc.
