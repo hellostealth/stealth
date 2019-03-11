@@ -19,20 +19,20 @@ class FlowMap
 end
 
 describe "Stealth::Session" do
-  let(:user_id) { '0xDEADBEEF' }
+  let(:id) { '0xDEADBEEF' }
 
   it "should raise an error if $redis is not set" do
     $redis = nil
 
     expect {
-      Stealth::Session.new(user_id: user_id)
+      Stealth::Session.new(id: id)
     }.to raise_error(Stealth::Errors::RedisNotConfigured)
 
     $redis = MockRedis.new
   end
 
   describe "without a session" do
-    let(:session) { Stealth::Session.new(user_id: user_id) }
+    let(:session) { Stealth::Session.new(id: id) }
 
     it "should have nil flow and state" do
       expect(session.flow).to be_nil
@@ -52,8 +52,8 @@ describe "Stealth::Session" do
 
   describe "with a session" do
     let(:session) do
-      session = Stealth::Session.new(user_id: user_id)
-      session.set(new_flow: 'marco', new_state: 'polo')
+      session = Stealth::Session.new(id: id)
+      session.set_session(new_flow: 'marco', new_state: 'polo')
       session
     end
 
@@ -81,28 +81,28 @@ describe "Stealth::Session" do
   end
 
   describe "incrementing and decrementing" do
-    let(:session) { Stealth::Session.new(user_id: user_id) }
+    let(:session) { Stealth::Session.new(id: id) }
 
     it "should increment the state" do
-      session.set(new_flow: 'new_todo', new_state: 'get_due_date')
+      session.set_session(new_flow: 'new_todo', new_state: 'get_due_date')
       new_session = session + 1.state
       expect(new_session.state_string).to eq('created')
     end
 
     it "should decrement the state" do
-      session.set(new_flow: 'new_todo', new_state: 'error')
+      session.set_session(new_flow: 'new_todo', new_state: 'error')
       new_session = session - 2.states
       expect(new_session.state_string).to eq('get_due_date')
     end
 
     it "should return the first state if the decrement is out of bounds" do
-      session.set(new_flow: 'new_todo', new_state: 'get_due_date')
+      session.set_session(new_flow: 'new_todo', new_state: 'get_due_date')
       new_session = session - 5.states
       expect(new_session.state_string).to eq('new')
     end
 
     it "should return the last state if the increment is out of bounds" do
-      session.set(new_flow: 'new_todo', new_state: 'created')
+      session.set_session(new_flow: 'new_todo', new_state: 'created')
       new_session = session + 5.states
       expect(new_session.state_string).to eq('error')
     end
@@ -156,84 +156,118 @@ describe "Stealth::Session" do
   end
 
   describe "setting sessions" do
-    let(:session) { Stealth::Session.new(user_id: user_id) }
-    let(:previous_session) { Stealth::Session.new(user_id: user_id, previous: true) }
+    let(:session) { Stealth::Session.new(id: id) }
+    let(:previous_session) { Stealth::Session.new(id: id, type: :previous) }
+    let(:back_to_session) { Stealth::Session.new(id: id, type: :back_to) }
 
     before(:each) do
-      $redis.del(user_id)
-      $redis.del([user_id, 'previous'].join('-'))
+      $redis.del(id)
+      $redis.del([id, 'previous'].join('-'))
+      $redis.del([id, 'back_to'].join('-'))
     end
 
     it "should store the new session" do
-      session.set(new_flow: 'marco', new_state: 'polo')
-      expect($redis.get(user_id)).to eq 'marco->polo'
+      session.set_session(new_flow: 'marco', new_state: 'polo')
+      expect($redis.get(id)).to eq 'marco->polo'
     end
 
     it "should store the current_session to previous_session" do
-      $redis.set(user_id, 'new_todo->new')
-      $redis.set([user_id, 'previous'].join('-'), 'new_todo->error')
-      session.set(new_flow: 'marco', new_state: 'polo')
-      expect(previous_session.get).to eq 'new_todo->new'
+      $redis.set(id, 'new_todo->new')
+      $redis.set([id, 'previous'].join('-'), 'new_todo->error')
+      session.set_session(new_flow: 'marco', new_state: 'polo')
+      expect(previous_session.get_session).to eq 'new_todo->new'
     end
 
     it "should not update previous_session if it matches current_session" do
-      $redis.set(user_id, 'marco->polo')
-      $redis.set([user_id, 'previous'].join('-'), 'new_todo->new')
-      session.set(new_flow: 'marco', new_state: 'polo')
-      expect(previous_session.get).to eq 'new_todo->new'
+      $redis.set(id, 'marco->polo')
+      $redis.set([id, 'previous'].join('-'), 'new_todo->new')
+      session.set_session(new_flow: 'marco', new_state: 'polo')
+      expect(previous_session.get_session).to eq 'new_todo->new'
     end
 
     it "should set an expiration for current_session if session_ttl is specified" do
       Stealth.config.session_ttl = 500
-      session.set(new_flow: 'marco', new_state: 'polo')
-      expect($redis.ttl(user_id)).to be > 0
+      session.set_session(new_flow: 'marco', new_state: 'polo')
+      expect($redis.ttl(id)).to be > 0
       Stealth.config.session_ttl = 0
     end
 
     it "should set an expiration for previous_session if session_ttl is specified" do
       Stealth.config.session_ttl = 500
-      $redis.set(user_id, 'new_todo->new')
-      session.set(new_flow: 'marco', new_state: 'polo')
-      expect($redis.ttl([user_id, 'previous'].join('-'))).to be > 0
+      $redis.set(id, 'new_todo->new')
+      session.set_session(new_flow: 'marco', new_state: 'polo')
+      expect($redis.ttl([id, 'previous'].join('-'))).to be > 0
       Stealth.config.session_ttl = 0
     end
 
     it "should NOT set an expiration if session_ttl is not specified" do
       Stealth.config.session_ttl = 0
-      session.set(new_flow: 'new_todo', new_state: 'get_due_date')
-      expect($redis.ttl(user_id)).to eq -1 # Does not expire
+      session.set_session(new_flow: 'new_todo', new_state: 'get_due_date')
+      expect($redis.ttl(id)).to eq -1 # Does not expire
+    end
+
+    it "should set the session for back_to" do
+      back_to_session.set_session(new_flow: 'marco', new_state: 'polo')
+      expect($redis.get([id, 'back_to'].join('-'))).to eq 'marco->polo'
+    end
+
+    it "should set an expiration for back_to if session_ttl is specified" do
+      Stealth.config.session_ttl = 500
+      back_to_session.set_session(new_flow: 'marco', new_state: 'polo')
+      expect($redis.ttl([id, 'back_to'].join('-'))).to be > 0
+      Stealth.config.session_ttl = 0
     end
   end
 
   describe "getting sessions" do
-    let(:session) { Stealth::Session.new(user_id: user_id) }
-    let(:previous_session) { Stealth::Session.new(user_id: user_id, previous: true) }
+    let(:session) { Stealth::Session.new(id: id) }
+    let(:previous_session) { Stealth::Session.new(id: id, type: :previous) }
+    let(:back_to_session) { Stealth::Session.new(id: id, type: :back_to) }
 
     before(:each) do
-      $redis.del(user_id)
-      $redis.del([user_id, 'previous'].join('-'))
+      $redis.del(id)
+      $redis.del([id, 'previous'].join('-'))
+      $redis.del([id, 'back_to'].join('-'))
     end
 
     it "should return the stored current_session" do
-      session.set(new_flow: 'marco', new_state: 'polo')
-      expect(session.get).to eq 'marco->polo'
+      session.set_session(new_flow: 'marco', new_state: 'polo')
+      expect(session.get_session).to eq 'marco->polo'
     end
 
     it "should return the stored previous_session if previous is requested" do
-      $redis.set(user_id, 'new_todo->new')
-      session.set(new_flow: 'marco', new_state: 'polo')
-      expect(previous_session.get).to eq 'new_todo->new'
+      $redis.set(id, 'new_todo->new')
+      session.set_session(new_flow: 'marco', new_state: 'polo')
+      expect(previous_session.get_session).to eq 'new_todo->new'
     end
 
     it "should update the expiration of current_session if session_ttl is set" do
       Stealth.config.session_ttl = 50
-      session.set(new_flow: 'marco', new_state: 'polo')
-      expect($redis.ttl(user_id)).to be_between(0, 50).inclusive
+      session.set_session(new_flow: 'marco', new_state: 'polo')
+      expect($redis.ttl(id)).to be_between(0, 50).inclusive
 
       Stealth.config.session_ttl = 500
       session.session = nil # reset memoization
-      session.get
-      expect($redis.ttl(user_id)).to be > 100
+      session.get_session
+      expect($redis.ttl(id)).to be > 100
+
+      Stealth.config.session_ttl = 0
+    end
+
+    it "should return the stored back_to_session" do
+      back_to_session.set_session(new_flow: 'marco', new_state: 'polo')
+      expect(back_to_session.get_session).to eq 'marco->polo'
+    end
+
+    it "should update the expiration of back_to_session if session_ttl is set" do
+      Stealth.config.session_ttl = 50
+      back_to_session.set_session(new_flow: 'marco', new_state: 'polo')
+      expect($redis.ttl([id, 'back_to'].join('-'))).to be_between(0, 50).inclusive
+
+      Stealth.config.session_ttl = 500
+      back_to_session.session = nil # reset memoization
+      back_to_session.get_session
+      expect($redis.ttl([id, 'back_to'].join('-'))).to be > 100
 
       Stealth.config.session_ttl = 0
     end

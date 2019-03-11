@@ -6,14 +6,18 @@ module Stealth
 
     SLUG_SEPARATOR = '->'
 
-    attr_reader :flow, :state, :user_id, :previous
+    attr_reader :flow, :state, :id, :type
     attr_accessor :session
 
-    def initialize(user_id: nil, previous: false)
-      @user_id = user_id
-      @previous = previous
+    # Session types:
+    #   - :primary
+    #   - :previous
+    #   - :back_to
+    def initialize(id: nil, type: :primary)
+      @id = id
+      @type = type
 
-      if user_id.present?
+      if id.present?
         unless defined?($redis) && $redis.present?
           raise(
             Stealth::Errors::RedisNotConfigured,
@@ -21,7 +25,7 @@ module Stealth
           )
         end
 
-        get
+        get_session
       end
 
       self
@@ -52,21 +56,19 @@ module Stealth
       session&.split(SLUG_SEPARATOR)&.last
     end
 
-    def get
-      prev_key = previous_session_key(user_id: user_id)
-
+    def get_session
       @session ||= begin
         if sessions_expire?
-          previous? ? getex(prev_key) : getex(user_id)
+          getex(session_key)
         else
-          previous? ? $redis.get(prev_key) : $redis.get(user_id)
+          $redis.get(session_key)
         end
       end
     end
 
-    def set(new_flow:, new_state:)
+    def set_session(new_flow:, new_state:)
       @flow = nil # override @flow's memoization
-      existing_session = session # tmp backup
+      existing_session = session # tmp backup for previous_session storage
       @session = self.class.canonical_session_slug(
         flow: new_flow,
         state: new_state
@@ -74,12 +76,14 @@ module Stealth
 
       Stealth::Logger.l(
         topic: "session",
-        message: "User #{user_id}: setting session to #{new_flow}->#{new_state}"
+        message: "User #{id}: setting session to #{new_flow}->#{new_state}"
       )
 
-      store_current_to_previous(existing_session: existing_session)
+      if primary_session?
+        store_current_to_previous(existing_session: existing_session)
+      end
 
-      persist_session(key: user_id, value: session)
+      persist_session(key: session_key, value: session)
     end
 
     def present?
@@ -90,16 +94,12 @@ module Stealth
       !present?
     end
 
-    def previous?
-      @previous
-    end
-
     def +(steps)
       return nil if flow.blank?
       return self if steps.zero?
 
       new_state = self.state + steps
-      new_session = Stealth::Session.new(user_id: self.user_id)
+      new_session = Stealth::Session.new(id: self.id)
       new_session.session = self.class.canonical_session_slug(
         flow: self.flow_string,
         state: new_state
@@ -127,10 +127,37 @@ module Stealth
       [flow, state].join(SLUG_SEPARATOR)
     end
 
+    def session_key
+      case type
+      when :primary
+        id
+      when :previous
+        previous_session_key
+      when :back_to
+        back_to_key
+      end
+    end
+
+    def primary_session?
+      type == :primary
+    end
+
+    def previous_session?
+      type == :previous
+    end
+
+    def back_to_session?
+      type == :back_to
+    end
+
     private
 
-      def previous_session_key(user_id:)
-        [user_id, 'previous'].join('-')
+      def previous_session_key
+        [id, 'previous'].join('-')
+      end
+
+      def back_to_key
+        [id, 'back_to'].join('-')
       end
 
       def store_current_to_previous(existing_session:)
@@ -138,17 +165,17 @@ module Stealth
         if session == existing_session
           Stealth::Logger.l(
             topic: "previous_session",
-            message: "User #{user_id}: skipping setting to #{session}"\
+            message: "User #{id}: skipping setting to #{session}"\
                      ' because it is the same as current_session'
           )
         else
           Stealth::Logger.l(
             topic: "previous_session",
-            message: "User #{user_id}: setting to #{existing_session}"
+            message: "User #{id}: setting to #{existing_session}"
           )
 
           persist_session(
-            key: previous_session_key(user_id: user_id),
+            key: previous_session_key,
             value: existing_session
           )
         end

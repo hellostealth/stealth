@@ -13,10 +13,9 @@ module Stealth
     attr_reader :current_message, :current_service, :flow_controller,
                 :action_name, :current_session_id
 
-    def initialize(service_message:, current_flow: nil)
+    def initialize(service_message:)
       @current_message = service_message
       @current_service = service_message.service
-      @current_flow = current_flow
       @current_session_id = service_message.sender_id
       @progressed = false
     end
@@ -40,19 +39,19 @@ module Stealth
     def flow_controller
       @flow_controller ||= begin
         flow_controller = [current_session.flow_string.pluralize, 'controller'].join('_').classify.constantize
-        flow_controller.new(
-          service_message: @current_message,
-          current_flow: current_flow
-        )
+        flow_controller.new(service_message: @current_message)
       end
     end
 
     def current_session
-      @current_session ||= Stealth::Session.new(user_id: current_session_id)
+      @current_session ||= Stealth::Session.new(id: current_session_id)
     end
 
     def previous_session
-      @previous_session ||= Stealth::Session.new(user_id: current_session_id, previous: true)
+      @previous_session ||= Stealth::Session.new(
+        id: current_session_id,
+        type: :previous
+      )
     end
 
     def action(action: nil)
@@ -114,6 +113,29 @@ module Stealth
       update_session(flow: flow, state: state)
     end
 
+    def set_back_to(flow: nil, state:)
+      # scope it to where this was called if not explicitly defined
+      flow ||= current_session.flow_string
+
+      store_back_to_session(flow: flow, state: state)
+    end
+
+    def step_back
+      back_to_session = Stealth::Session.new(
+        id: current_session_id,
+        type: :back_to
+      )
+
+      if back_to_session.blank?
+        raise(
+          Stealth::Errors::InvalidStateTransition,
+          'back_to_session not found; make sure set_back_to was called first'
+        )
+      end
+
+      step_to(session: back_to_session)
+    end
+
     def do_nothing
       @progressed = :do_nothing
     end
@@ -121,9 +143,17 @@ module Stealth
     private
 
       def update_session(flow:, state:)
-        @current_session = Stealth::Session.new(user_id: current_session_id)
+        @current_session = Stealth::Session.new(id: current_session_id)
         @progressed = :updated_session
-        @current_session.set(new_flow: flow, new_state: state)
+        @current_session.set_session(new_flow: flow, new_state: state)
+      end
+
+      def store_back_to_session(flow:, state:)
+        back_to_session = Stealth::Session.new(
+          id: current_session_id,
+          type: :back_to
+        )
+        back_to_session.set_session(new_flow: flow, new_state: state)
       end
 
       def step(flow:, state:)
