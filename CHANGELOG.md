@@ -9,11 +9,16 @@
 * [Sessions] previous_session log entries now appear below current_session entries.
 * [Logging] Add option, `Stealth.config.transcript_logging`, to log incoming and outgoing messages.
 * [Server] The only HTTP header passed along to `handle_message_job` is now `HTTP_HOST`.
+* [Controllers] Added `set_back_to` and `step_back` to allow user specified "redirect back". Useful for multi-state transitions that would otherwise not be possible with just `previous_session`.
 
 ## Bug Fixes
 
 * [Sessions] Sessions retrieved when session expiration was enabled would return as an Array rather than a slug.
 * [Sessions] previous_session now respects session_ttl values.
+
+## Deprecations
+
+* [Controllers] current_user_id has now been completely removed since becoming deprecated in 1.1.0.
 
 # Changelog for Stealth v1.1.5
 
