@@ -39,7 +39,11 @@ module Stealth
           when 'list'
             STANDARD_DELAY
           when nil
-            SHORT_DELAY
+            if current_service == 'twilio'
+              0
+            else
+              SHORT_DELAY
+            end
           else
             SHORT_DELAY
           end
