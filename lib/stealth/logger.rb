@@ -39,7 +39,7 @@ module Stealth
                 :green
               when :previous_session
                 :yellow
-              when :facebook, :twilio
+              when :facebook, :twilio, :bandwidth
                 :blue
               when :smooch
                 :magenta
