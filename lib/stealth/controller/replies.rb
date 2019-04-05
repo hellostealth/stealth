@@ -12,15 +12,24 @@ module Stealth
         class_attribute :_preprocessors, default: [:erb]
         class_attribute :_replies_path, default: [Stealth.root, 'bot', 'replies']
 
-        def send_replies
-          yaml_reply, preprocessor = action_replies
+        def send_replies(custom_reply: nil, inline: nil)
+          if inline.present?
+            service_reply = Stealth::ServiceReply.new(
+              recipient_id: current_session_id,
+              yaml_reply: inline,
+              preprocessor: :none,
+              context: nil
+            )
+          else
+            yaml_reply, preprocessor = action_replies(custom_reply)
 
-          service_reply = Stealth::ServiceReply.new(
-            recipient_id: current_session_id,
-            yaml_reply: yaml_reply,
-            preprocessor: preprocessor,
-            context: binding
-          )
+            service_reply = Stealth::ServiceReply.new(
+              recipient_id: current_session_id,
+              yaml_reply: yaml_reply,
+              preprocessor: preprocessor,
+              context: binding
+            )
+          end
 
           service_reply.replies.each_with_index do |reply, i|
             # Support randomized replies for text and speech replies.
@@ -97,17 +106,31 @@ module Stealth
             "#{current_session.state_string}.yml"
           end
 
-          def reply_filenames
-            service_filename = [base_reply_filename, current_service].join('+')
+          def reply_filenames(custom_reply_filename=nil)
+            reply_filename = if custom_reply_filename.present?
+              custom_reply_filename
+            else
+              base_reply_filename
+            end
+
+            service_filename = [reply_filename, current_service].join('+')
 
             # Service-specific filenames take precedance (returned first)
-            [service_filename, base_reply_filename]
+            [service_filename, reply_filename]
           end
 
-          def find_reply_and_preprocessor
+          def find_reply_and_preprocessor(custom_reply)
             selected_preprocessor = :none
-            reply_file_path = File.join(*reply_dir, base_reply_filename)
-            service_reply_path = File.join(*reply_dir, reply_filenames.first)
+
+            if custom_reply.present?
+              _dir, _file = custom_reply.split(File::SEPARATOR)
+              _file = "#{_file}.yml"
+              reply_file_path = File.join([*self._replies_path, _dir], _file)
+              service_reply_path = File.join(*reply_dir, reply_filenames(_file).first)
+            else
+              reply_file_path = File.join(*reply_dir, base_reply_filename)
+              service_reply_path = File.join(*reply_dir, reply_filenames.first)
+            end
 
             # Check if the service_filename exists
             # If so, we can skip checking for a preprocessor
@@ -131,11 +154,11 @@ module Stealth
             return reply_file_path, selected_preprocessor
           end
 
-          def action_replies
-            reply_file_path, selected_preprocessor = find_reply_and_preprocessor
+          def action_replies(custom_reply=nil)
+            reply_path, selected_preprocessor = find_reply_and_preprocessor(custom_reply)
 
             begin
-              file_contents = File.read(reply_file_path)
+              file_contents = File.read(reply_path)
             rescue Errno::ENOENT
               raise(Stealth::Errors::ReplyNotFound, "Could not find a reply in #{reply_dir}")
             end
@@ -143,7 +166,7 @@ module Stealth
             return file_contents, selected_preprocessor
           end
 
-          def log_reply(reply)
+          def log_reply
             message = case reply.reply_type
                       when 'text', 'speech'
                         reply['text']
