@@ -1,3 +1,19 @@
+# Changelog for Stealth v2.2.0
+
+## Enhancements
+
+* `send_reples` now supports two additional options for replies:
+  `send_replies(custom_reply: 'hello/say_hello')`
+  `send_replies(inline: [])`
+
+# Changelog for Stealth v2.1.0
+
+## Enhancements
+
+* Dynamic delays for SMS platforms do not delay at the beginning of a reply.
+* Added support for Bandwidth SMS
+* The `ServiceMessage` (current_message) now contains a `target_id`. This can be set by the platform driver to provide more information about the intended target of a message.
+
 # Changelog for Stealth v2.0.0
 
 ## Enhancements
