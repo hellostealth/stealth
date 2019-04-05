@@ -50,6 +50,20 @@ describe "Stealth::Controller replies" do
     def say_randomize_speech
       send_replies
     end
+
+    def say_custom_reply
+      send_replies custom_reply: 'messages/say_offer'
+    end
+
+    def say_inline_reply
+      reply = [
+        { 'reply_type' => 'text', 'text' => 'Hi, Morty. Welcome to Stealth bot...' },
+        { 'reply_type' => 'delay', 'duration' => 2 },
+        { 'reply_type' => 'text', 'text' => 'We offer users an awesome Ruby framework for building chat bots.' }
+      ]
+
+      send_replies inline: reply
+    end
   end
 
   describe "missing reply" do
@@ -174,6 +188,84 @@ describe "Stealth::Controller replies" do
 
       expect(controller).to receive(:sleep).exactly(1).times.with(2.0)
       controller.say_offer
+    end
+  end
+
+  describe "custom_reply" do
+    let(:stubbed_handler) { double("handler") }
+    let(:stubbed_client) { double("client") }
+
+    before(:each) do
+      allow(Stealth::Services::Facebook::ReplyHandler).to receive(:new).and_return(stubbed_handler)
+      allow(Stealth::Services::Facebook::Client).to receive(:new).and_return(stubbed_client)
+      allow(controller.current_session).to receive(:flow_string).and_return("message")
+      allow(controller.current_session).to receive(:state_string).and_return("say_custom_reply")
+    end
+
+    it "should translate each reply_type in the reply" do
+      allow(stubbed_client).to receive(:transmit).and_return(true)
+      allow(controller).to receive(:sleep).and_return(true).with(2.0)
+
+      expect(stubbed_handler).to receive(:text).exactly(2).times
+      expect(stubbed_handler).to receive(:delay).exactly(1).times
+      controller.say_custom_reply
+    end
+
+    it "should transmit each reply_type in the reply" do
+      allow(stubbed_handler).to receive(:text).exactly(2).times
+      allow(stubbed_handler).to receive(:delay).exactly(1).times
+      allow(controller).to receive(:sleep).and_return(true).with(2.0)
+
+      expect(stubbed_client).to receive(:transmit).exactly(3).times
+      controller.say_custom_reply
+    end
+
+    it "should sleep on delays" do
+      allow(stubbed_handler).to receive(:text).exactly(2).times
+      allow(stubbed_handler).to receive(:delay).exactly(1).times
+      allow(stubbed_client).to receive(:transmit).exactly(3).times
+
+      expect(controller).to receive(:sleep).exactly(1).times.with(2.0)
+      controller.say_custom_reply
+    end
+  end
+
+  describe "inline replies" do
+    let(:stubbed_handler) { double("handler") }
+    let(:stubbed_client) { double("client") }
+
+    before(:each) do
+      allow(Stealth::Services::Facebook::ReplyHandler).to receive(:new).and_return(stubbed_handler)
+      allow(Stealth::Services::Facebook::Client).to receive(:new).and_return(stubbed_client)
+      allow(controller.current_session).to receive(:flow_string).and_return("message")
+      allow(controller.current_session).to receive(:state_string).and_return("say_inline_reply")
+    end
+
+    it "should translate each reply_type in the reply" do
+      allow(stubbed_client).to receive(:transmit).and_return(true)
+      allow(controller).to receive(:sleep).and_return(true).with(2.0)
+
+      expect(stubbed_handler).to receive(:text).exactly(2).times
+      expect(stubbed_handler).to receive(:delay).exactly(1).times
+      controller.say_inline_reply
+    end
+
+    it "should transmit each reply_type in the reply" do
+      allow(stubbed_handler).to receive(:text).exactly(2).times
+      allow(stubbed_handler).to receive(:delay).exactly(1).times
+      allow(controller).to receive(:sleep).and_return(true).with(2.0)
+
+      expect(stubbed_client).to receive(:transmit).exactly(3).times
+      controller.say_inline_reply
+    end
+
+    it "should sleep on delays" do
+      allow(stubbed_handler).to receive(:text).exactly(2).times
+      allow(stubbed_handler).to receive(:delay).exactly(1).times
+      allow(stubbed_client).to receive(:transmit).exactly(3).times
+
+      expect(controller).to receive(:sleep).exactly(1).times.with(2.0)
+      controller.say_inline_reply
     end
   end
 

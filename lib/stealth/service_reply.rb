@@ -18,7 +18,11 @@ module Stealth
         @yaml_reply
       end
 
-      @replies = load_replies(YAML.load(processed_reply))
+      if yaml_reply.is_a?(Array)
+        @replies = load_replies(@yaml_reply)
+      else
+        @replies = load_replies(YAML.load(processed_reply))
+      end
     end
 
     private
