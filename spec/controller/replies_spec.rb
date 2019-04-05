@@ -64,10 +64,6 @@ describe "Stealth::Controller replies" do
 
       send_replies inline: reply
     end
-
-    def say_inline_reply_with_erb
-      send_replies inline: reply, preprocess: true
-    end
   end
 
   describe "missing reply" do
