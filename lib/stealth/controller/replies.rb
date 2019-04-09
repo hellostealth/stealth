@@ -166,7 +166,7 @@ module Stealth
             return file_contents, selected_preprocessor
           end
 
-          def log_reply
+          def log_reply(reply)
             message = case reply.reply_type
                       when 'text', 'speech'
                         reply['text']
