@@ -1,3 +1,9 @@
+# Changelog for Stealth v2.2.2
+
+## Enhancements
+
+* Leading dynamic delays in a reply are not sent again on SMS platforms.
+
 # Changelog for Stealth v2.2.0
 
 ## Enhancements
