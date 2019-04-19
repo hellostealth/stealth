@@ -39,11 +39,7 @@ module Stealth
           when 'list'
             STANDARD_DELAY
           when nil
-            if %w[twilio bandwidth].include?(current_service)
-              0
-            else
-              SHORT_DELAY
-            end
+            SHORT_DELAY
           else
             SHORT_DELAY
           end
