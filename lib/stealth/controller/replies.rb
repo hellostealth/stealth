@@ -125,11 +125,13 @@ module Stealth
             if custom_reply.present?
               _dir, _file = custom_reply.split(File::SEPARATOR)
               _file = "#{_file}.yml"
-              reply_file_path = File.join([*self._replies_path, _dir], _file)
-              service_reply_path = File.join(*reply_dir, reply_filenames(_file).first)
+              _replies_dir = [*self._replies_path, _dir]
+              reply_file_path = File.join(_replies_dir, _file)
+              service_reply_path = File.join(_replies_dir, reply_filenames(_file).first)
             else
-              reply_file_path = File.join(*reply_dir, base_reply_filename)
-              service_reply_path = File.join(*reply_dir, reply_filenames.first)
+              _replies_dir = *reply_dir
+              reply_file_path = File.join(_replies_dir, base_reply_filename)
+              service_reply_path = File.join(_replies_dir, reply_filenames.first)
             end
 
             # Check if the service_filename exists
@@ -142,7 +144,7 @@ module Stealth
             # Early returns for performance
             for preprocessor in self.class._preprocessors do
               for reply_filename in reply_filenames do
-                selected_filepath = File.join(*reply_dir, [reply_filename, preprocessor.to_s].join('.'))
+                selected_filepath = File.join(_replies_dir, [reply_filename, preprocessor.to_s].join('.'))
                 if File.exist?(selected_filepath)
                   reply_file_path = selected_filepath
                   selected_preprocessor = preprocessor
