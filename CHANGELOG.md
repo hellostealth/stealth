@@ -1,3 +1,9 @@
+# Changelog for Stealth v2.2.4
+
+## Bug Fixes
+
+* Fixed another bug loading replies from a `custom_reply` path in `send_replies`
+
 # Changelog for Stealth v2.2.3
 
 ## Bug Fixes
