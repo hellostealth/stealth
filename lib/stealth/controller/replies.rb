@@ -126,10 +126,12 @@ module Stealth
               _dir, _file = custom_reply.split(File::SEPARATOR)
               _file = "#{_file}.yml"
               _replies_dir = [*self._replies_path, _dir]
+              possible_filenames = reply_filenames(_file)
               reply_file_path = File.join(_replies_dir, _file)
               service_reply_path = File.join(_replies_dir, reply_filenames(_file).first)
             else
               _replies_dir = *reply_dir
+              possible_filenames = reply_filenames
               reply_file_path = File.join(_replies_dir, base_reply_filename)
               service_reply_path = File.join(_replies_dir, reply_filenames.first)
             end
@@ -143,7 +145,7 @@ module Stealth
             # Cycles through possible preprocessor and variant combinations
             # Early returns for performance
             for preprocessor in self.class._preprocessors do
-              for reply_filename in reply_filenames do
+              for reply_filename in possible_filenames do
                 selected_filepath = File.join(_replies_dir, [reply_filename, preprocessor.to_s].join('.'))
                 if File.exist?(selected_filepath)
                   reply_file_path = selected_filepath
@@ -162,7 +164,7 @@ module Stealth
             begin
               file_contents = File.read(reply_path)
             rescue Errno::ENOENT
-              raise(Stealth::Errors::ReplyNotFound, "Could not find a reply in #{reply_dir}")
+              raise(Stealth::Errors::ReplyNotFound, "Could not find reply: '#{reply_path}'")
             end
 
             return file_contents, selected_preprocessor
