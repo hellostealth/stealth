@@ -23,7 +23,7 @@ GEM
     i18n (1.6.0)
       concurrent-ruby (~> 1.0)
     minitest (5.11.3)
-    mock_redis (0.19.0)
+    mock_redis (0.20.0)
     multi_json (1.13.1)
     mustermann (1.0.3)
     oj (3.7.12)
