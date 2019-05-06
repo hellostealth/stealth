@@ -3,55 +3,47 @@
 
 require File.expand_path(File.join(File.dirname(__FILE__), '..', '/spec_helper'))
 
+$history = []
+
 class BotController < Stealth::Controller
   before_action :fetch_user_name
 
-  attr_accessor :record
-
   def some_action
-    @record = []
     step_to flow: 'flow_tester', state: 'my_action'
   end
 
   def other_action
-    @record = []
     step_to flow: 'other_flow_tester', state: 'other_action'
   end
 
   def halted_action
-    @record = []
     step_to flow: 'flow_tester', state: 'my_action2'
   end
 
   def filtered_action
-    @record = []
     step_to flow: 'flow_tester', state: 'my_action3'
   end
 
   def some_other_action2
-    @record = []
     step_to flow: 'other_flow_tester', state: 'other_action2'
   end
 
   def some_other_action3
-    @record = []
     step_to flow: 'other_flow_tester', state: 'other_action3'
   end
 
   def some_other_action4
-    @record = []
     step_to flow: 'other_flow_tester', state: 'other_action4'
   end
 
   def some_other_action5
-    @record = []
     step_to flow: 'other_flow_tester', state: 'other_action5'
   end
 
   private
 
     def fetch_user_name
-      @record << "fetched user name"
+      $history << "fetched user name"
     end
 end
 
@@ -77,7 +69,7 @@ class FlowTestersController < BotController
   protected
 
     def test_action
-      @record << "tested action"
+      $history << "tested action"
     end
 
     def test_before_halting
@@ -85,11 +77,11 @@ class FlowTestersController < BotController
     end
 
     def test_filtering
-      @record << "filtered"
+      $history << "filtered"
     end
 
     def test_after_halting
-      @record << "after action ran"
+      $history << "after action ran"
     end
 end
 
@@ -125,11 +117,11 @@ class OtherFlowTestersController < BotController
   private
 
     def after_action1
-      @record << "after action 1"
+      $history << "after action 1"
     end
 
     def after_action2
-      @record << "after action 2"
+      $history << "after action 2"
     end
 
     def run_halt
@@ -137,9 +129,9 @@ class OtherFlowTestersController < BotController
     end
 
     def run_around_filter
-      @record << "around before"
+      $history << "around before"
       yield
-      @record << "around after"
+      $history << "around after"
     end
 end
 
@@ -165,29 +157,33 @@ describe "Stealth::Controller callbacks" do
 
   let(:facebook_message) { SampleMessage.new(service: 'facebook') }
 
+  before(:each) do
+    $history = []
+  end
+
   describe "before_action" do
     it "should fire the callback on the parent class" do
       controller = BotController.new(service_message: facebook_message.message_with_text)
       controller.other_action
-      expect(controller.record).to eq ["fetched user name"]
+      expect($history).to eq ["fetched user name"]
     end
 
     it "should fire the callback on a child class" do
       controller = FlowTestersController.new(service_message: facebook_message.message_with_text)
       controller.some_action
-      expect(controller.record).to eq ["fetched user name", "tested action"]
+      expect($history).to eq ["fetched user name", "tested action"]
     end
 
     it "should halt the callback chain when :abort is thrown" do
       controller = FlowTestersController.new(service_message: facebook_message.message_with_text)
       controller.halted_action
-      expect(controller.record).to eq ["fetched user name"]
+      expect($history).to eq ["fetched user name"]
     end
 
     it "should respect 'unless' filter" do
       controller = FlowTestersController.new(service_message: facebook_message.message_with_text)
       controller.filtered_action
-      expect(controller.record).to eq ["fetched user name", "tested action", "filtered"]
+      expect($history).to eq ["fetched user name", "tested action", "filtered"]
     end
   end
 
@@ -195,13 +191,13 @@ describe "Stealth::Controller callbacks" do
     it "should fire the after callbacks in reverse order" do
       controller = OtherFlowTestersController.new(service_message: facebook_message.message_with_text)
       controller.some_other_action2
-      expect(controller.record).to eq ["fetched user name", "after action 2", "after action 1"]
+      expect($history).to eq ["fetched user name", "after action 2", "after action 1"]
     end
 
     it "should not fire after callbacks if a before callback throws an :abort" do
       controller = OtherFlowTestersController.new(service_message: facebook_message.message_with_text)
       controller.some_other_action3
-      expect(controller.record).to eq ["fetched user name"]
+      expect($history).to eq ["fetched user name"]
     end
   end
 
@@ -209,13 +205,13 @@ describe "Stealth::Controller callbacks" do
     it "should fire the around callback before and after" do
       controller = OtherFlowTestersController.new(service_message: facebook_message.message_with_text)
       controller.some_other_action4
-      expect(controller.record).to eq ["fetched user name", "around before", "around after"]
+      expect($history).to eq ["fetched user name", "around before", "around after"]
     end
 
     it "should not fire the around callback if a before callback throws abort" do
       controller = OtherFlowTestersController.new(service_message: facebook_message.message_with_text)
       controller.some_other_action5
-      expect(controller.record).to eq ["fetched user name"]
+      expect($history).to eq ["fetched user name"]
     end
   end
 

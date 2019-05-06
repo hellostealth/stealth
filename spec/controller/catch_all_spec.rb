@@ -21,15 +21,15 @@ describe "Stealth::Controller::CatchAll" do
 
   class StubbedCatchAllsController < Stealth::Controller
     def level1
-
+      do_nothing
     end
 
     def level2
-
+      do_nothing
     end
 
     def level3
-
+      do_nothing
     end
   end
 
@@ -64,30 +64,26 @@ describe "Stealth::Controller::CatchAll" do
     it "should step_to catch_all->level1 when a StandardError is raised" do
       controller.current_session.session = Stealth::Session.canonical_session_slug(flow: 'vader', state: 'my_action')
       controller.action(action: :my_action)
-      expect(controller.current_session.flow_string).to eq("catch_all")
-      expect(controller.current_session.state_string).to eq("level1")
+      expect($redis.get(controller.current_session.session_key)).to eq('catch_all->level1')
     end
 
     it "should step_to catch_all->level1 when an action doesn't progress the flow" do
       controller.current_session.session = Stealth::Session.canonical_session_slug(flow: 'vader', state: 'my_action2')
       controller.action(action: :my_action2)
-      expect(controller.current_session.flow_string).to eq("catch_all")
-      expect(controller.current_session.state_string).to eq("level1")
+      expect($redis.get(controller.current_session.session_key)).to eq('catch_all->level1')
     end
 
     it "should step_to catch_all->level2 when an action raises back to back" do
       controller.step_to flow: :vader, state: :my_action
       controller.step_to flow: :vader, state: :my_action
-      expect(controller.current_session.flow_string).to eq("catch_all")
-      expect(controller.current_session.state_string).to eq("level2")
+      expect($redis.get(controller.current_session.session_key)).to eq('catch_all->level2')
     end
 
     it "should step_to catch_all->level3 when an action raises back to back to back" do
       controller.step_to flow: :vader, state: :my_action
       controller.step_to flow: :vader, state: :my_action
       controller.step_to flow: :vader, state: :my_action
-      expect(controller.current_session.flow_string).to eq("catch_all")
-      expect(controller.current_session.state_string).to eq("level3")
+      expect($redis.get(controller.current_session.session_key)).to eq('catch_all->level3')
     end
 
     it "should just stop after the maximum number of catch_all levels have been reached" do
@@ -95,15 +91,13 @@ describe "Stealth::Controller::CatchAll" do
       controller.step_to flow: :vader, state: :my_action
       controller.step_to flow: :vader, state: :my_action
       controller.step_to flow: :vader, state: :my_action
-      expect(controller.current_session.flow_string).to eq("vader")
-      expect(controller.current_session.state_string).to eq("my_action")
+      expect($redis.get(controller.current_session.session_key)).to eq('vader->my_action')
     end
 
     it "should NOT run the catch_all if do_nothing is called" do
-      controller.current_session.session = Stealth::Session.canonical_session_slug(flow: 'vader', state: 'my_action3')
+      controller.current_session.set_session(new_flow: 'vader', new_state: 'my_action3')
       controller.action(action: :my_action3)
-      expect(controller.current_session.flow_string).to eq("vader")
-      expect(controller.current_session.state_string).to eq("my_action3")
+      expect($redis.get(controller.current_session.session_key)).to eq('vader->my_action3')
     end
   end
 end

@@ -127,9 +127,9 @@ describe "Stealth::Controller" do
 
     it "should step_to the specified redirect flow and state when a session is specified" do
       controller.current_session.session = Stealth::Session.canonical_session_slug(flow: 'mr_tron', state: 'deprecated_action2')
-      mr_robot_controller = MrTronsController.new(service_message: facebook_message.message_with_text)
+      mr_robot_controller = MrRobotsController.new(service_message: facebook_message.message_with_text)
 
-      expect(MrRobotsController).to receive(:new).and_return(mr_robot_controller)
+      allow(MrRobotsController).to receive(:new).and_return(mr_robot_controller)
       expect(mr_robot_controller).to receive(:my_action)
       controller.action(action: :deprecated_action2)
     end

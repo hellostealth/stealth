@@ -172,7 +172,7 @@ module Stealth
         @flow_controller = nil
         @current_flow = current_session.flow
 
-        action(action: state)
+        flow_controller.action(action: state)
       end
 
       def get_flow_and_state(session: nil, flow: nil, state: nil)
