@@ -11,16 +11,16 @@ module Stealth
 
         def run_catch_all(reason: nil)
           error_level = fetch_error_level
-          Stealth::Logger.l(topic: "catch_all", message: "CatchAll #{calculate_catch_all_state(error_level)} triggered for #{error_slug}: #{reason}")
+          Stealth::Logger.l(topic: 'catch_all', message: "CatchAll #{calculate_catch_all_state(error_level)} triggered for #{error_slug}: #{reason}")
 
           if defined?(CatchAllsController) && FlowMap.flow_spec[:catch_all].present?
             catch_all_state = calculate_catch_all_state(error_level)
 
             if FlowMap.flow_spec[:catch_all].states.keys.include?(catch_all_state.to_sym)
-              step_to flow: 'catch_all', state: catch_all_state
+              step_to flow: :catch_all, state: catch_all_state
             else
               # We are out of bounds, do nothing to prevent an infinite loop
-              Stealth::Logger.l(topic: "catch_all", message: "Stopping; we've exceeded the number of defined catch_all states.")
+              Stealth::Logger.l(topic: 'catch_all', message: 'Stopping; we\'ve exceeded the number of defined catch_all states.')
               return false
             end
           end
