@@ -150,6 +150,10 @@ module Stealth
       type == :back_to
     end
 
+    def to_s
+      [flow_string, state_string].join(SLUG_SEPARATOR)
+    end
+
     private
 
       def previous_session_key
