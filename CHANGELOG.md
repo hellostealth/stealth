@@ -1,3 +1,13 @@
+# Changelog for Stealth v2.3.0
+
+## Enhancements
+
+* [Sessions] Added `to_s` for sessions to pretty print the slug. Useful when debugging.
+
+## Bug Fixes
+
+* Callbacks specified in child controllers of `BotController` where not being called during `step_to`. While the fix was small, we've bumped the minor release to ensure this fix does not break existing codebases.
+
 # Changelog for Stealth v2.2.4
 
 ## Bug Fixes
