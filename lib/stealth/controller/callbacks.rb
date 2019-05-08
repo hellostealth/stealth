@@ -13,7 +13,7 @@ module Stealth
         define_callbacks :action, skip_after_callbacks_if_terminated: true
       end
 
-      module ClassMethods
+      class_methods do
         def _normalize_callback_options(options)
           _normalize_callback_option(options, :only, :if)
           _normalize_callback_option(options, :except, :unless)
