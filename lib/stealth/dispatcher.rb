@@ -36,7 +36,16 @@ module Stealth
       end
 
       bot_controller = BotController.new(service_message: service_message)
-      bot_controller.route
+
+      if ignoring_messages?(session: bot_controller.current_session)
+        Stealth::Logger.l(
+          topic: 'user',
+          message: "User #{service_message.sender_id}; ignoring message due to session (#{bot_controller.current_session})"
+        )
+        return false
+      else
+        bot_controller.route
+      end
     end
 
     private
@@ -61,10 +70,13 @@ module Stealth
                   end
 
         Stealth::Logger.l(
-          topic: "user",
+          topic: 'user',
           message: "User #{service_message.sender_id} -> #{message}"
         )
       end
 
+      def ignoring_messages?(session:)
+        %w[catch_all interrupt].include?(session.flow_string)
+      end
   end
 end
