@@ -86,6 +86,10 @@ module Stealth
       persist_session(key: session_key, value: session)
     end
 
+    def clear_session
+      $redis.del(session_key)
+    end
+
     def present?
       session.present?
     end
