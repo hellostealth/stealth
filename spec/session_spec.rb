@@ -272,4 +272,34 @@ describe "Stealth::Session" do
       Stealth.config.session_ttl = 0
     end
   end
+
+  describe "clearing sessions" do
+    let(:session) { Stealth::Session.new(id: id) }
+    let(:previous_session) { Stealth::Session.new(id: id, type: :previous) }
+    let(:back_to_session) { Stealth::Session.new(id: id, type: :back_to) }
+
+    before(:each) do
+      session.send(:persist_session, key: session.session_key, value: '1')
+      previous_session.send(:persist_session, key: previous_session.session_key, value: '1')
+      back_to_session.send(:persist_session, key: back_to_session.session_key, value: '1')
+    end
+
+    it "should remove a default session from Redis" do
+      expect($redis.get(session.session_key)).to eq '1'
+      session.clear_session
+      expect($redis.get(session.session_key)).to be_nil
+    end
+
+    it "should remove a previous session from Redis" do
+      expect($redis.get(previous_session.session_key)).to eq '1'
+      previous_session.clear_session
+      expect($redis.get(previous_session.session_key)).to be_nil
+    end
+
+    it "should remove a back_to session from Redis" do
+      expect($redis.get(back_to_session.session_key)).to eq '1'
+      back_to_session.clear_session
+      expect($redis.get(back_to_session.session_key)).to be_nil
+    end
+  end
 end
