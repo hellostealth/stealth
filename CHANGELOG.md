@@ -1,3 +1,9 @@
+# Changelog for Stealth v2.4.0 (Pending)
+
+## Enhancements
+
+* [Controllers] When user's flow is set to `catch_all` or `interrupt`, Stealth will ignore incoming messages. If you have interactive states in either of these controllers, you will need to move those interactions to a different controller.
+
 # Changelog for Stealth v2.3.0
 
 ## Enhancements
