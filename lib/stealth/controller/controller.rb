@@ -144,6 +144,7 @@ module Stealth
       end
 
       step_to(session: back_to_session)
+      back_to_session.clear_session
     end
 
     def do_nothing

@@ -484,6 +484,25 @@ describe "Stealth::Controller" do
 
       controller.step_back
     end
+
+    it "should clear the back_to session from Redis of stepping" do
+      controller.set_back_to(flow: 'marco', state: 'polo')
+      back_to_session = Stealth::Session.new(
+        id: controller.current_session_id,
+        type: :back_to
+      )
+      expect($redis.get(back_to_session.session_key)).to_not be_nil
+
+      # We need to control the returned session object so the IDs match
+      expect(Stealth::Session).to receive(:new).with(
+        id: controller.current_session_id,
+        type: :back_to
+      ).and_return(back_to_session)
+      expect(controller).to receive(:step_to).with(session: back_to_session)
+
+      controller.step_back
+      expect($redis.get(back_to_session.session_key)).to be_nil
+    end
   end
 
   describe "progressed?" do
