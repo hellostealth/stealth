@@ -2,7 +2,7 @@
 title: NLP Integrations
 ---
 
-Stealth can be extended with NLP/NLU integrations. While these are not needed for the majority of interactions within chatbot, you may find they are helpful for certain types of interactions.
+Stealth can be extended with NLP/NLU integrations. While these are not needed for the majority of chatbot interactions, you may find they are helpful for certain types of interactions.
 
 ## Officially Supported
 

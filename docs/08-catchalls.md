@@ -2,7 +2,7 @@
 title: CatchAll
 ---
 
-Stealth CatchAlls are designed to handle a very common scenario within chatbots. What happens when the user says something the bot doesn't understand? The majority of bots will simply respond back with a generic "I don't understand" and hope the user to figures out the next step. While this experience might be ok for some bots, we built a more robust way of handling these experiences right into Stealth. The better your CatchAlls, the better your bot.
+Stealth CatchAlls are designed to handle a common scenario within chatbots: What happens when the user says something the bot doesn't understand? The majority of bots will simply respond back with a generic "I don't understand" and hope the user to figures out the next step. While this experience might be ok for some bots, we built a more robust way of handling these experiences right into Stealth. The better your CatchAlls, the better your bot.
 
 ## Triggering
 
