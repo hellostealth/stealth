@@ -108,6 +108,44 @@ describe "Stealth::Session" do
     end
   end
 
+  describe "==" do
+    let(:session) {
+      _session = Stealth::Session.new(id: id, type: :primary)
+      _session.set_session(new_flow: 'hello', new_state: 'say_hola')
+      _session
+    }
+
+    it "should return false if the session ids do not" do
+      other_session = Stealth::Session.new(id: 'xyz123', type: :primary)
+      other_session.set_session(new_flow: 'hello', new_state: 'say_hola')
+      expect(session == other_session).to be false
+    end
+
+    it "should return false if the states do not" do
+      other_session = Stealth::Session.new(id: id, type: :primary)
+      other_session.set_session(new_flow: 'hello', new_state: 'say_hola2')
+      expect(session == other_session).to be false
+    end
+
+    it "should return false if flows do not match" do
+      other_session = Stealth::Session.new(id: id, type: :primary)
+      other_session.set_session(new_flow: 'hello2', new_state: 'say_hola')
+      expect(session == other_session).to be false
+    end
+
+    it 'should return false if the session type does not match' do
+      other_session = Stealth::Session.new(id: id, type: :back_to)
+      other_session.set_session(new_flow: 'hello', new_state: 'say_hola')
+      expect(session == other_session).to be false
+    end
+
+    it 'should return true if the session id, flow, state, and session types match' do
+      other_session = Stealth::Session.new(id: id, type: :primary)
+      other_session.set_session(new_flow: 'hello', new_state: 'say_hola')
+      expect(session == other_session).to be true
+    end
+  end
+
   describe "self.is_a_session_string?" do
     it "should return false for state strings" do
       session_string = 'say_hello'
