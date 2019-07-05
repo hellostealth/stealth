@@ -37,7 +37,7 @@ module Stealth
       color = case topic.to_sym
               when :session
                 :green
-              when :previous_session
+              when :previous_session, :back_to_session
                 :yellow
               when :facebook, :twilio, :bandwidth
                 :blue
