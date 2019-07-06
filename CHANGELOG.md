@@ -4,6 +4,8 @@
 
 * [Controllers] When user's flow is set to `catch_all` or `interrupt`, Stealth will ignore incoming messages. If you have interactive states in either of these controllers, you will need to move those interactions to a different controller.
 * [Sessions] Sessions can now be cleared by calling `session.clear_session`. Clearing a session removes the key from Redis.
+* [Logging] `primary_session`, `previous_session`, and `back_to_session` now explicitly logged
+* [Sessions] The session is no longer set on update or stepping witht destination flow and state match the existing session.
 
 # Changelog for Stealth v2.3.0
 
