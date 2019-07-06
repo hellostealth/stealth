@@ -29,7 +29,7 @@ module Stealth
     end
 
     def progressed?
-      @progressed.present?
+      @progressed
     end
 
     def route
