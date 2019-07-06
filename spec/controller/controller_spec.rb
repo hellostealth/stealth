@@ -547,4 +547,26 @@ describe "Stealth::Controller" do
     end
   end
 
+  describe "update_session" do
+    before(:each) do
+      controller.current_session.set_session(new_flow: 'mr_tron', new_state: 'other_action')
+    end
+
+    it "should set progressed to :updated_session" do
+      controller.send(:update_session, flow: :mr_tron, state: :other_action)
+      expect(controller.progressed?).to eq :updated_session
+    end
+
+    it "call set_session on the current_session with the new flow and state" do
+      controller.send(:update_session, flow: :mr_robot, state: :my_action)
+      expect(controller.current_session.flow_string).to eq 'mr_robot'
+      expect(controller.current_session.state_string).to eq 'my_action'
+    end
+
+    it "should not call set_session on current_session if the flow and state match" do
+      expect_any_instance_of(Stealth::Session).to_not receive(:set_session)
+      controller.send(:update_session, flow: :mr_tron, state: :other_action)
+    end
+  end
+
 end

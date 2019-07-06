@@ -153,9 +153,12 @@ module Stealth
     private
 
       def update_session(flow:, state:)
-        @current_session = Stealth::Session.new(id: current_session_id)
         @progressed = :updated_session
-        @current_session.set_session(new_flow: flow, new_state: state)
+        @current_session = Stealth::Session.new(id: current_session_id)
+
+        unless current_session.flow_string == flow.to_s && current_session.state_string == state.to_s
+          @current_session.set_session(new_flow: flow, new_state: state)
+        end
       end
 
       def store_back_to_session(flow:, state:)
