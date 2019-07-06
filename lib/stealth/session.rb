@@ -75,7 +75,7 @@ module Stealth
       )
 
       Stealth::Logger.l(
-        topic: "session",
+        topic: [type, 'session'].join('_'),
         message: "User #{id}: setting session to #{new_flow}->#{new_state}"
       )
 
@@ -120,6 +120,13 @@ module Stealth
       else
         return self + (-steps)
       end
+    end
+
+    def ==(other_session)
+      self.flow_string == other_session.flow_string &&
+        self.state_string == other_session.state_string &&
+        self.type == other_session.type &&
+        self.id == other_session.id
     end
 
     def self.is_a_session_string?(string)

@@ -35,9 +35,9 @@ module Stealth
       topic_string = "[#{topic}]"
 
       color = case topic.to_sym
-              when :session
+              when :primary_session
                 :green
-              when :previous_session
+              when :previous_session, :back_to_session
                 :yellow
               when :facebook, :twilio, :bandwidth
                 :blue

@@ -484,25 +484,6 @@ describe "Stealth::Controller" do
 
       controller.step_back
     end
-
-    it "should clear the back_to session from Redis of stepping" do
-      controller.set_back_to(flow: 'marco', state: 'polo')
-      back_to_session = Stealth::Session.new(
-        id: controller.current_session_id,
-        type: :back_to
-      )
-      expect($redis.get(back_to_session.session_key)).to_not be_nil
-
-      # We need to control the returned session object so the IDs match
-      expect(Stealth::Session).to receive(:new).with(
-        id: controller.current_session_id,
-        type: :back_to
-      ).and_return(back_to_session)
-      expect(controller).to receive(:step_to).with(session: back_to_session)
-
-      controller.step_back
-      expect($redis.get(back_to_session.session_key)).to be_nil
-    end
   end
 
   describe "progressed?" do
@@ -563,6 +544,28 @@ describe "Stealth::Controller" do
       expect(controller.progressed?).to be_falsey
       controller.action(action: :other_action4)
       expect(controller.progressed?).to be_truthy
+    end
+  end
+
+  describe "update_session" do
+    before(:each) do
+      controller.current_session.set_session(new_flow: 'mr_tron', new_state: 'other_action')
+    end
+
+    it "should set progressed to :updated_session" do
+      controller.send(:update_session, flow: :mr_tron, state: :other_action)
+      expect(controller.progressed?).to eq :updated_session
+    end
+
+    it "call set_session on the current_session with the new flow and state" do
+      controller.send(:update_session, flow: :mr_robot, state: :my_action)
+      expect(controller.current_session.flow_string).to eq 'mr_robot'
+      expect(controller.current_session.state_string).to eq 'my_action'
+    end
+
+    it "should not call set_session on current_session if the flow and state match" do
+      expect_any_instance_of(Stealth::Session).to_not receive(:set_session)
+      controller.send(:update_session, flow: :mr_tron, state: :other_action)
     end
   end
 
