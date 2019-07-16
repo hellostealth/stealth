@@ -256,7 +256,8 @@ describe "Stealth::Controller" do
         controller.current_service,
         controller.current_session_id,
         'mr_robot',
-        'my_action'
+        'my_action',
+        nil
       )
 
       expect {
@@ -274,7 +275,8 @@ describe "Stealth::Controller" do
         controller.current_service,
         controller.current_session_id,
         'mr_tron',
-        'other_action3'
+        'other_action3',
+        nil
       )
 
       expect {
@@ -290,7 +292,8 @@ describe "Stealth::Controller" do
         controller.current_service,
         controller.current_session_id,
         'mr_robot',
-        'my_action3'
+        'my_action3',
+        nil
       )
 
       expect {
@@ -309,7 +312,8 @@ describe "Stealth::Controller" do
         controller.current_service,
         controller.current_session_id,
         'mr_robot',
-        'my_action3'
+        'my_action3',
+        nil
       )
 
       expect {
@@ -325,12 +329,27 @@ describe "Stealth::Controller" do
         controller.current_service,
         controller.current_session_id,
         'mr_robot',
-        'my_action3'
+        'my_action3',
+        nil
       )
 
       expect {
         controller.step_to_in 100.seconds, flow: :mr_robot, state: :my_action3
       }.to_not change(controller.current_session, :get_session)
+    end
+
+    it "should pass along the target_id if set on the message" do
+      expect(Stealth::ScheduledReplyJob).to receive(:perform_in).with(
+        100.seconds,
+        controller.current_service,
+        controller.current_session_id,
+        'mr_robot',
+        'my_action3',
+        '+18885551212'
+      )
+
+      controller.current_message.target_id = '+18885551212'
+      controller.step_to_in 100.seconds, flow: :mr_robot, state: :my_action3
     end
   end
 
@@ -357,7 +376,8 @@ describe "Stealth::Controller" do
         controller.current_service,
         controller.current_session_id,
         'mr_robot',
-        'my_action'
+        'my_action',
+        nil
       )
 
       expect {
@@ -375,7 +395,8 @@ describe "Stealth::Controller" do
         controller.current_service,
         controller.current_session_id,
         'mr_tron',
-        'other_action3'
+        'other_action3',
+        nil
       )
 
       expect {
@@ -391,7 +412,8 @@ describe "Stealth::Controller" do
         controller.current_service,
         controller.current_session_id,
         'mr_robot',
-        'my_action3'
+        'my_action3',
+        nil
       )
 
       expect {
@@ -410,7 +432,8 @@ describe "Stealth::Controller" do
         controller.current_service,
         controller.current_session_id,
         'mr_robot',
-        'my_action3'
+        'my_action3',
+        nil
       )
 
       expect {
@@ -426,12 +449,27 @@ describe "Stealth::Controller" do
         controller.current_service,
         controller.current_session_id,
         'mr_robot',
-        'my_action3'
+        'my_action3',
+        nil
       )
 
       expect {
         controller.step_to_at future_timestamp, flow: :mr_robot, state: :my_action3
       }.to_not change(controller.current_session, :get_session)
+    end
+
+    it "should pass along the target_id if set on the message" do
+      expect(Stealth::ScheduledReplyJob).to receive(:perform_at).with(
+        future_timestamp,
+        controller.current_service,
+        controller.current_session_id,
+        'mr_robot',
+        'my_action3',
+        '+18885551212'
+      )
+
+      controller.current_message.target_id = '+18885551212'
+      controller.step_to_at future_timestamp, flow: :mr_robot, state: :my_action3
     end
   end
 
