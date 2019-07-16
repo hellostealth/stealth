@@ -7,6 +7,7 @@
 * [Logging] `primary_session`, `previous_session`, and `back_to_session` now explicitly logged
 * [Sessions] The session is no longer set on update or stepping witht destination flow and state match the existing session.
 * [Scheduled Replies] The `service_message.target_id` is now set for scheduled replies. NOTE: scheduled replies that are already enqueued will NOT have this set.
+* [Server] Updated to Puma 4.0.1
 
 # Changelog for Stealth v2.3.0
 
