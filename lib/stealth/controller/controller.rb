@@ -83,36 +83,36 @@ module Stealth
       end
     end
 
-    def step_to_in(delay, session: nil, flow: nil, state: nil)
-      flow, state = get_flow_and_state(session: session, flow: flow, state: state)
+    def step_to_in(delay, session: nil, flow: nil, state: nil, params: {})
+      flow, state, params = get_flow_state_and_params(session: session, flow: flow, state: state, params: params)
 
       unless delay.is_a?(ActiveSupport::Duration)
         raise ArgumentError, "Please specify your step_to_in `delay` parameter using ActiveSupport::Duration, e.g. `1.day` or `5.hours`"
       end
 
-      Stealth::ScheduledReplyJob.perform_in(delay, current_service, current_session_id, flow, state)
-      Stealth::Logger.l(topic: "session", message: "User #{current_session_id}: scheduled session step to #{flow}->#{state} in #{delay} seconds")
+      Stealth::ScheduledReplyJob.perform_in(delay, current_service, current_session_id, flow, state, params)
+      Stealth::Logger.l(topic: "session", message: "User #{current_session_id}: scheduled session step to #{flow}->#{state}?#{params.to_h} in #{delay} seconds")
     end
 
-    def step_to_at(timestamp, session: nil, flow: nil, state: nil)
-      flow, state = get_flow_and_state(session: session, flow: flow, state: state)
+    def step_to_at(timestamp, session: nil, flow: nil, state: nil, params: {})
+      flow, state, params = get_flow_state_and_params(session: session, flow: flow, state: state, params: params)
 
       unless timestamp.is_a?(DateTime)
         raise ArgumentError, "Please specify your step_to_at `timestamp` parameter as a DateTime"
       end
 
-      Stealth::ScheduledReplyJob.perform_at(timestamp, current_service, current_session_id, flow, state)
-      Stealth::Logger.l(topic: "session", message: "User #{current_session_id}: scheduled session step to #{flow}->#{state} at #{timestamp.iso8601}")
+      Stealth::ScheduledReplyJob.perform_at(timestamp, current_service, current_session_id, flow, state, params)
+      Stealth::Logger.l(topic: "session", message: "User #{current_session_id}: scheduled session step to #{flow}->#{state}?#{params.to_h} at #{timestamp.iso8601}")
     end
 
-    def step_to(session: nil, flow: nil, state: nil)
-      flow, state = get_flow_and_state(session: session, flow: flow, state: state)
-      step(flow: flow, state: state)
+    def step_to(session: nil, flow: nil, state: nil, params: {})
+      flow, state, params = get_flow_state_and_params(session: session, flow: flow, state: state, params: params)
+      step(flow: flow, state: state, params: params)
     end
 
-    def update_session_to(session: nil, flow: nil, state: nil)
-      flow, state = get_flow_and_state(session: session, flow: flow, state: state)
-      update_session(flow: flow, state: state)
+    def update_session_to(session: nil, flow: nil, state: nil, params: {})
+      flow, state, params = get_flow_state_and_params(session: session, flow: flow, state: state, params: params)
+      update_session(flow: flow, state: state, params: params)
     end
 
     def do_nothing
@@ -121,14 +121,14 @@ module Stealth
 
     private
 
-      def update_session(flow:, state:)
+      def update_session(flow:, state:, params:)
         @current_session = Stealth::Session.new(user_id: current_session_id)
         @progressed = :updated_session
-        @current_session.set(flow: flow, state: state)
+        @current_session.set(flow: flow, state: state, params: params)
       end
 
-      def step(flow:, state:)
-        update_session(flow: flow, state: state)
+      def step(flow:, state:, params:)
+        update_session(flow: flow, state: state, params: params)
         @progressed = :stepped
         @flow_controller = nil
         @current_flow = current_session.flow
@@ -136,13 +136,13 @@ module Stealth
         action(action: state)
       end
 
-      def get_flow_and_state(session: nil, flow: nil, state: nil)
+      def get_flow_state_and_params(session: nil, flow: nil, state: nil, params: {})
         if session.nil? && flow.nil? && state.nil?
           raise(ArgumentError, "A session, flow, or state must be specified")
         end
 
         if session.present?
-          return session.flow_string, session.state_string
+          return session.flow_string, session.state_string, session.params
         end
 
         if flow.present?
@@ -150,11 +150,11 @@ module Stealth
             state = FlowMap.flow_spec[flow.to_sym].states.keys.first.to_s
           end
 
-          return flow.to_s, state.to_s
+          return flow.to_s, state.to_s, params.to_h
         end
 
         if state.present?
-          return current_session.flow_string, state.to_s
+          return current_session.flow_string, state.to_s, params.to_h
         end
       end
 

@@ -61,15 +61,21 @@ describe "Stealth::Controller" do
 
   describe "convenience methods" do
     it "should make the session ID accessible via current_session_id" do
-      controller.current_session.set(flow: 'mr_tron', state: 'other_action')
+      controller.current_session.set(flow: 'mr_tron', state: 'other_action', params: {})
 
       expect(controller.current_session_id).to eq(facebook_message.sender_id)
     end
 
     it "should make the session ID accessible via current_user_id" do
-      controller.current_session.set(flow: 'mr_tron', state: 'other_action')
+      controller.current_session.set(flow: 'mr_tron', state: 'other_action', params: {})
 
       expect(controller.current_user_id).to eq(facebook_message.sender_id)
+    end
+
+    it "should make params available in current_session.params" do
+      controller.current_session.set(flow: 'mr_tron', state: 'other_action', params: { 'key' => 'value' })
+
+      expect(controller.current_session.params).to eq({ 'key' => 'value' })
     end
 
     it "should make the message available in current_message.message" do
@@ -123,14 +129,14 @@ describe "Stealth::Controller" do
 
   describe "states with redirect_to specified" do
     it "should step_to the specified redirect state when only a state is specified" do
-      controller.current_session.session = Stealth::Session.canonical_session_slug(flow: 'mr_tron', state: 'deprecated_action')
+      controller.current_session.session = Stealth::Session.canonical_session_slug(flow: 'mr_tron', state: 'deprecated_action', params: {})
       expect(MrTronsController).to receive(:new).and_return(controller)
       expect(controller).to receive(:other_action)
       controller.action(action: :deprecated_action)
     end
 
     it "should step_to the specified redirect flow and state when a session is specified" do
-      controller.current_session.session = Stealth::Session.canonical_session_slug(flow: 'mr_tron', state: 'deprecated_action2')
+      controller.current_session.session = Stealth::Session.canonical_session_slug(flow: 'mr_tron', state: 'deprecated_action2', params: {})
       mr_robot_controller = MrTronsController.new(service_message: facebook_message.message_with_text)
 
       expect(MrRobotsController).to receive(:new).and_return(mr_robot_controller)
@@ -139,7 +145,7 @@ describe "Stealth::Controller" do
     end
 
     it "should NOT call the redirected controller action method" do
-      controller.current_session.session = Stealth::Session.canonical_session_slug(flow: 'mr_tron', state: 'deprecated_action')
+      controller.current_session.session = Stealth::Session.canonical_session_slug(flow: 'mr_tron', state: 'deprecated_action', params: {})
       expect(MrTronsController).to receive(:new).and_return(controller)
       expect(controller).to_not receive(:deprecated_action)
       controller.action(action: :deprecated_action)
@@ -161,14 +167,16 @@ describe "Stealth::Controller" do
     it "should call a controller's corresponding action when only a state is provided" do
       expect_any_instance_of(MrTronsController).to receive(:other_action3)
 
-      controller.current_session.set(flow: 'mr_tron', state: 'other_action')
+      controller.current_session.set(flow: 'mr_tron', state: 'other_action', params: {})
 
       controller.step_to state: "other_action3"
     end
 
-    it "should call a controller's corresponding action when a state and flow is provided" do
+    it "should call a controller's corresponding action with params set on current_session when a state, flow and params is provided" do
       expect_any_instance_of(MrRobotsController).to receive(:my_action3)
-      controller.step_to flow: "mr_robot", state: "my_action3"
+      controller.step_to flow: "mr_robot", state: "my_action3", params: { 'key' => 'value' }
+      
+      expect(controller.current_session.params).to eq({ 'key' => 'value' })
     end
 
     it "should call a controller's corresponding action when a session is provided" do
@@ -204,30 +212,32 @@ describe "Stealth::Controller" do
     it "should update session to controller's corresponding action when only a state is provided" do
       expect_any_instance_of(MrTronsController).to_not receive(:other_action3)
 
-      controller.current_session.set(flow: 'mr_tron', state: 'other_action')
+      controller.current_session.set(flow: 'mr_tron', state: 'other_action', params: {})
 
       controller.update_session_to state: "other_action3"
       expect(controller.current_session.flow_string).to eq('mr_tron')
       expect(controller.current_session.state_string).to eq('other_action3')
     end
 
-    it "should update session to controller's corresponding action when a state and flow is provided" do
+    it "should update session to controller's corresponding action when a state, flow and params is provided" do
       expect_any_instance_of(MrRobotsController).to_not receive(:my_action3)
 
-      controller.update_session_to flow: "mr_robot", state: "my_action3"
+      controller.update_session_to flow: "mr_robot", state: "my_action3", params: { 'key' => 'value' }
       expect(controller.current_session.flow_string).to eq('mr_robot')
       expect(controller.current_session.state_string).to eq('my_action3')
+      expect(controller.current_session.params).to eq({ 'key' => 'value' })
     end
 
     it "should update session to controller's corresponding action when a session is provided" do
       expect_any_instance_of(MrRobotsController).to_not receive(:my_action3)
 
       session = Stealth::Session.new(user_id: controller.current_session_id)
-      session.set(flow: 'mr_robot', state: 'my_action3')
+      session.set(flow: 'mr_robot', state: 'my_action3', params: { 'key' => 'value' })
 
       controller.update_session_to session: session
       expect(controller.current_session.flow_string).to eq('mr_robot')
       expect(controller.current_session.state_string).to eq('my_action3')
+      expect(controller.current_session.params).to eq({ 'key' => 'value' })
     end
 
     it "should accept flow and string specified as symbols" do
@@ -260,7 +270,8 @@ describe "Stealth::Controller" do
         controller.current_service,
         controller.current_session_id,
         'mr_robot',
-        'my_action'
+        'my_action',
+        {}
       )
 
       expect {
@@ -271,14 +282,15 @@ describe "Stealth::Controller" do
     it "should schedule a transition to controller's corresponding action when only a state is provided" do
       expect_any_instance_of(MrRobotsController).to_not receive(:my_action)
 
-      controller.current_session.set(flow: 'mr_tron', state: 'other_action')
+      controller.current_session.set(flow: 'mr_tron', state: 'other_action', params: {})
 
       expect(Stealth::ScheduledReplyJob).to receive(:perform_in).with(
         100.seconds,
         controller.current_service,
         controller.current_session_id,
         'mr_tron',
-        'other_action3'
+        'other_action3',
+        {}
       )
 
       expect {
@@ -286,7 +298,7 @@ describe "Stealth::Controller" do
       }.to_not change(controller.current_session, :get)
     end
 
-    it "should update session to controller's corresponding action when a state and flow is provided" do
+    it "should update session to controller's corresponding action when a state, flow and params is provided" do
       expect_any_instance_of(MrRobotsController).to_not receive(:my_action)
 
       expect(Stealth::ScheduledReplyJob).to receive(:perform_in).with(
@@ -294,11 +306,12 @@ describe "Stealth::Controller" do
         controller.current_service,
         controller.current_session_id,
         'mr_robot',
-        'my_action3'
+        'my_action3',
+        { 'key' => 'value' }
       )
 
       expect {
-        controller.step_to_in 100.seconds, flow: 'mr_robot', state: "my_action3"
+        controller.step_to_in 100.seconds, flow: 'mr_robot', state: "my_action3", params: { 'key' => 'value' }
       }.to_not change(controller.current_session, :get)
     end
 
@@ -306,14 +319,15 @@ describe "Stealth::Controller" do
       expect_any_instance_of(MrRobotsController).to_not receive(:my_action)
 
       session = Stealth::Session.new(user_id: controller.current_session_id)
-      session.set(flow: 'mr_robot', state: 'my_action3')
+      session.set(flow: 'mr_robot', state: 'my_action3', params: { 'key' => 'value' })
 
       expect(Stealth::ScheduledReplyJob).to receive(:perform_in).with(
         100.seconds,
         controller.current_service,
         controller.current_session_id,
         'mr_robot',
-        'my_action3'
+        'my_action3',
+        { 'key' => 'value' }
       )
 
       expect {
@@ -329,7 +343,8 @@ describe "Stealth::Controller" do
         controller.current_service,
         controller.current_session_id,
         'mr_robot',
-        'my_action3'
+        'my_action3',
+        {}
       )
 
       expect {
@@ -361,7 +376,8 @@ describe "Stealth::Controller" do
         controller.current_service,
         controller.current_session_id,
         'mr_robot',
-        'my_action'
+        'my_action',
+        {}
       )
 
       expect {
@@ -372,14 +388,15 @@ describe "Stealth::Controller" do
     it "should schedule a transition to controller's corresponding action when only a state is provided" do
       expect_any_instance_of(MrRobotsController).to_not receive(:my_action)
 
-      controller.current_session.set(flow: 'mr_tron', state: 'other_action')
+      controller.current_session.set(flow: 'mr_tron', state: 'other_action', params: {})
 
       expect(Stealth::ScheduledReplyJob).to receive(:perform_at).with(
         future_timestamp,
         controller.current_service,
         controller.current_session_id,
         'mr_tron',
-        'other_action3'
+        'other_action3',
+        {}
       )
 
       expect {
@@ -387,7 +404,7 @@ describe "Stealth::Controller" do
       }.to_not change(controller.current_session, :get)
     end
 
-    it "should update session to controller's corresponding action when a state and flow is provided" do
+    it "should update session to controller's corresponding action when a state, flow and params is provided" do
       expect_any_instance_of(MrRobotsController).to_not receive(:my_action)
 
       expect(Stealth::ScheduledReplyJob).to receive(:perform_at).with(
@@ -395,11 +412,12 @@ describe "Stealth::Controller" do
         controller.current_service,
         controller.current_session_id,
         'mr_robot',
-        'my_action3'
+        'my_action3',
+        { 'key' => 'value' }
       )
 
       expect {
-        controller.step_to_at future_timestamp, flow: 'mr_robot', state: "my_action3"
+        controller.step_to_at future_timestamp, flow: 'mr_robot', state: "my_action3", params: { 'key' => 'value' }
       }.to_not change(controller.current_session, :get)
     end
 
@@ -407,14 +425,15 @@ describe "Stealth::Controller" do
       expect_any_instance_of(MrRobotsController).to_not receive(:my_action)
 
       session = Stealth::Session.new(user_id: controller.current_session_id)
-      session.set(flow: 'mr_robot', state: 'my_action3')
+      session.set(flow: 'mr_robot', state: 'my_action3', params: { 'key' => 'value' })
 
       expect(Stealth::ScheduledReplyJob).to receive(:perform_at).with(
         future_timestamp,
         controller.current_service,
         controller.current_session_id,
         'mr_robot',
-        'my_action3'
+        'my_action3',
+        { 'key' => 'value' }
       )
 
       expect {
@@ -430,7 +449,8 @@ describe "Stealth::Controller" do
         controller.current_service,
         controller.current_session_id,
         'mr_robot',
-        'my_action3'
+        'my_action3',
+        {}
       )
 
       expect {

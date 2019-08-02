@@ -62,14 +62,14 @@ describe "Stealth::Controller::CatchAll" do
     end
 
     it "should step_to catch_all->level1 when a StandardError is raised" do
-      controller.current_session.session = Stealth::Session.canonical_session_slug(flow: 'vader', state: 'my_action')
+      controller.current_session.session = Stealth::Session.canonical_session_slug(flow: 'vader', state: 'my_action', params: {})
       controller.action(action: :my_action)
       expect(controller.current_session.flow_string).to eq("catch_all")
       expect(controller.current_session.state_string).to eq("level1")
     end
 
     it "should step_to catch_all->level1 when an action doesn't progress the flow" do
-      controller.current_session.session = Stealth::Session.canonical_session_slug(flow: 'vader', state: 'my_action2')
+      controller.current_session.session = Stealth::Session.canonical_session_slug(flow: 'vader', state: 'my_action2', params: {})
       controller.action(action: :my_action2)
       expect(controller.current_session.flow_string).to eq("catch_all")
       expect(controller.current_session.state_string).to eq("level1")
@@ -100,7 +100,7 @@ describe "Stealth::Controller::CatchAll" do
     end
 
     it "should NOT run the catch_all if do_nothing is called" do
-      controller.current_session.session = Stealth::Session.canonical_session_slug(flow: 'vader', state: 'my_action3')
+      controller.current_session.session = Stealth::Session.canonical_session_slug(flow: 'vader', state: 'my_action3', params: {})
       controller.action(action: :my_action3)
       expect(controller.current_session.flow_string).to eq("vader")
       expect(controller.current_session.state_string).to eq("my_action3")

@@ -43,7 +43,8 @@ module Stealth
             else
               session.session = Stealth::Session.canonical_session_slug(
                 flow: flow_name,
-                state: specified_state
+                state: specified_state,
+                params: {}
               )
             end
 

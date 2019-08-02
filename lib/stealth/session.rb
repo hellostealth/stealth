@@ -4,9 +4,10 @@
 module Stealth
   class Session
 
-    SLUG_SEPARATOR = '->'
+    STATE_SEPARATOR = '->'
+    PARAMS_SEPARATOR = '?'
 
-    attr_reader :flow, :state, :user_id, :previous
+    attr_reader :user_id, :previous
     attr_accessor :session
 
     def initialize(user_id: nil, previous: false)
@@ -24,13 +25,6 @@ module Stealth
       self
     end
 
-    def self.flow_and_state_from_session_slug(slug:)
-      {
-        flow: slug&.split(SLUG_SEPARATOR)&.first,
-        state: slug&.split(SLUG_SEPARATOR)&.last
-      }
-    end
-
     def flow
       return nil if flow_string.blank?
 
@@ -41,12 +35,20 @@ module Stealth
       flow&.current_state
     end
 
+    def params
+      (params_json.blank? || params_json == "{}") ? {} : JSON.load(params_json)
+    end
+
     def flow_string
-      session&.split(SLUG_SEPARATOR)&.first
+      session&.split(STATE_SEPARATOR)&.first
     end
 
     def state_string
-      session&.split(SLUG_SEPARATOR)&.last
+      session&.split(STATE_SEPARATOR, 2)&.second&.split(PARAMS_SEPARATOR)&.first
+    end
+
+    def params_json
+      session&.split(STATE_SEPARATOR, 2)&.second&.split(PARAMS_SEPARATOR, 2)&.second
     end
 
     def get
@@ -61,13 +63,13 @@ module Stealth
       end
     end
 
-    def set(flow:, state:)
-      store_current_to_previous(flow: flow, state: state)
+    def set(flow:, state:, params:)
+      store_current_to_previous(flow: flow, state: state, params: params)
 
       @flow = nil
-      @session = self.class.canonical_session_slug(flow: flow, state: state)
+      @session = self.class.canonical_session_slug(flow: flow, state: state, params: params)
 
-      Stealth::Logger.l(topic: "session", message: "User #{user_id}: setting session to #{flow}->#{state}")
+      Stealth::Logger.l(topic: "session", message: "User #{user_id}: setting session to #{flow}->#{state}?#{params.to_h}")
 
       if sessions_expire?
         $redis.setex(user_id, Stealth.config.session_ttl, session)
@@ -94,7 +96,7 @@ module Stealth
 
       new_state = self.state + steps
       new_session = Stealth::Session.new(user_id: self.user_id)
-      new_session.session = self.class.canonical_session_slug(flow: self.flow_string, state: new_state)
+      new_session.session = self.class.canonical_session_slug(flow: self.flow_string, state: new_state, params: {})
 
       new_session
     end
@@ -110,12 +112,13 @@ module Stealth
     end
 
     def self.is_a_session_string?(string)
-      session_regex = /(.+)(#{SLUG_SEPARATOR})(.+)/
+      session_regex = /(.+)(#{STATE_SEPARATOR})(.+)/
       !!string.match(session_regex)
     end
 
-    def self.canonical_session_slug(flow:, state:)
-      [flow, state].join(SLUG_SEPARATOR)
+    def self.canonical_session_slug(flow:, state:, params:)
+      params_json_dump = params.blank? ? '{}' : JSON.dump(params.to_h)
+      "#{flow.to_s}#{STATE_SEPARATOR}#{state.to_s}#{PARAMS_SEPARATOR}#{params_json_dump}"
     end
 
     private
@@ -124,11 +127,11 @@ module Stealth
         [user_id, 'previous'].join('-')
       end
 
-      def store_current_to_previous(flow:, state:)
-        new_session = self.class.canonical_session_slug(flow: flow, state: state)
+      def store_current_to_previous(flow:, state:, params:)
+        new_session = self.class.canonical_session_slug(flow: flow, state: state, params: params)
 
-        # Prevent previous_session from becoming current_session
-        if new_session == session
+        # Prevent previous_session from becoming current_session, exclude params
+        if new_session&.split(PARAMS_SEPARATOR)&.first == session&.split(PARAMS_SEPARATOR)&.first
           Stealth::Logger.l(topic: "previous_session", message: "User #{user_id}: skipping setting to #{session} because it is the same as current_session")
         else
           Stealth::Logger.l(topic: "previous_session", message: "User #{user_id}: setting to #{session}")

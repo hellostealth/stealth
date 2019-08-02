@@ -34,14 +34,16 @@ describe "Stealth::Session" do
   describe "without a session" do
     let(:session) { Stealth::Session.new(user_id: user_id) }
 
-    it "should have nil flow and state" do
+    it "should have nil flow and state, empty params" do
       expect(session.flow).to be_nil
       expect(session.state).to be_nil
+      expect(session.params).to be_empty
     end
 
-    it "should have nil flow_string and state_string" do
+    it "should have nil flow_string, state_string, params_json" do
       expect(session.flow_string).to be_nil
       expect(session.state_string).to be_nil
+      expect(session.params_json).to be_nil
     end
 
     it "should respond to present? and blank?" do
@@ -53,7 +55,7 @@ describe "Stealth::Session" do
   describe "with a session" do
     let(:session) do
       session = Stealth::Session.new(user_id: user_id)
-      session.set(flow: 'marco', state: 'polo')
+      session.set(flow: 'marco', state: 'polo', params: { key: 'value'})
       session
     end
 
@@ -66,12 +68,20 @@ describe "Stealth::Session" do
       expect(session.state).to eq :polo
     end
 
+    it "should return the params" do
+      expect(session.params).to eq({ "key" => "value" })
+    end
+
     it "should return the flow_string" do
       expect(session.flow_string).to eq "marco"
     end
 
     it "should return the state_string" do
       expect(session.state_string).to eq "polo"
+    end
+
+    it "should return the params json" do
+      expect(session.params_json).to eq JSON.dump({ key: 'value' })
     end
 
     it "should respond to present? and blank?" do
@@ -84,25 +94,25 @@ describe "Stealth::Session" do
     let(:session) { Stealth::Session.new(user_id: user_id) }
 
     it "should increment the state" do
-      session.set(flow: 'new_todo', state: 'get_due_date')
+      session.set(flow: 'new_todo', state: 'get_due_date', params: {})
       new_session = session + 1.state
       expect(new_session.state_string).to eq('created')
     end
 
     it "should decrement the state" do
-      session.set(flow: 'new_todo', state: 'error')
+      session.set(flow: 'new_todo', state: 'error', params: {})
       new_session = session - 2.states
       expect(new_session.state_string).to eq('get_due_date')
     end
 
     it "should return the first state if the decrement is out of bounds" do
-      session.set(flow: 'new_todo', state: 'get_due_date')
+      session.set(flow: 'new_todo', state: 'get_due_date', params: {})
       new_session = session - 5.states
       expect(new_session.state_string).to eq('new')
     end
 
     it "should return the last state if the increment is out of bounds" do
-      session.set(flow: 'new_todo', state: 'created')
+      session.set(flow: 'new_todo', state: 'created', params: {})
       new_session = session + 5.states
       expect(new_session.state_string).to eq('error')
     end
@@ -119,8 +129,13 @@ describe "Stealth::Session" do
       expect(Stealth::Session.is_a_session_string?(session_string)).to be false
     end
 
-    it "should return true for a complete session string" do
+    it "should return true for flow and state session string" do
       session_string = 'hello->say_hello'
+      expect(Stealth::Session.is_a_session_string?(session_string)).to be true
+    end
+
+    it "should return true for a complete session string" do
+      session_string = "hello->say_hello?#{JSON.dump({ key: 'value' })}"
       expect(Stealth::Session.is_a_session_string?(session_string)).to be true
     end
   end
