@@ -36,7 +36,7 @@ module Stealth
     end
 
     def params
-      (params_json.blank? || params_json == "{}") ? {} : JSON.load(params_json)
+      (params_json.blank? || params_json == "{}") ? {} : ActiveSupport::HashWithIndifferentAccess.new(JSON.load(params_json))
     end
 
     def flow_string

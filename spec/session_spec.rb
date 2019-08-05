@@ -69,7 +69,8 @@ describe "Stealth::Session" do
     end
 
     it "should return the params" do
-      expect(session.params).to eq({ "key" => "value" })
+      expect(session.params["key"]).to eq "value"
+      expect(session.params[:key]).to eq "value"
     end
 
     it "should return the flow_string" do
