@@ -69,7 +69,7 @@ module Stealth
       @flow = nil
       @session = self.class.canonical_session_slug(flow: flow, state: state, params: params)
 
-      Stealth::Logger.l(topic: "session", message: "User #{user_id}: setting session to #{flow}->#{state}?#{params.to_h}")
+      Stealth::Logger.l(topic: "session", message: "User #{user_id}: setting to #{session}")
 
       if sessions_expire?
         $redis.setex(user_id, Stealth.config.session_ttl, session)
