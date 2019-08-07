@@ -40,6 +40,14 @@ module Stealth
       }
     end
 
+    def self.slugify(flow:, state:)
+      unless flow.present? && state.present?
+        raise(ArgumentError, 'A flow and state must be specified.')
+      end
+
+      [flow, state].join(SLUG_SEPARATOR)
+    end
+
     def flow
       return nil if flow_string.blank?
 

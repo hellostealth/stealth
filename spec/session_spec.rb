@@ -340,4 +340,28 @@ describe "Stealth::Session" do
       expect($redis.get(back_to_session.session_key)).to be_nil
     end
   end
+
+  describe "self.slugify" do
+    it "should return a session slug given a flow and state" do
+      expect(Stealth::Session.slugify(flow: 'hello', state: 'world')).to eq 'hello->world'
+    end
+
+    it "should raise an ArgumentError if flow is blank" do
+      expect {
+        Stealth::Session.slugify(flow: '', state: 'world')
+      }.to raise_error(ArgumentError)
+    end
+
+    it "should raise an ArgumentError if state is blank" do
+      expect {
+        Stealth::Session.slugify(flow: 'hello', state: nil)
+      }.to raise_error(ArgumentError)
+    end
+
+    it "should raise an ArgumentError if flow and state are blank" do
+      expect {
+        Stealth::Session.slugify(flow: nil, state: nil)
+      }.to raise_error(ArgumentError)
+    end
+  end
 end
