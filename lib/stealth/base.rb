@@ -102,6 +102,10 @@ module Stealth
     end
   end
 
+  def self.tid
+    Thread.current.object_id.to_s(36)
+  end
+
   private
 
     def self.require_directory(directory)
