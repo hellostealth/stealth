@@ -9,9 +9,7 @@ Stealth is designed for your bot to support one or more messaging integrations. 
 ```
 source 'https://rubygems.org'
 
-ruby '2.5.1'
-
-gem 'stealth', '~> 0.10.0'
+gem 'stealth', '~> 1.0'
 
 # Uncomment to enable the Stealth Facebook Driver
 # gem 'stealth-facebook'

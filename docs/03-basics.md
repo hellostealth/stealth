@@ -54,7 +54,7 @@ A flow consists of the following components:
 
 1. A controller file, named in the plural form. For example, a `quote` flow would have a corresponding `QuotesController`.
 2. Replies. Each flow will have a directory in the `replies` directory in plural form. Again using the `quote` flow example, the directory would named `quotes`.
-3. An entry in `config/flow_map.rb`. The `FlowMap` file is where each flow and it's respective states are defined for your bot.
+3. An entry in `config/flow_map.rb`. The `FlowMap` file is where each flow and its respective states are defined for your bot.
 
 Flows can be generated using a generator:
 
@@ -64,7 +64,7 @@ Flows can be generated using a generator:
 
 ## FlowMap
 
-The `FlowMap` file is where each flow and it's respective states are defined for your bot. Here is an example `flow_map.rb`:
+The `FlowMap` file is where each flow and its respective states are defined for your bot. Here is an example `flow_map.rb`:
 
 ```ruby
 class FlowMap
