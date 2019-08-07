@@ -4,6 +4,8 @@
 module Stealth
   class Session
 
+    include Stealth::Redis
+
     SLUG_SEPARATOR = '->'
 
     attr_reader :flow, :state, :id, :type
@@ -57,13 +59,7 @@ module Stealth
     end
 
     def get_session
-      @session ||= begin
-        if sessions_expire?
-          getex(session_key)
-        else
-          $redis.get(session_key)
-        end
-      end
+      @session ||= get_key(session_key)
     end
 
     def set_session(new_flow:, new_state:)
@@ -83,7 +79,7 @@ module Stealth
         store_current_to_previous(existing_session: existing_session)
       end
 
-      persist_session(key: session_key, value: session)
+      persist_key(key: session_key, value: session)
     end
 
     def clear_session
@@ -189,29 +185,10 @@ module Stealth
             message: "User #{id}: setting to #{existing_session}"
           )
 
-          persist_session(
+          persist_key(
             key: previous_session_key,
             value: existing_session
           )
-        end
-      end
-
-      def sessions_expire?
-        Stealth.config.session_ttl > 0
-      end
-
-      def getex(key)
-        $redis.multi do
-          $redis.expire(key, Stealth.config.session_ttl)
-          $redis.get(key)
-        end.last
-      end
-
-      def persist_session(key:, value:)
-        if sessions_expire?
-          $redis.setex(key, Stealth.config.session_ttl, value)
-        else
-          $redis.set(key, value)
         end
       end
 

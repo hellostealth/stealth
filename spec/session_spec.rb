@@ -317,9 +317,9 @@ describe "Stealth::Session" do
     let(:back_to_session) { Stealth::Session.new(id: id, type: :back_to) }
 
     before(:each) do
-      session.send(:persist_session, key: session.session_key, value: '1')
-      previous_session.send(:persist_session, key: previous_session.session_key, value: '1')
-      back_to_session.send(:persist_session, key: back_to_session.session_key, value: '1')
+      session.send(:persist_key, key: session.session_key, value: '1')
+      previous_session.send(:persist_key, key: previous_session.session_key, value: '1')
+      back_to_session.send(:persist_key, key: back_to_session.session_key, value: '1')
     end
 
     it "should remove a default session from Redis" do

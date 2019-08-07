@@ -19,6 +19,9 @@ require 'stealth/errors'
 require 'stealth/logger'
 require 'stealth/configuration'
 
+# helpers
+require 'stealth/helpers/redis'
+
 module Stealth
 
   def self.env
