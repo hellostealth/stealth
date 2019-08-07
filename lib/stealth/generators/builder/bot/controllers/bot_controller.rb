@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class BotController < Stealth::Controller
 
   helper :all
