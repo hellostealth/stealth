@@ -47,6 +47,7 @@ module Stealth
   def self.set_config_defaults(config)
     config.dynamic_delay_muliplier = 1.0
     config.session_ttl = 0
+    config.lock_autorelease = 30
     config.transcript_logging = false
   end
 
