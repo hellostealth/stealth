@@ -8,28 +8,28 @@ module Stealth
     included do
       private
 
-      def keys_expire?
-        Stealth.config.session_ttl > 0
-      end
-
-      def get_key(key)
-        if keys_expire?
-          getex(key)
+      def get_key(key, expiration: Stealth.config.session_ttl)
+        if expiration > 0
+          getex(key, expiration)
         else
           $redis.get(key)
         end
       end
 
-      def getex(key)
+      def delete_key(key)
+        $redis.del(key)
+      end
+
+      def getex(key, expiration=Stealth.config.session_ttl)
         $redis.multi do
-          $redis.expire(key, Stealth.config.session_ttl)
+          $redis.expire(key, expiration)
           $redis.get(key)
         end.last
       end
 
-      def persist_key(key:, value:)
-        if keys_expire?
-          $redis.setex(key, Stealth.config.session_ttl, value)
+      def persist_key(key:, value:, expiration: Stealth.config.session_ttl)
+        if expiration > 0
+          $redis.setex(key, expiration, value)
         else
           $redis.set(key, value)
         end
