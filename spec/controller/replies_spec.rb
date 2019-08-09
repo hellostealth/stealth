@@ -269,6 +269,58 @@ describe "Stealth::Controller replies" do
     end
   end
 
+  describe "session locking" do
+    let(:stubbed_handler) { double("handler") }
+    let(:stubbed_client) { double("client") }
+
+    before(:each) do
+      allow(Stealth::Services::Facebook::ReplyHandler).to receive(:new).and_return(stubbed_handler)
+      allow(Stealth::Services::Facebook::Client).to receive(:new).and_return(stubbed_client)
+      allow(controller.current_session).to receive(:flow_string).and_return("message")
+      allow(controller.current_session).to receive(:state_string).and_return("say_offer")
+    end
+
+    it "should update the lock for each reply_type in the reply" do
+      allow(stubbed_client).to receive(:transmit).and_return(true)
+      allow(controller).to receive(:sleep).and_return(true).with(2.0)
+
+      expect(controller).to receive(:lock_session!).exactly(3).times
+      expect(stubbed_handler).to receive(:text).exactly(2).times
+      expect(stubbed_handler).to receive(:delay).exactly(1).times
+      controller.say_offer
+    end
+
+    it "should update the lock position for each reply_type in the reply" do
+      allow(stubbed_client).to receive(:transmit).and_return(true)
+      allow(controller).to receive(:sleep).and_return(true).with(2.0)
+
+      expect(controller).to receive(
+        :lock_session!
+      ).with(
+        session_slug: controller.current_session.get_session,
+        position: 0
+      ).exactly(1).times
+
+      expect(controller).to receive(
+        :lock_session!
+      ).with(
+        session_slug: controller.current_session.get_session,
+        position: 1
+      ).exactly(1).times
+
+      expect(controller).to receive(
+        :lock_session!
+      ).with(
+        session_slug: controller.current_session.get_session,
+        position: 2
+      ).exactly(1).times
+
+      expect(stubbed_handler).to receive(:text).exactly(2).times
+      expect(stubbed_handler).to receive(:delay).exactly(1).times
+      controller.say_offer
+    end
+  end
+
   describe "dynamic delays" do
     let(:stubbed_handler) { double("handler") }
     let(:stubbed_client) { double("client") }
