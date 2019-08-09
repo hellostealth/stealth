@@ -86,6 +86,11 @@ module Stealth
     end
 
     def step_to_in(delay, session: nil, flow: nil, state: nil)
+      if interrupt_detected?
+        run_interrupt_action
+        return :interrupted
+      end
+
       flow, state = get_flow_and_state(session: session, flow: flow, state: state)
 
       unless delay.is_a?(ActiveSupport::Duration)
@@ -97,6 +102,11 @@ module Stealth
     end
 
     def step_to_at(timestamp, session: nil, flow: nil, state: nil)
+      if interrupt_detected?
+        run_interrupt_action
+        return :interrupted
+      end
+
       flow, state = get_flow_and_state(session: session, flow: flow, state: state)
 
       unless timestamp.is_a?(DateTime)
@@ -108,24 +118,43 @@ module Stealth
     end
 
     def step_to(session: nil, flow: nil, state: nil)
+      if interrupt_detected?
+        run_interrupt_action
+        return :interrupted
+      end
+
       flow, state = get_flow_and_state(
         session: session,
         flow: flow,
         state: state
       )
+
+      lock_session!(session_slug: Session.slugify(flow: flow, state: state))
+
       step(flow: flow, state: state)
     end
 
     def update_session_to(session: nil, flow: nil, state: nil)
+      if interrupt_detected?
+        run_interrupt_action
+        return :interrupted
+      end
+
       flow, state = get_flow_and_state(
         session: session,
         flow: flow,
         state: state
       )
       update_session(flow: flow, state: state)
+      release_lock!
     end
 
     def set_back_to(session: nil, flow: nil, state:)
+      if interrupt_detected?
+        run_interrupt_action
+        return :interrupted
+      end
+
       flow, state = get_flow_and_state(
         session: session,
         flow: flow,
@@ -152,6 +181,7 @@ module Stealth
 
     def do_nothing
       @progressed = :do_nothing
+      release_lock!
     end
 
     private
