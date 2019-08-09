@@ -39,6 +39,8 @@ module Stealth
                 :green
               when :previous_session, :back_to_session
                 :yellow
+              when :interrupt
+                :magenta
               when :facebook, :twilio, :bandwidth
                 :blue
               when :smooch
