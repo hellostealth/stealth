@@ -6,6 +6,7 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'rspec'
 
 require 'stealth'
+require 'sidekiq/testing'
 require 'mock_redis'
 
 # Requires supporting files with custom matchers and macros, etc,
@@ -16,4 +17,8 @@ $redis = MockRedis.new
 
 RSpec.configure do |config|
   ENV['STEALTH_ENV'] = 'test'
+
+  config.before(:each) do |example|
+    Sidekiq::Testing.fake!
+  end
 end
