@@ -32,6 +32,12 @@ module Stealth
           end
 
           service_reply.replies.each_with_index do |reply, i|
+            # Updates the lock with the current position of the reply
+            lock_session!(
+              session_slug: current_session.get_session,
+              position: i
+            )
+
             # Support randomized replies for text and speech replies.
             # We select one before handing the reply off to the driver.
             if reply['text'].is_a?(Array)

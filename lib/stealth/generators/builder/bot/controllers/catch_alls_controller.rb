@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CatchAllsController < BotController
 
   def level1

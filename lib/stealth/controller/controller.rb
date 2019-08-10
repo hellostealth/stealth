@@ -9,6 +9,7 @@ module Stealth
     include Stealth::Controller::Replies
     include Stealth::Controller::CatchAll
     include Stealth::Controller::Helpers
+    include Stealth::Controller::InterruptDetect
 
     attr_reader :current_message, :current_service, :flow_controller,
                 :action_name, :current_session_id
@@ -75,13 +76,21 @@ module Stealth
             run_catch_all(reason: 'Did not send replies, update session, or step')
           end
         rescue StandardError => e
-          Stealth::Logger.l(topic: "catch_all", message: e.backtrace.join("\n"))
+          Stealth::Logger.l(
+            topic: "catch_all",
+            message: [e.message, e.backtrace.join("\n")].join("\n")
+          )
           run_catch_all(reason: e.message)
         end
       end
     end
 
     def step_to_in(delay, session: nil, flow: nil, state: nil)
+      if interrupt_detected?
+        run_interrupt_action
+        return :interrupted
+      end
+
       flow, state = get_flow_and_state(session: session, flow: flow, state: state)
 
       unless delay.is_a?(ActiveSupport::Duration)
@@ -93,6 +102,11 @@ module Stealth
     end
 
     def step_to_at(timestamp, session: nil, flow: nil, state: nil)
+      if interrupt_detected?
+        run_interrupt_action
+        return :interrupted
+      end
+
       flow, state = get_flow_and_state(session: session, flow: flow, state: state)
 
       unless timestamp.is_a?(DateTime)
@@ -104,24 +118,43 @@ module Stealth
     end
 
     def step_to(session: nil, flow: nil, state: nil)
+      if interrupt_detected?
+        run_interrupt_action
+        return :interrupted
+      end
+
       flow, state = get_flow_and_state(
         session: session,
         flow: flow,
         state: state
       )
+
+      lock_session!(session_slug: Session.slugify(flow: flow, state: state))
+
       step(flow: flow, state: state)
     end
 
     def update_session_to(session: nil, flow: nil, state: nil)
+      if interrupt_detected?
+        run_interrupt_action
+        return :interrupted
+      end
+
       flow, state = get_flow_and_state(
         session: session,
         flow: flow,
         state: state
       )
       update_session(flow: flow, state: state)
+      release_lock!
     end
 
     def set_back_to(session: nil, flow: nil, state:)
+      if interrupt_detected?
+        run_interrupt_action
+        return :interrupted
+      end
+
       flow, state = get_flow_and_state(
         session: session,
         flow: flow,
@@ -148,6 +181,7 @@ module Stealth
 
     def do_nothing
       @progressed = :do_nothing
+      release_lock!
     end
 
     private

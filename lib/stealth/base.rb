@@ -19,6 +19,9 @@ require 'stealth/errors'
 require 'stealth/logger'
 require 'stealth/configuration'
 
+# helpers
+require 'stealth/helpers/redis'
+
 module Stealth
 
   def self.env
@@ -44,6 +47,7 @@ module Stealth
   def self.set_config_defaults(config)
     config.dynamic_delay_muliplier = 1.0
     config.session_ttl = 0
+    config.lock_autorelease = 30
     config.transcript_logging = false
   end
 
@@ -99,6 +103,10 @@ module Stealth
     end
   end
 
+  def self.tid
+    Thread.current.object_id.to_s(36)
+  end
+
   private
 
     def self.require_directory(directory)
@@ -123,11 +131,13 @@ require 'stealth/scheduled_reply'
 require 'stealth/service_reply'
 require 'stealth/service_message'
 require 'stealth/session'
+require 'stealth/lock'
 require 'stealth/controller/callbacks'
 require 'stealth/controller/replies'
 require 'stealth/controller/catch_all'
 require 'stealth/controller/helpers'
 require 'stealth/controller/dynamic_delay'
+require 'stealth/controller/interrupt_detect'
 require 'stealth/controller/controller'
 require 'stealth/flow/base'
 require 'stealth/services/base_client'

@@ -317,9 +317,9 @@ describe "Stealth::Session" do
     let(:back_to_session) { Stealth::Session.new(id: id, type: :back_to) }
 
     before(:each) do
-      session.send(:persist_session, key: session.session_key, value: '1')
-      previous_session.send(:persist_session, key: previous_session.session_key, value: '1')
-      back_to_session.send(:persist_session, key: back_to_session.session_key, value: '1')
+      session.send(:persist_key, key: session.session_key, value: '1')
+      previous_session.send(:persist_key, key: previous_session.session_key, value: '1')
+      back_to_session.send(:persist_key, key: back_to_session.session_key, value: '1')
     end
 
     it "should remove a default session from Redis" do
@@ -338,6 +338,30 @@ describe "Stealth::Session" do
       expect($redis.get(back_to_session.session_key)).to eq '1'
       back_to_session.clear_session
       expect($redis.get(back_to_session.session_key)).to be_nil
+    end
+  end
+
+  describe "self.slugify" do
+    it "should return a session slug given a flow and state" do
+      expect(Stealth::Session.slugify(flow: 'hello', state: 'world')).to eq 'hello->world'
+    end
+
+    it "should raise an ArgumentError if flow is blank" do
+      expect {
+        Stealth::Session.slugify(flow: '', state: 'world')
+      }.to raise_error(ArgumentError)
+    end
+
+    it "should raise an ArgumentError if state is blank" do
+      expect {
+        Stealth::Session.slugify(flow: 'hello', state: nil)
+      }.to raise_error(ArgumentError)
+    end
+
+    it "should raise an ArgumentError if flow and state are blank" do
+      expect {
+        Stealth::Session.slugify(flow: nil, state: nil)
+      }.to raise_error(ArgumentError)
     end
   end
 end

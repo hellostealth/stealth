@@ -1,4 +1,12 @@
-# Changelog for Stealth v2.4.0 (Pending)
+# Changelog for Stealth v2.5.0
+
+## Enhancements
+
+* [Catch All] Backtrace logging has been improved. The error message is now included first in the backtrace.
+* [Logger] The thread's ID (TID) is now included in every logging entry preceding the log type, ie "[facebook]"
+* [Interrupt] Interrupt detection has been added. See the docs for more info on this feature.
+
+# Changelog for Stealth v2.4.0
 
 ## Enhancements
 

@@ -180,6 +180,22 @@ describe "Stealth::Controller" do
       expect_any_instance_of(MrRobotsController).to receive(:my_action3)
       controller.step_to flow: :mr_robot, state: :my_action3
     end
+
+    it "should lock the session" do
+      expect(controller).to receive(:lock_session!).with(session_slug: 'mr_robot->my_action3')
+      controller.step_to flow: :mr_robot, state: :my_action3
+    end
+
+    it "should check if an interruption occured" do
+      expect(controller).to receive(:interrupt_detected?).and_return(false)
+      controller.step_to flow: :mr_robot, state: :my_action3
+    end
+
+    it "should call run_interrupt_action if an interruption occured and return" do
+      expect(controller).to receive(:interrupt_detected?).and_return(true)
+      expect(controller).to receive(:run_interrupt_action)
+      expect(controller.step_to(flow: :mr_robot, state: :my_action3)).to eq :interrupted
+    end
   end
 
   describe "update_session_to" do
@@ -232,6 +248,22 @@ describe "Stealth::Controller" do
       controller.update_session_to flow: :mr_robot, state: :my_action3
       expect(controller.current_session.flow_string).to eq('mr_robot')
       expect(controller.current_session.state_string).to eq('my_action3')
+    end
+
+    it "should release the lock on the session" do
+      expect(controller).to receive(:release_lock!)
+      controller.update_session_to flow: :mr_robot, state: :my_action3
+    end
+
+    it "should check if an interruption occured" do
+      expect(controller).to receive(:interrupt_detected?).and_return(false)
+      controller.update_session_to flow: :mr_robot, state: :my_action3
+    end
+
+    it "should call run_interrupt_action if an interruption occured and return" do
+      expect(controller).to receive(:interrupt_detected?).and_return(true)
+      expect(controller).to receive(:run_interrupt_action)
+      expect(controller.update_session_to(flow: :mr_robot, state: :my_action3)).to eq :interrupted
     end
   end
 
@@ -350,6 +382,17 @@ describe "Stealth::Controller" do
 
       controller.current_message.target_id = '+18885551212'
       controller.step_to_in 100.seconds, flow: :mr_robot, state: :my_action3
+    end
+
+    it "should check if an interruption occured" do
+      expect(controller).to receive(:interrupt_detected?).and_return(false)
+      controller.step_to_in 100.seconds, flow: :mr_robot, state: :my_action3
+    end
+
+    it "should call run_interrupt_action if an interruption occured and return" do
+      expect(controller).to receive(:interrupt_detected?).and_return(true)
+      expect(controller).to receive(:run_interrupt_action)
+      expect(controller.step_to_in(100.seconds, flow: :mr_robot, state: :my_action3)).to eq :interrupted
     end
   end
 
@@ -471,6 +514,17 @@ describe "Stealth::Controller" do
       controller.current_message.target_id = '+18885551212'
       controller.step_to_at future_timestamp, flow: :mr_robot, state: :my_action3
     end
+
+    it "should check if an interruption occured" do
+      expect(controller).to receive(:interrupt_detected?).and_return(false)
+      controller.step_to_at future_timestamp, flow: :mr_robot, state: :my_action3
+    end
+
+    it "should call run_interrupt_action if an interruption occured and return" do
+      expect(controller).to receive(:interrupt_detected?).and_return(true)
+      expect(controller).to receive(:run_interrupt_action)
+      expect(controller.step_to_at(future_timestamp, flow: :mr_robot, state: :my_action3)).to eq :interrupted
+    end
   end
 
   describe "set_back_to" do
@@ -493,6 +547,17 @@ describe "Stealth::Controller" do
       expect {
         controller.set_back_to(state: 'other_action')
       }.to change{ $redis.get([controller.current_session_id, 'back_to'].join('-')) }.from('marco->polo').to('mr_tron->other_action')
+    end
+
+    it "should check if an interruption occured" do
+      expect(controller).to receive(:interrupt_detected?).and_return(false)
+      controller.set_back_to flow: :mr_robot, state: :my_action3
+    end
+
+    it "should call run_interrupt_action if an interruption occured and return" do
+      expect(controller).to receive(:interrupt_detected?).and_return(true)
+      expect(controller).to receive(:run_interrupt_action)
+      expect(controller.set_back_to(flow: :mr_robot, state: :my_action3)).to eq :interrupted
     end
   end
 
@@ -521,6 +586,19 @@ describe "Stealth::Controller" do
       expect(controller).to receive(:step_to).with(session: back_to_session)
 
       controller.step_back
+    end
+
+    it "should check if an interruption occured" do
+      controller.set_back_to(flow: :mr_robot, state: :my_action3)
+      expect(controller).to receive(:interrupt_detected?).and_return(false)
+      controller.step_back
+    end
+
+    it "should call run_interrupt_action if an interruption occured and return" do
+      controller.set_back_to(flow: :mr_robot, state: :my_action3)
+      expect(controller).to receive(:interrupt_detected?).and_return(true)
+      expect(controller).to receive(:run_interrupt_action)
+      expect(controller.step_back).to eq :interrupted
     end
   end
 
@@ -582,6 +660,11 @@ describe "Stealth::Controller" do
       expect(controller.progressed?).to be_falsey
       controller.action(action: :other_action4)
       expect(controller.progressed?).to be_truthy
+    end
+
+    it "should release the lock on the session" do
+      expect(controller).to receive(:release_lock!)
+      controller.do_nothing
     end
   end
 
