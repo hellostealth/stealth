@@ -75,34 +75,6 @@ describe "Stealth::Dispatcher" do
         expect(dispatcher).to receive(:log_incoming_message).with(fb_message.message_with_text)
         dispatcher.process
       end
-
-      it 'should return false if the current_session is at catch_all' do
-        message_handler = double
-
-        # Stub out the message handler to return a service_message
-        expect(Stealth::Services::Facebook::MessageHandler).to receive(:new).and_return(message_handler)
-        expect(message_handler).to receive(:process).and_return(fb_message.message_with_text)
-
-        # Stub out BotController and set session
-        expect(BotController).to receive(:new).and_return(stubbed_controller)
-        stubbed_controller.current_session.set_session(new_flow: 'catch_all', new_state: 'level1')
-
-        expect(dispatcher.process).to be false
-      end
-
-      it 'should return false if the current_session is at interrupt' do
-        message_handler = double
-
-        # Stub out the message handler to return a service_message
-        expect(Stealth::Services::Facebook::MessageHandler).to receive(:new).and_return(message_handler)
-        expect(message_handler).to receive(:process).and_return(fb_message.message_with_text)
-
-        # Stub out BotController and set session
-        expect(BotController).to receive(:new).and_return(stubbed_controller)
-        stubbed_controller.current_session.set_session(new_flow: 'interrupt', new_state: 'say_interrupted')
-
-        expect(dispatcher.process).to be false
-      end
     end
 
 end
