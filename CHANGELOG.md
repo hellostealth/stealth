@@ -1,3 +1,10 @@
+# Changelog for Stealth v2.5.1
+
+## Bug Fixes
+
+* [Interrupt] If CatchAll runs and doesn't `step_to`, it releases the session lock.
+* [Controller] Messages are no longer ignored in CatchAll and Interrupt controllers
+
 # Changelog for Stealth v2.5.0
 
 ## Enhancements
