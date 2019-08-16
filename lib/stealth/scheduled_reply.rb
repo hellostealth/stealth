@@ -11,8 +11,7 @@ module Stealth
       service_message.sender_id = user_id
       service_message.target_id = target_id
       controller = BotController.new(service_message: service_message)
-      controller.update_session_to(flow: flow, state: state)
-      controller.route
+      controller.step_to(flow: flow, state: state)
     end
   end
 
