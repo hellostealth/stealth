@@ -80,6 +80,7 @@ module Stealth
           end
 
           @progressed = :sent_replies
+          release_lock!
         end
 
         private

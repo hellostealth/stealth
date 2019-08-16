@@ -1,3 +1,9 @@
+# Changelog for Stealth v2.5.3
+
+## Bug Fixes
+
+* [Interrupts] After `send_replies`, we now release the session lock. This ensures replies that send buttons can properly receive responses from them.
+
 # Changelog for Stealth v2.5.2
 
 ## Enhancements
