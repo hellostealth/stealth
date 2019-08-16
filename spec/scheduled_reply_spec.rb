@@ -14,8 +14,7 @@ describe "Stealth::ScheduledReplyJob" do
 
     bot_controller_double = double('bot_controller')
     expect(BotController).to receive(:new).with(service_message: service_msg_double).and_return(bot_controller_double)
-    expect(bot_controller_double).to receive(:update_session_to).with(flow: 'my_flow', state: 'say_hi')
-    expect(bot_controller_double).to receive(:route)
+    expect(bot_controller_double).to receive(:step_to).with(flow: 'my_flow', state: 'say_hi')
 
     scheduled_reply_job = Stealth::ScheduledReplyJob.new
     scheduled_reply_job.perform('twilio', '+18885551212', 'my_flow', 'say_hi', '33322')
