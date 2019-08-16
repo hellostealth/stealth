@@ -1,3 +1,9 @@
+# Changelog for Stealth v2.5.2
+
+## Enhancements
+
+* [Controllers] Scheduled replies no longer call `controller.route` when they run. Instead we `step_to` to the flow and state directly. This ensures the `route` is reserved for incoming messages.
+
 # Changelog for Stealth v2.5.1
 
 ## Bug Fixes
