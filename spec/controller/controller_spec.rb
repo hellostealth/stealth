@@ -690,4 +690,62 @@ describe "Stealth::Controller" do
     end
   end
 
+  describe "dev jumps" do
+    describe "dev_jump_detected?" do
+      it "should return false if the enviornment is not 'development'" do
+        expect(Stealth.env).to eq 'test'
+        expect(controller.send(:dev_jump_detected?)).to be false
+      end
+
+      it "should return false if the message does not match the jump format" do
+        allow(Stealth).to receive(:env).and_return('development')
+        controller.current_message.message = 'hello world'
+        expect(Stealth.env).to eq 'development'
+        expect(controller.send(:dev_jump_detected?)).to be false
+      end
+
+      describe "with a dev jump message" do
+        before(:each) do
+          expect(controller).to receive(:handle_dev_jump).and_return(true)
+          expect(Stealth).to receive(:env).and_return('development')
+        end
+
+        it "should return true if the message is in the format /flow/state" do
+          controller.current_message.message = '/mr_robot/my_action'
+          expect(controller.send(:dev_jump_detected?)).to be true
+        end
+
+        it "should return true if the message is in the format /flow" do
+          controller.current_message.message = '/mr_robot'
+          expect(controller.send(:dev_jump_detected?)).to be true
+        end
+
+        it "should return true if the message is in the format //state" do
+          controller.current_message.message = '//my_action'
+          expect(controller.send(:dev_jump_detected?)).to be true
+        end
+      end
+    end
+
+    describe "handle_dev_jump" do
+      it "should handle messages in the format /flow/state" do
+        controller.current_message.message = '/mr_robot/my_action'
+        expect(controller).to receive(:step_to).with(flow: 'mr_robot', state: 'my_action')
+        controller.send(:handle_dev_jump)
+      end
+
+      it "should handle messages in the format /flow" do
+        controller.current_message.message = '/mr_robot'
+        expect(controller).to receive(:step_to).with(flow: 'mr_robot', state: nil)
+        controller.send(:handle_dev_jump)
+      end
+
+      it "should handle messages in the format //state" do
+        controller.current_message.message = '//my_action'
+        expect(controller).to receive(:step_to).with(flow: nil, state: 'my_action')
+        controller.send(:handle_dev_jump)
+      end
+    end
+  end
+
 end

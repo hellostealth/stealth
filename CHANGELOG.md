@@ -1,3 +1,9 @@
+# Changelog for Stealth v2.6.0
+
+## Enhancements
+
+* [Controllers] Added support for Dev Jumping. This feature allows developers to jump around flows and states for bot's in development.
+
 # Changelog for Stealth v2.5.3
 
 ## Bug Fixes
