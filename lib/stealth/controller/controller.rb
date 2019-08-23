@@ -10,6 +10,7 @@ module Stealth
     include Stealth::Controller::CatchAll
     include Stealth::Controller::Helpers
     include Stealth::Controller::InterruptDetect
+    include Stealth::Controller::DevJumps
 
     attr_reader :current_message, :current_service, :flow_controller,
                 :action_name, :current_session_id
@@ -232,24 +233,6 @@ module Stealth
         if state.present?
           return current_session.flow_string, state.to_s
         end
-      end
-
-      def dev_jump_detected?
-        if Stealth.env == 'development'
-          if current_message.message&.match(/\/(.*)\/(.*)|\/\/(.*)|\/(.*)/)
-            handle_dev_jump
-            return true
-          end
-        end
-
-        false
-      end
-
-      def handle_dev_jump
-        _, flow, state = current_message.message.split('/')
-        flow = nil if flow.blank?
-
-        step_to flow: flow, state: state
       end
 
   end
