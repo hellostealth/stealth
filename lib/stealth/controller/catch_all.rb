@@ -13,6 +13,12 @@ module Stealth
           error_level = fetch_error_level
           Stealth::Logger.l(topic: 'catch_all', message: "CatchAll #{calculate_catch_all_state(error_level)} triggered for #{error_slug}: #{reason}")
 
+          # Don't run catch_all from the catch_all controller
+          if current_session.flow_string == 'catch_all'
+            Stealth::Logger.l(topic: 'catch_all', message: "CatchAll triggered from within CatchAll; ignoring.")
+            return false
+          end
+
           if defined?(CatchAllsController) && FlowMap.flow_spec[:catch_all].present?
             catch_all_state = calculate_catch_all_state(error_level)
 

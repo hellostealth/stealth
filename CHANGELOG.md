@@ -4,6 +4,10 @@
 
 * [Controllers] Added support for Dev Jumping. This feature allows developers to jump around flows and states for bot's in development.
 
+## Bug Fixes
+
+* [Catch All] Errors triggered within CatchAlls no longer trigger a CatchAll. They are simply ignored. This prevents infinite looping scenarios.
+
 # Changelog for Stealth v2.5.3
 
 ## Bug Fixes
