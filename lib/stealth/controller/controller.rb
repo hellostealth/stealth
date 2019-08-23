@@ -10,6 +10,7 @@ module Stealth
     include Stealth::Controller::CatchAll
     include Stealth::Controller::Helpers
     include Stealth::Controller::InterruptDetect
+    include Stealth::Controller::DevJumps
 
     attr_reader :current_message, :current_service, :flow_controller,
                 :action_name, :current_session_id
