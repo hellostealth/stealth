@@ -3,6 +3,7 @@
 ## Enhancements
 
 * [Controllers] Added support for Dev Jumping. This feature allows developers to jump around flows and states for bot's in development.
+* [NLP] Added base classes for `Stealth::Nlp::Result` and `Stealth::Nlp::Client` to be used by NLP drivers.
 
 ## Bug Fixes
 
