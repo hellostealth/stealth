@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'puma', '>= 3.10', '< 5.0'
   s.add_dependency 'thor', '~> 0.20'
   s.add_dependency 'multi_json', '~> 1.12'
-  s.add_dependency 'sidekiq', '~> 5.0'
+  s.add_dependency 'sidekiq', '>= 5', '< 7'
   s.add_dependency 'activesupport', '~> 5.2'
 
   s.add_development_dependency 'rspec', '~> 3.6'
