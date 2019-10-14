@@ -44,7 +44,7 @@ Currently, there are gems for:
 
 ## Docs
 
-You can find our full docs [here](https://www.notion.so/whoisblackops/Stealth-6b6e164381fe41cb9896cebf8302fa42). If something is not clear in the docs, please file an issue! We consider all shortcomings in the docs as bugs.
+You can find our full docs [here](https://hellostealth.org/docs/). If something is not clear in the docs, please file an issue! We consider all shortcomings in the docs as bugs.
 
 ## Versioning
 
