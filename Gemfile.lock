@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    stealth (2.5.3)
+    stealth (2.0.0.beta1)
       activesupport (~> 5.2)
       multi_json (~> 1.12)
       puma (>= 3.10, < 5.0)
@@ -26,9 +26,9 @@ GEM
     mock_redis (0.21.0)
     multi_json (1.13.1)
     mustermann (1.0.3)
-    nio4r (2.5.1)
+    nio4r (2.4.0)
     oj (3.8.1)
-    puma (4.1.1)
+    puma (4.1.0)
       nio4r (~> 2.0)
     rack (2.0.7)
     rack-protection (2.0.7)
