@@ -1,6 +1,6 @@
 # <a href='https://hellostealth.org'><img src='logo.svg' height='120' alt='Stealth Logo' aria-label='hellostealth.org' /></a>
 
-Stealth is a Ruby based framework for creating voice & text chatbots. It's design is inspired by Ruby on Rails's philosophy of convention over configuration. It has an MVC architecture with the slight caveat that `views` are aptly named `replies`.
+Stealth is an open source Ruby framework for creating text and voice chatbots. It's design is inspired by Ruby on Rails's philosophy of convention over configuration. It has an MVC architecture with the slight caveat that `views` are aptly named `replies`.
 
 [![CircleCI](https://circleci.com/gh/whoisblackops/stealth.svg?style=svg&circle-token=63fb0f94994daf358fab46dd716e4da3578fd530)](https://circleci.com/gh/whoisblackops/stealth)
 
@@ -29,22 +29,22 @@ Stealth is extensible. All service integrations are split out into separate Ruby
 Currently, there are gems for:
 
 ### Messaging
-* [Facebook Messenger](https://github.com/whoisblackops/stealth-facebook)
-* [Twilio SMS](https://github.com/whoisblackops/stealth-twilio)
-* [Smooch](https://github.com/whoisblackops/stealth-smooch)
+* [Facebook Messenger](https://github.com/hellostealth/stealth-facebook)
+* [Twilio SMS](https://github.com/hellostealth/stealth-twilio)
+* [Smooch](https://github.com/hellostealth/stealth-smooch)
 
 ### Voice
-* [Alexa Skill](https://github.com/whoisblackops/stealth-alexa) (Early alpha)
+* [Alexa Skill](https://github.com/hellostealth/stealth-alexa) (Early alpha)
 
 ### Natural Language Processing
-* [AWS Comprehend](https://github.com/whoisblackops/stealth-aws-comprehend)
+* [AWS Comprehend](https://github.com/hellostealth/stealth-aws-comprehend)
 
 ### Analytics
-* [Mixpanel](https://github.com/whoisblackops/stealth-mixpanel)
+* [Mixpanel](https://github.com/hellostealth/stealth-mixpanel)
 
 ## Docs
 
-You can find our full docs [here](https://www.notion.so/whoisblackops/Stealth-6b6e164381fe41cb9896cebf8302fa42). If something is not clear in the docs, please file an issue! We consider all shortcomings in the docs as bugs.
+You can find our full docs [here](https://hellostealth.org/docs/). If something is not clear in the docs, please file an issue! We consider all shortcomings in the docs as bugs.
 
 ## Versioning
 
@@ -52,4 +52,4 @@ Stealth is versioned uses [Semantic Versioning](https://semver.org), but it's mo
 
 ## License
 
-"Stealth" and the Stealth logo are copyright (c) 2018 The Black Ops Bureau Inc.
+"Stealth" and the Stealth logo are copyright (c) 2019 The Black Ops Bureau Inc.

@@ -29,6 +29,14 @@ describe "Stealth::Configuration" do
     it "should handle multiple keys at the root level" do
       expect(config.twilio_sms.account_sid).to eq parsed_config['twilio_sms']['account_sid']
     end
+
+    it "should return nil if the key is not present at the node" do
+      expect(config.twilio_sms.api_key).to be nil
+    end
+
+    it "should raise a NoMethodError when accessing multi-levels of missing nodes" do
+      expect { config.slack.api_key }.to raise_error(NoMethodError)
+    end
   end
 
   describe "config files with ERB" do

@@ -1,100 +1,27 @@
-# Changelog for Stealth v2.6.0
+# Changelog for Stealth v2.0.0 (unreleased)
 
 ## Enhancements
 
 * [Controllers] Added support for Dev Jumping. This feature allows developers to jump around flows and states for bot's in development.
 * [NLP] Added base classes for `Stealth::Nlp::Result` and `Stealth::Nlp::Client` to be used by NLP drivers.
-
-## Bug Fixes
-
-* [Catch All] Errors triggered within CatchAlls no longer trigger a CatchAll. They are simply ignored. This prevents infinite looping scenarios.
-
-# Changelog for Stealth v2.5.3
-
-## Bug Fixes
-
-* [Interrupts] After `send_replies`, we now release the session lock. This ensures replies that send buttons can properly receive responses from them.
-
-# Changelog for Stealth v2.5.2
-
-## Enhancements
-
 * [Controllers] Scheduled replies no longer call `controller.route` when they run. Instead we `step_to` to the flow and state directly. This ensures the `route` is reserved for incoming messages.
-
-# Changelog for Stealth v2.5.1
-
-## Bug Fixes
-
-* [Interrupt] If CatchAll runs and doesn't `step_to`, it releases the session lock.
-* [Controller] Messages are no longer ignored in CatchAll and Interrupt controllers
-
-# Changelog for Stealth v2.5.0
-
-## Enhancements
-
 * [Catch All] Backtrace logging has been improved. The error message is now included first in the backtrace.
 * [Logger] The thread's ID (TID) is now included in every logging entry preceding the log type, ie "[facebook]"
 * [Interrupt] Interrupt detection has been added. See the docs for more info on this feature.
-
-# Changelog for Stealth v2.4.0
-
-## Enhancements
-
 * [Controllers] When user's flow is set to `catch_all` or `interrupt`, Stealth will ignore incoming messages. If you have interactive states in either of these controllers, you will need to move those interactions to a different controller.
 * [Sessions] Sessions can now be cleared by calling `session.clear_session`. Clearing a session removes the key from Redis.
 * [Logging] `primary_session`, `previous_session`, and `back_to_session` now explicitly logged
 * [Sessions] The session is no longer set on update or stepping witht destination flow and state match the existing session.
 * [Scheduled Replies] The `service_message.target_id` is now set for scheduled replies. NOTE: scheduled replies that are already enqueued will NOT have this set.
-* [Server] Updated to Puma 4.0.1
-
-# Changelog for Stealth v2.3.0
-
-## Enhancements
-
+* [Server] Updated to Puma 4.1.1
+* [Server] Updated to Sinatra 1.0.7
 * [Sessions] Added `to_s` for sessions to pretty print the slug. Useful when debugging.
-
-## Bug Fixes
-
-* Callbacks specified in child controllers of `BotController` where not being called during `step_to`. While the fix was small, we've bumped the minor release to ensure this fix does not break existing codebases.
-
-# Changelog for Stealth v2.2.4
-
-## Bug Fixes
-
-* Fixed another bug loading replies from a `custom_reply` path in `send_replies`
-
-# Changelog for Stealth v2.2.3
-
-## Bug Fixes
-
-* Fixed bug loading replies from a `custom_reply` path in `send_replies`
-
-# Changelog for Stealth v2.2.2
-
-## Enhancements
-
-* Leading dynamic delays in a reply are not sent again on SMS platforms.
-
-# Changelog for Stealth v2.2.0
-
-## Enhancements
-
 * `send_reples` now supports two additional options for replies:
   `send_replies(custom_reply: 'hello/say_hello')`
   `send_replies(inline: [])`
-
-# Changelog for Stealth v2.1.0
-
-## Enhancements
-
 * Dynamic delays for SMS platforms do not delay at the beginning of a reply.
 * Added support for Bandwidth SMS
 * The `ServiceMessage` (current_message) now contains a `target_id`. This can be set by the platform driver to provide more information about the intended target of a message.
-
-# Changelog for Stealth v2.0.0
-
-## Enhancements
-
 * [Controller] Added a `do_nothing` method that prevents `catch_all` from firing when a controller action doesn't send replies nor progresses the session.
 * [Replies] If `text` and `speech` replies are specified as an Array, Stealth will now randomize the selected text.
 * [Generators] Added sample payload handling to generated bots since it can be tricky.
@@ -103,15 +30,25 @@
 * [Logging] Add option, `Stealth.config.transcript_logging`, to log incoming and outgoing messages.
 * [Server] The only HTTP header passed along to `handle_message_job` is now `HTTP_HOST`.
 * [Controllers] Added `set_back_to` and `step_back` to allow user specified "redirect back". Useful for multi-state transitions that would otherwise not be possible with just `previous_session`.
+* [Configuration] Stealth::Configuration now returns `nil` for a configuration option that is missing. It still returns a `NoMethodError` if attempting to access a key from a parent node that is also missing.
 
 ## Bug Fixes
 
+* [Catch All] Errors triggered within CatchAlls no longer trigger a CatchAll. They are simply ignored. This prevents infinite looping scenarios.
+* [Interrupt] If CatchAll runs and doesn't `step_to`, it releases the session lock.
+* [Controller] Messages are no longer ignored in CatchAll and Interrupt controllers
+* [Interrupts] After `send_replies`, we now release the session lock. This ensures replies that send buttons can properly receive responses from them.
+* Callbacks specified in child controllers of `BotController` where not being called during `step_to`. While the fix was small, we've bumped the minor release to ensure this fix does not break existing codebases.
+* Fixed another bug loading replies from a `custom_reply` path in `send_replies`
+* Fixed bug loading replies from a `custom_reply` path in `send_replies`
+* Leading dynamic delays in a reply are not sent again on SMS platforms.
 * [Sessions] Sessions retrieved when session expiration was enabled would return as an Array rather than a slug.
 * [Sessions] previous_session now respects session_ttl values.
 
 ## Deprecations
 
 * [Controllers] current_user_id has now been completely removed since becoming deprecated in 1.1.0.
+* [Ruby] MRI 2.4 is no longer supported as we depend on ActiveSupport 6.0 now. Rails 6.0 only supports Ruby MRI 2.5+.
 
 # Changelog for Stealth v1.1.5
 

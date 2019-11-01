@@ -1,8 +1,6 @@
 # coding: utf-8
 # frozen_string_literal: true
 
-require 'thread'
-
 module Stealth
   class Configuration < Hash
 
@@ -20,7 +18,6 @@ module Stealth
       if setter?(method)
         self[key] = args.first
       else
-        super(method, args) && return unless key?(key)
         self[key]
       end
     end
