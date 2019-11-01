@@ -48,6 +48,7 @@
 ## Deprecations
 
 * [Controllers] current_user_id has now been completely removed since becoming deprecated in 1.1.0.
+* [Ruby] MRI 2.4 is no longer supported as we depend on ActiveSupport 6.0 now. Rails 6.0 only supports Ruby MRI 2.5+.
 
 # Changelog for Stealth v1.1.5
 
