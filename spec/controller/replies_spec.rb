@@ -55,6 +55,10 @@ describe "Stealth::Controller replies" do
       send_replies custom_reply: 'messages/say_offer'
     end
 
+    def say_nested_custom_reply
+      send_replies custom_reply: 'messages/sub1/sub2/say_nested'
+    end
+
     def say_inline_reply
       reply = [
         { 'reply_type' => 'text', 'text' => 'Hi, Morty. Welcome to Stealth bot...' },
@@ -227,6 +231,15 @@ describe "Stealth::Controller replies" do
 
       expect(controller).to receive(:sleep).exactly(1).times.with(2.0)
       controller.say_custom_reply
+    end
+
+    it "should correctly load from sub-dirs" do
+      expect(stubbed_handler).to receive(:text).exactly(3).times
+      expect(stubbed_handler).to receive(:delay).exactly(2).times
+      expect(stubbed_client).to receive(:transmit).exactly(5).times
+
+      expect(controller).to receive(:sleep).exactly(2).times.with(2.0)
+      controller.say_nested_custom_reply
     end
   end
 

@@ -130,8 +130,9 @@ module Stealth
             selected_preprocessor = :none
 
             if custom_reply.present?
-              _dir, _file = custom_reply.split(File::SEPARATOR)
-              _file = "#{_file}.yml"
+              dir_and_file = custom_reply.rpartition(File::SEPARATOR)
+              _dir = dir_and_file.first
+              _file = "#{dir_and_file.last}.yml"
               _replies_dir = [*self._replies_path, _dir]
               possible_filenames = reply_filenames(_file)
               reply_file_path = File.join(_replies_dir, _file)
