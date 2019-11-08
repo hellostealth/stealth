@@ -11,7 +11,7 @@ module Stealth
         private
 
         def dev_jump_detected?
-          if Stealth.env == 'development'
+          if Stealth.env.development?
             if current_message.message&.match(/\/(.*)\/(.*)|\/\/(.*)|\/(.*)/)
               handle_dev_jump
               return true
