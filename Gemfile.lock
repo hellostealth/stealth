@@ -8,6 +8,7 @@ PATH
       sidekiq (~> 6.0)
       sinatra (~> 2.0)
       thor (~> 0.20)
+      zeitwerk (~> 2.2)
 
 GEM
   remote: https://rubygems.org/
@@ -81,4 +82,4 @@ DEPENDENCIES
   stealth!
 
 BUNDLED WITH
-   1.17.3
+   2.0.2
