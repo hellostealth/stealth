@@ -30,7 +30,7 @@ GEM
     mustermann (1.0.3)
     nio4r (2.5.2)
     oj (3.9.2)
-    puma (4.2.1)
+    puma (4.3.0)
       nio4r (~> 2.0)
     rack (2.0.7)
     rack-protection (2.0.7)
