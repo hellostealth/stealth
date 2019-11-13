@@ -17,6 +17,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'thor', '~> 0.20'
   s.add_dependency 'multi_json', '~> 1.12'
   s.add_dependency 'sidekiq', '~> 6.0'
+  s.add_dependency 'zeitwerk', '~> 2.2'
   s.add_dependency 'activesupport', '~> 6.0'
 
   s.add_development_dependency 'rspec', '~> 3.9'
