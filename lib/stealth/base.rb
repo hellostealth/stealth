@@ -68,12 +68,8 @@ module Stealth
     config.transcript_logging = false
     config.hot_reload = Stealth.env.development?
     config.eager_load = Stealth.env.production?
-
-    # Avoid loading the array in production
-    if Stealth.env.development?
-      config.autoload_paths = Stealth.default_autoload_paths
-      config.autoload_ignore_paths = []
-    end
+    config.autoload_paths = Stealth.default_autoload_paths
+    config.autoload_ignore_paths ||= []
   end
 
   # Loads the services.yml configuration unless one has already been loaded
