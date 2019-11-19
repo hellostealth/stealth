@@ -114,7 +114,7 @@ module Stealth
     EOS
     define_method 'sessions:clear' do
       Stealth.load_environment
-      $redis.flushdb if Stealth.env == 'development'
+      $redis.flushdb if Stealth.env.development?
     end
 
 

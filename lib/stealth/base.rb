@@ -18,6 +18,7 @@ require 'stealth/version'
 require 'stealth/errors'
 require 'stealth/logger'
 require 'stealth/configuration'
+require 'stealth/reloader'
 
 # helpers
 require 'stealth/helpers/redis'
@@ -33,6 +34,7 @@ module Stealth
   end
 
   def self.boot
+    load_services_config
     load_environment
   end
 
@@ -44,11 +46,30 @@ module Stealth
     Thread.current[:configuration] = config
   end
 
+  def self.default_autoload_paths
+    [
+      File.join(Stealth.root, 'bot', 'controllers', 'concerns'),
+      File.join(Stealth.root, 'bot', 'controllers'),
+      File.join(Stealth.root, 'bot', 'models', 'concerns'),
+      File.join(Stealth.root, 'bot', 'models'),
+      File.join(Stealth.root, 'bot', 'helpers'),
+      File.join(Stealth.root, 'config')
+    ]
+  end
+
+  def self.bot_reloader
+    @bot_reloader
+  end
+
   def self.set_config_defaults(config)
     config.dynamic_delay_muliplier = 1.0
     config.session_ttl = 0
     config.lock_autorelease = 30
     config.transcript_logging = false
+    config.hot_reload = Stealth.env.development?
+    config.eager_load = Stealth.env.production?
+    config.autoload_paths = Stealth.default_autoload_paths
+    config.autoload_ignore_paths ||= []
   end
 
   # Loads the services.yml configuration unless one has already been loaded
@@ -83,22 +104,20 @@ module Stealth
 
   def self.load_environment
     require File.join(Stealth.root, 'config', 'boot')
-    require_directory("config/initializers")
+    require_directory('config/initializers')
 
-    # Require explicitly to ensure it loads first
-    require_directory File.join(Stealth.root, 'bot', 'controllers', 'concerns')
-    require_directory File.join(Stealth.root, 'bot', 'models', 'concerns')
-    require File.join(Stealth.root, 'bot', 'controllers', 'bot_controller')
-    require File.join(Stealth.root, 'bot', 'models', 'bot_record')
+    @bot_reloader = Stealth::Reloader.new
+    @bot_reloader.load_bot!
 
-    require File.join(Stealth.root, 'config', 'flow_map')
-    require_directory("bot")
+    Sidekiq.options[:reloader] = Stealth.bot_reloader
 
     if defined?(ActiveRecord)
       if ENV['DATABASE_URL'].present?
         ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'])
       else
-        ActiveRecord::Base.establish_connection(YAML::load_file("config/database.yml")[Stealth.env])
+        ActiveRecord::Base.establish_connection(
+          YAML::load_file("config/database.yml")[Stealth.env]
+        )
       end
     end
   end
@@ -107,11 +126,11 @@ module Stealth
     Thread.current.object_id.to_s(36)
   end
 
-  private
+  def self.require_directory(directory)
+    for_each_file_in(directory) { |file| require_relative(file) }
+  end
 
-    def self.require_directory(directory)
-      for_each_file_in(directory) { |file| require_relative(file) }
-    end
+  private
 
     def self.for_each_file_in(directory, &blk)
       directory = directory.to_s.gsub(%r{(\/|\\)}, File::SEPARATOR)

@@ -691,6 +691,8 @@ describe "Stealth::Controller" do
   end
 
   describe "dev jumps" do
+    let!(:dev_env) { ActiveSupport::StringInquirer.new('development') }
+
     describe "dev_jump_detected?" do
       it "should return false if the enviornment is not 'development'" do
         expect(Stealth.env).to eq 'test'
@@ -698,16 +700,16 @@ describe "Stealth::Controller" do
       end
 
       it "should return false if the message does not match the jump format" do
-        allow(Stealth).to receive(:env).and_return('development')
+        allow(Stealth).to receive(:env).and_return(dev_env)
         controller.current_message.message = 'hello world'
-        expect(Stealth.env).to eq 'development'
+        expect(Stealth.env.development?).to be true
         expect(controller.send(:dev_jump_detected?)).to be false
       end
 
       describe "with a dev jump message" do
         before(:each) do
           expect(controller).to receive(:handle_dev_jump).and_return(true)
-          expect(Stealth).to receive(:env).and_return('development')
+          expect(Stealth).to receive(:env).and_return(dev_env)
         end
 
         it "should return true if the message is in the format /flow/state" do
