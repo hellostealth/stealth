@@ -31,6 +31,8 @@
 * [Server] The only HTTP header passed along to `handle_message_job` is now `HTTP_HOST`.
 * [Controllers] Added `set_back_to` and `step_back` to allow user specified "redirect back". Useful for multi-state transitions that would otherwise not be possible with just `previous_session`.
 * [Configuration] Stealth::Configuration now returns `nil` for a configuration option that is missing. It still returns a `NoMethodError` if attempting to access a key from a parent node that is also missing.
+* [Reloading] Bots in development mode now hot reload! It's no longer necessary to stop your local server.
+* [Production] Production bots now eager load bot code to improve copy-on-write performance. The `puma.rb` config has been updated with instructions for multiple workers.
 
 ## Bug Fixes
 
