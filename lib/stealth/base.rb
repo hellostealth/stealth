@@ -102,12 +102,19 @@ module Stealth
     load_services_config(services_yaml)
   end
 
+  def self.load_bot!
+    @bot_reloader ||= begin
+      bot_reloader = Stealth::Reloader.new
+      bot_reloader.load_bot!
+      bot_reloader
+    end
+  end
+
   def self.load_environment
     require File.join(Stealth.root, 'config', 'boot')
     require_directory('config/initializers')
 
-    @bot_reloader = Stealth::Reloader.new
-    @bot_reloader.load_bot!
+    load_bot!
 
     Sidekiq.options[:reloader] = Stealth.bot_reloader
 
