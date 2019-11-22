@@ -7,6 +7,7 @@ module Stealth
     include Stealth::Controller::Callbacks
     include Stealth::Controller::DynamicDelay
     include Stealth::Controller::Replies
+    include Stealth::Controller::Messages
     include Stealth::Controller::CatchAll
     include Stealth::Controller::Helpers
     include Stealth::Controller::InterruptDetect
