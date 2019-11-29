@@ -28,7 +28,7 @@ GEM
     multi_json (1.14.1)
     mustermann (1.0.3)
     nio4r (2.5.2)
-    oj (3.9.2)
+    oj (3.10.0)
     puma (4.3.0)
       nio4r (~> 2.0)
     rack (2.0.7)
@@ -74,7 +74,7 @@ PLATFORMS
 
 DEPENDENCIES
   mock_redis (~> 0.22)
-  oj (~> 3.9)
+  oj (~> 3.10)
   rack-test (~> 1.1)
   rspec (~> 3.9)
   rspec_junit_formatter (~> 0.3)
