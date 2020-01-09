@@ -70,6 +70,7 @@ module Stealth
     config.eager_load = Stealth.env.production?
     config.autoload_paths = Stealth.default_autoload_paths
     config.autoload_ignore_paths ||= []
+    config.nlp_integration = nil
   end
 
   # Loads the services.yml configuration unless one has already been loaded
