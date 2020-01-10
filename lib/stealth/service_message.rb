@@ -5,7 +5,7 @@ module Stealth
   class ServiceMessage
 
     attr_accessor :sender_id, :target_id, :timestamp, :service, :message,
-                  :location, :attachments, :payload, :referral
+                  :location, :attachments, :payload, :referral, :nlp_result
 
     def initialize(service:)
       @service = service
