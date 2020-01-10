@@ -1,7 +1,6 @@
-# coding: utf-8
 # frozen_string_literal: true
 
-require File.expand_path(File.join(File.dirname(__FILE__), '..', '/spec_helper'))
+require 'spec_helper'
 
 describe "Stealth::Controller::DynamicDelay" do
 
@@ -69,4 +68,3 @@ describe "Stealth::Controller::DynamicDelay" do
     expect(delay).to eq(Stealth::Controller::DynamicDelay::STANDARD_DELAY)
   end
 end
-
