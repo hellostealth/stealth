@@ -47,6 +47,8 @@ module Stealth
                 :magenta
               when :alexa
                 :light_cyan
+              when :nlp
+                :cyan
               when :catch_all
                 :red
               when :user
