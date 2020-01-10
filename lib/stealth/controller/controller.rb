@@ -14,12 +14,13 @@ module Stealth
     include Stealth::Controller::DevJumps
 
     attr_reader :current_message, :current_service, :flow_controller,
-                :action_name, :current_session_id
+                :action_name, :current_session_id, :nlp_result
 
     def initialize(service_message:)
       @current_message = service_message
       @current_service = service_message.service
       @current_session_id = service_message.sender_id
+      @nlp_result = service_message.nlp_result
       @progressed = false
     end
 
