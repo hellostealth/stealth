@@ -15,7 +15,8 @@ module Stealth
     include Stealth::Controller::Nlp
 
     attr_reader :current_message, :current_service, :flow_controller,
-                :action_name, :current_session_id, :nlp_result
+                :action_name, :current_session_id
+    attr_accessor :nlp_result
 
     def initialize(service_message:)
       @current_message = service_message

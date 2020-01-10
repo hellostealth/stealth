@@ -80,6 +80,13 @@ describe Stealth::Controller::Nlp do
         controller.perform_nlp!
         expect(controller.current_message.nlp_result).to eq nlp_result
       end
+
+      it 'should perform the NLP query if it has been cleared out' do
+        expect(@luis_client_dbl).to receive(:understand).exactly(2).times.with(query: 'Hello World!').and_return(nlp_result)
+        controller.perform_nlp!
+        controller.nlp_result = nil
+        controller.perform_nlp!
+      end
     end
   end
 
