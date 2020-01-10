@@ -5,15 +5,15 @@ module Stealth
   module Nlp
     class Client
 
-      def self.client
+      def client
         nil
       end
 
-      def detect_intent(query:)
+      def understand(query:)
         nil
       end
 
-      def detect_speech_intent(audio_file:, audio_config: nil)
+      def understand_speech(audio_file:, audio_config: nil)
         nil
       end
     end
