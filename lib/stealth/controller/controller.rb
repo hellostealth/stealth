@@ -12,6 +12,7 @@ module Stealth
     include Stealth::Controller::Helpers
     include Stealth::Controller::InterruptDetect
     include Stealth::Controller::DevJumps
+    include Stealth::Controller::Nlp
 
     attr_reader :current_message, :current_service, :flow_controller,
                 :action_name, :current_session_id, :nlp_result
