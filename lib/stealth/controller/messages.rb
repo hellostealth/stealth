@@ -100,7 +100,7 @@ module Stealth
 
           if raise_on_mismatch
             raise(
-              StandardError,
+              Stealth::Errors::MessageNotRecognized,
               "The reply '#{current_message.message}' was not recognized."
             )
           else
@@ -127,7 +127,7 @@ module Stealth
               log_nlp_result
 
               raise(
-                StandardError,
+                Stealth::Errors::MessageNotRecognized,
                 "Encountered #{match_count} entity matches of type #{entity.inspect} and expected 1. To allow, set fuzzy_match to true."
               )
             else
@@ -157,7 +157,7 @@ module Stealth
                 log_nlp_result
                 leftover_count = nlp_entities[entity].size
                 raise(
-                  StandardError,
+                  Stealth::Errors::MessageNotRecognized,
                   "Encountered #{leftover_count} additional entity matches of type #{entity.inspect} for match #{entities.inspect}. To allow, set fuzzy_match to true."
                 )
               end

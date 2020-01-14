@@ -57,18 +57,18 @@ describe Stealth::Controller::Messages do
       ).to eq('woot')
     end
 
-    it "should raise StandardError if a response was not matched" do
+    it "should raise Stealth::Errors::MessageNotRecognized if a response was not matched" do
       test_controller.current_message.message = "uh oh"
       expect {
         test_controller.get_match(['nice', 'woot'])
-      }.to raise_error(StandardError)
+      }.to raise_error(Stealth::Errors::MessageNotRecognized)
     end
 
-    it "should raise StandardError if an SMS quick reply was not matched" do
+    it "should raise Stealth::Errors::MessageNotRecognized if an SMS quick reply was not matched" do
       test_controller.current_message.message = "C"
       expect {
         test_controller.get_match(['nice', 'woot'])
-      }.to raise_error(StandardError)
+      }.to raise_error(Stealth::Errors::MessageNotRecognized)
     end
 
     describe "entity detection" do
@@ -99,14 +99,14 @@ describe Stealth::Controller::Messages do
           ).to eq(test_controller.nlp_result.entities[:number].first)
         end
 
-        it 'should raise StandardError if more than one :number entity is returned and fuzzy_match=false' do
+        it 'should raise Stealth::Errors::MessageNotRecognized if more than one :number entity is returned and fuzzy_match=false' do
           allow(test_controller).to receive(:perform_nlp!).and_return(double_number_nlp_result)
           test_controller.nlp_result = double_number_nlp_result
 
           test_controller.current_message.message = "hi"
           expect {
             test_controller.get_match(['nice', :number], fuzzy_match: false)
-          }.to raise_error(StandardError, "Encountered 2 entity matches of type :number and expected 1. To allow, set fuzzy_match to true.")
+          }.to raise_error(Stealth::Errors::MessageNotRecognized, "Encountered 2 entity matches of type :number and expected 1. To allow, set fuzzy_match to true.")
         end
       end
 
@@ -161,35 +161,35 @@ describe Stealth::Controller::Messages do
           ).to eq([89, 'scores'])
         end
 
-        it 'should raise StandardError if more than one :number entity is returned and fuzzy_match=false' do
+        it 'should raise Stealth::Errors::MessageNotRecognized if more than one :number entity is returned and fuzzy_match=false' do
           allow(test_controller).to receive(:perform_nlp!).and_return(triple_number_nlp_result)
           test_controller.nlp_result = triple_number_nlp_result
 
           test_controller.current_message.message = "hi"
           expect {
             test_controller.get_match(['nice', :number], fuzzy_match: false)
-          }.to raise_error(StandardError, "Encountered 3 entity matches of type :number and expected 1. To allow, set fuzzy_match to true.")
+          }.to raise_error(Stealth::Errors::MessageNotRecognized, "Encountered 3 entity matches of type :number and expected 1. To allow, set fuzzy_match to true.")
         end
 
-        it 'should raise StandardError if more than two :number entities are returned and fuzzy_match=false' do
+        it 'should raise Stealth::Errors::MessageNotRecognized if more than two :number entities are returned and fuzzy_match=false' do
           allow(test_controller).to receive(:perform_nlp!).and_return(triple_number_nlp_result)
           test_controller.nlp_result = triple_number_nlp_result
 
           test_controller.current_message.message = "hi"
           expect {
             test_controller.get_match(['nice', [:number, :number]], fuzzy_match: false)
-          }.to raise_error(StandardError, "Encountered 1 additional entity matches of type :number for match [:number, :number]. To allow, set fuzzy_match to true.")
+          }.to raise_error(Stealth::Errors::MessageNotRecognized, "Encountered 1 additional entity matches of type :number for match [:number, :number]. To allow, set fuzzy_match to true.")
         end
       end
     end
 
     describe "mismatch" do
       describe 'raise_on_mismatch: true' do
-        it "should raise a StandardError" do
+        it "should raise a Stealth::Errors::MessageNotRecognized" do
           test_controller.current_message.message = 'C'
           expect {
             test_controller.get_match(['nice', 'woot'])
-          }.to raise_error(StandardError)
+          }.to raise_error(Stealth::Errors::MessageNotRecognized)
         end
 
         it "should NOT log if an nlp_result is not present" do
@@ -197,7 +197,7 @@ describe Stealth::Controller::Messages do
           expect(Stealth::Logger).to_not receive(:l)
           expect {
             test_controller.get_match(['nice', 'woot'])
-          }.to raise_error(StandardError)
+          }.to raise_error(Stealth::Errors::MessageNotRecognized)
         end
 
         it "should log if an nlp_result is present" do
@@ -214,16 +214,16 @@ describe Stealth::Controller::Messages do
 
           expect {
             test_controller.get_match(['nice', 'woot'])
-          }.to raise_error(StandardError)
+          }.to raise_error(Stealth::Errors::MessageNotRecognized)
         end
       end
 
       describe 'raise_on_mismatch: false' do
-        it "should not raise a StandardError" do
+        it "should not raise a Stealth::Errors::MessageNotRecognized" do
           test_controller.current_message.message = 'C'
           expect {
             test_controller.get_match(['nice', 'woot'], raise_on_mismatch: false)
-          }.to_not raise_error(StandardError)
+          }.to_not raise_error(Stealth::Errors::MessageNotRecognized)
         end
 
         it "should return the original message" do
@@ -320,7 +320,7 @@ describe Stealth::Controller::Messages do
       end
     end
 
-    it "should raise StandardError if the reply does not match" do
+    it "should raise Stealth::Errors::MessageNotRecognized if the reply does not match" do
       test_controller.current_message.message = "C"
       x = 0
       expect {
@@ -328,7 +328,7 @@ describe Stealth::Controller::Messages do
           'Buy' => proc { x += 1 },
           'Refinance' => proc { x += 2 }
         )
-      }.to raise_error(StandardError)
+      }.to raise_error(Stealth::Errors::MessageNotRecognized)
     end
 
     it "should NOT log if an nlp_result is not present" do
@@ -341,7 +341,7 @@ describe Stealth::Controller::Messages do
           'Buy' => proc { x += 1 },
           'Refinance' => proc { x += 2 }
         )
-      }.to raise_error(StandardError)
+      }.to raise_error(Stealth::Errors::MessageNotRecognized)
     end
 
     it "should log if an nlp_result is present" do
@@ -362,7 +362,7 @@ describe Stealth::Controller::Messages do
           'Buy' => proc { x += 1 },
           'Refinance' => proc { x += 2 }
         )
-      }.to raise_error(StandardError)
+      }.to raise_error(Stealth::Errors::MessageNotRecognized)
     end
   end
 

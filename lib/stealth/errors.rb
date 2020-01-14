@@ -34,6 +34,9 @@ module Stealth
     class ReplyNotFound < Errors
     end
 
+    class MessageNotRecognized < Errors
+    end
+
     class FlowError < Errors
     end
 
