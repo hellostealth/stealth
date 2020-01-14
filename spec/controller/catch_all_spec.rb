@@ -1,23 +1,8 @@
-# coding: utf-8
 # frozen_string_literal: true
 
-require File.expand_path(File.join(File.dirname(__FILE__), '..', '/spec_helper'))
+require 'spec_helper'
 
 describe "Stealth::Controller::CatchAll" do
-
-  class VadersController < Stealth::Controller
-    def my_action
-      raise "oops"
-    end
-
-    def my_action2
-
-    end
-
-    def my_action3
-      do_nothing
-    end
-  end
 
   class StubbedCatchAllsController < Stealth::Controller
     def level1

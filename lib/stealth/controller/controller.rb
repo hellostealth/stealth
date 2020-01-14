@@ -7,18 +7,22 @@ module Stealth
     include Stealth::Controller::Callbacks
     include Stealth::Controller::DynamicDelay
     include Stealth::Controller::Replies
+    include Stealth::Controller::Messages
     include Stealth::Controller::CatchAll
     include Stealth::Controller::Helpers
     include Stealth::Controller::InterruptDetect
     include Stealth::Controller::DevJumps
+    include Stealth::Controller::Nlp
 
     attr_reader :current_message, :current_service, :flow_controller,
                 :action_name, :current_session_id
+    attr_accessor :nlp_result
 
     def initialize(service_message:)
       @current_message = service_message
       @current_service = service_message.service
       @current_session_id = service_message.sender_id
+      @nlp_result = service_message.nlp_result
       @progressed = false
     end
 

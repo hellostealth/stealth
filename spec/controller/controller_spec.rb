@@ -1,7 +1,6 @@
-# coding: utf-8
 # frozen_string_literal: true
 
-require File.expand_path(File.join(File.dirname(__FILE__), '..', '/spec_helper'))
+require 'spec_helper'
 
 describe "Stealth::Controller" do
 
@@ -174,6 +173,12 @@ describe "Stealth::Controller" do
       allow(controller.current_session).to receive(:state_string).and_return("my_action3")
 
       controller.step_to session: controller.current_session
+    end
+
+    it "should pass along the service_message" do
+      robot_controller_dbl = double('MrRobotsController').as_null_object
+      expect(MrRobotsController).to receive(:new).with(service_message: controller.current_message).and_return(robot_controller_dbl)
+      controller.step_to flow: :mr_robot, state: :my_action3
     end
 
     it "should accept flow and string specified as symbols" do
