@@ -14,12 +14,15 @@ require 'mock_redis'
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 
 $redis = MockRedis.new
+$services_yml = File.read(File.join(File.dirname(__FILE__), 'support', 'services.yml'))
 
 RSpec.configure do |config|
   ENV['STEALTH_ENV'] = 'test'
 
   config.before(:each) do |example|
     Sidekiq::Testing.fake!
+
+    Stealth.load_services_config!($services_yml)
   end
 
   config.expect_with :rspec do |expectations|

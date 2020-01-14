@@ -3,9 +3,11 @@
 require 'spec_helper'
 
 describe "Stealth::Controller::CatchAll" do
+  $msg = nil
 
   class StubbedCatchAllsController < Stealth::Controller
     def level1
+      $msg = current_message
       do_nothing
     end
 
@@ -25,6 +27,8 @@ describe "Stealth::Controller::CatchAll" do
       state :my_action
       state :my_action2
       state :my_action3
+      state :action_with_unrecognized_msg
+      state :action_with_unrecognized_match
     end
 
     flow :catch_all do
@@ -116,9 +120,40 @@ describe "Stealth::Controller::CatchAll" do
       end
 
       it "should release the session lock if the bot does not have a CatchAll flow" do
-        FlowMap.flow_spec[:catch_all] = nil
+        # FlowMap.flow_spec[:catch_all] = nil
+        allow(FlowMap.flow_spec).to receive(:[]).with(:catch_all).and_return(nil)
         expect(controller).to receive(:release_lock!)
         controller.run_catch_all
+      end
+    end
+
+    describe "catch_all_reason" do
+      before(:each) do
+        @session = Stealth::Session.new(id: controller.current_session_id)
+        @session.set_session(new_flow: 'vader', new_state: 'my_action2')
+      end
+
+      after(:each) do
+        $msg = nil
+      end
+
+      it 'should have access to the error raised in current_message.catch_all_reason' do
+        controller.action(action: :my_action)
+        expect($msg.catch_all_reason).to be_a(Hash)
+        expect($msg.catch_all_reason[:err]).to eq(RuntimeError)
+        expect($msg.catch_all_reason[:err_msg]).to eq('oops')
+      end
+
+      it 'should have the correct error when handle_message fails to recognize a message' do
+        controller.action(action: :action_with_unrecognized_msg)
+        expect($msg.catch_all_reason[:err]).to eq(Stealth::Errors::MessageNotRecognized)
+        expect($msg.catch_all_reason[:err_msg]).to eq("The reply '#{facebook_message.message_with_text.message}' was not recognized.")
+      end
+
+      it 'should have the correct error when get_match fails to recognize a message' do
+        controller.action(action: :action_with_unrecognized_match)
+        expect($msg.catch_all_reason[:err]).to eq(Stealth::Errors::MessageNotRecognized)
+        expect($msg.catch_all_reason[:err_msg]).to eq("The reply '#{facebook_message.message_with_text.message}' was not recognized.")
       end
     end
   end

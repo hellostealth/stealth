@@ -85,6 +85,13 @@ module Stealth
             topic: "catch_all",
             message: [e.message, e.backtrace.join("\n")].join("\n")
           )
+
+          # Store the reason so it can be accessed by the CatchAllsController
+          current_message.catch_all_reason = {
+            err: e.class,
+            err_msg: e.message
+          }
+
           run_catch_all(reason: e.message)
         end
       end
