@@ -175,6 +175,12 @@ describe "Stealth::Controller" do
       controller.step_to session: controller.current_session
     end
 
+    it "should pass along the service_message" do
+      robot_controller_dbl = double('MrRobotsController').as_null_object
+      expect(MrRobotsController).to receive(:new).with(service_message: controller.current_message).and_return(robot_controller_dbl)
+      controller.step_to flow: :mr_robot, state: :my_action3
+    end
+
     it "should accept flow and string specified as symbols" do
       expect_any_instance_of(MrRobotsController).to receive(:my_action3)
       controller.step_to flow: :mr_robot, state: :my_action3
