@@ -28,7 +28,7 @@ module Stealth
             if Stealth.config.log_all_nlp_results
               Stealth::Logger.l(
                 topic: :nlp,
-                message: "User #{current_session_id} -> NLP result: #{@nlp_result.parsed_result.inspect}"
+                message: "User #{current_session_id} -> NLP Result: #{@nlp_result.parsed_result.inspect}"
               )
             end
 
