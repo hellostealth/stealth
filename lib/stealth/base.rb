@@ -71,6 +71,7 @@ module Stealth
     config.autoload_paths = Stealth.default_autoload_paths
     config.autoload_ignore_paths ||= []
     config.nlp_integration = nil
+    config.log_all_nlp_results = false
   end
 
   # Loads the services.yml configuration unless one has already been loaded
