@@ -29,7 +29,7 @@ GEM
     mustermann (1.1.1)
       ruby2_keywords (~> 0.0.1)
     nio4r (2.5.2)
-    oj (3.10.0)
+    oj (3.10.1)
     puma (4.3.1)
       nio4r (~> 2.0)
     rack (2.0.8)
@@ -76,7 +76,7 @@ PLATFORMS
 
 DEPENDENCIES
   mock_redis (~> 0.22)
-  oj (~> 3.9)
+  oj (~> 3.10)
   rack-test (~> 1.1)
   rspec (~> 3.9)
   rspec_junit_formatter (~> 0.3)
