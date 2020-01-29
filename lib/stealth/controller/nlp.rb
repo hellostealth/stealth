@@ -10,6 +10,11 @@ module Stealth
       included do
         # Memoized in order to prevent multiple requests to the NLP provider
         def perform_nlp!
+          Stealth::Logger.l(
+            topic: :nlp,
+            message: "User #{current_session_id} -> Performing NLP."
+          )
+
           unless Stealth.config.nlp_integration.present?
             raise Stealth::Errors::ConfigurationError, "An NLP integration has not yet been configured (Stealth.config.nlp_integration)"
           end
@@ -19,6 +24,13 @@ module Stealth
             @nlp_result = @current_message.nlp_result = nlp_client.understand(
               query: current_message.message
             )
+
+            if Stealth.config.log_all_nlp_results
+              Stealth::Logger.l(
+                topic: :nlp,
+                message: "User #{current_session_id} -> NLP Result: #{@nlp_result.parsed_result.inspect}"
+              )
+            end
 
             @nlp_result
           end
