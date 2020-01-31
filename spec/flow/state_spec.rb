@@ -14,6 +14,7 @@ describe Stealth::Flow::State do
       state :created2, fails_to: 'new_todo->new'
       state :deprecated, redirects_to: 'new'
       state :deprecated2, redirects_to: 'other_flow->say_hi'
+      state :new_opts, opt1: 'hello', opt2: 1
       state :error
     end
   end
@@ -68,6 +69,17 @@ describe Stealth::Flow::State do
     end
   end
 
+  describe "opts" do
+    it "should return {} for a state that has not specified any opts" do
+      expect(flow_map.current_state.opts).to eq({})
+    end
+
+    it "should return the opts if they were specified" do
+      flow_map.init(flow: :new_todo, state: :new_opts)
+      expect(flow_map.current_state.opts).to eq({ opt1: 'hello', opt2: 1 })
+    end
+  end
+
   describe "state incrementing and decrementing" do
     it "should increment the state" do
       flow_map.init(flow: :new_todo, state: :get_due_date)
@@ -77,7 +89,7 @@ describe Stealth::Flow::State do
 
     it "should decrement the state" do
       flow_map.init(flow: :new_todo, state: :error)
-      new_state = flow_map.current_state - 5.states
+      new_state = flow_map.current_state - 6.states
       expect(new_state).to eq(:get_due_date)
     end
 
