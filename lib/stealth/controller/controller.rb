@@ -93,6 +93,8 @@ module Stealth
           }
 
           run_catch_all(reason: e.message)
+        ensure
+          release_lock!
         end
       end
     end
@@ -158,7 +160,6 @@ module Stealth
         state: state
       )
       update_session(flow: flow, state: state)
-      release_lock!
     end
 
     def set_back_to(session: nil, flow: nil, state:)
@@ -193,7 +194,6 @@ module Stealth
 
     def do_nothing
       @progressed = :do_nothing
-      release_lock!
     end
 
     private
