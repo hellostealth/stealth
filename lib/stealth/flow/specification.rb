@@ -19,7 +19,7 @@ module Stealth
 
       private
 
-        def state(name, fails_to: nil, redirects_to: nil)
+        def state(name, fails_to: nil, redirects_to: nil, **opts)
           fail_state = get_fail_or_redirect_state(fails_to)
           redirect_state = get_fail_or_redirect_state(redirects_to)
 
@@ -27,7 +27,8 @@ module Stealth
             name: name,
             spec: self,
             fails_to: fail_state,
-            redirects_to: redirect_state
+            redirects_to: redirect_state,
+            opts: opts
           )
 
           @initial_state = new_state if @states.empty?

@@ -8,9 +8,9 @@ module Stealth
       include Comparable
 
       attr_accessor :name
-      attr_reader :spec, :fails_to, :redirects_to
+      attr_reader :spec, :fails_to, :redirects_to, :opts
 
-      def initialize(name:, spec:, fails_to: nil, redirects_to: nil)
+      def initialize(name:, spec:, fails_to: nil, redirects_to: nil, opts:)
         if fails_to.present? && !fails_to.is_a?(Stealth::Session)
           raise(ArgumentError, 'fails_to state should be a Stealth::Session')
         end
@@ -20,7 +20,7 @@ module Stealth
         end
 
         @name, @spec = name, spec
-        @fails_to, @redirects_to = fails_to, redirects_to
+        @fails_to, @redirects_to, @opts = fails_to, redirects_to, opts
       end
 
       def <=>(other_state)

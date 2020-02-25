@@ -33,6 +33,7 @@
 * [Configuration] Stealth::Configuration now returns `nil` for a configuration option that is missing. It still returns a `NoMethodError` if attempting to access a key from a parent node that is also missing.
 * [Reloading] Bots in development mode now hot reload! It's no longer necessary to stop your local server.
 * [Production] Production bots now eager load bot code to improve copy-on-write performance. The `puma.rb` config has been updated with instructions for multiple workers.
+* [Flows] You can now specify custom options when defining states. These options can later be accessed via the flow specification.
 
 ## Bug Fixes
 

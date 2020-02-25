@@ -711,6 +711,20 @@ describe "Stealth::Controller" do
         expect(controller.send(:dev_jump_detected?)).to be false
       end
 
+      it "should return false if the message looks like an American date" do
+        allow(Stealth).to receive(:env).and_return(dev_env)
+        controller.current_message.message = '1/23/84'
+        expect(Stealth.env.development?).to be true
+        expect(controller.send(:dev_jump_detected?)).to be false
+      end
+
+      it "should return false if the message looks like an American date that is zero padded" do
+        allow(Stealth).to receive(:env).and_return(dev_env)
+        controller.current_message.message = '01/23/1984'
+        expect(Stealth.env.development?).to be true
+        expect(controller.send(:dev_jump_detected?)).to be false
+      end
+
       describe "with a dev jump message" do
         before(:each) do
           expect(controller).to receive(:handle_dev_jump).and_return(true)
