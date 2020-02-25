@@ -110,23 +110,6 @@ describe "Stealth::Controller::CatchAll" do
       end
     end
 
-    describe "releasing locks" do
-      it "should release the session lock after the maximum number of catch_all levels have been reached" do
-        allow(controller).to receive(:fetch_error_level).and_return(4)
-        session = Stealth::Session.new(id: controller.current_session_id)
-        session.set_session(new_flow: 'vader', new_state: 'my_action')
-        expect(controller).to receive(:release_lock!)
-        controller.run_catch_all
-      end
-
-      it "should release the session lock if the bot does not have a CatchAll flow" do
-        # FlowMap.flow_spec[:catch_all] = nil
-        allow(FlowMap.flow_spec).to receive(:[]).with(:catch_all).and_return(nil)
-        expect(controller).to receive(:release_lock!)
-        controller.run_catch_all
-      end
-    end
-
     describe "catch_all_reason" do
       before(:each) do
         @session = Stealth::Session.new(id: controller.current_session_id)
