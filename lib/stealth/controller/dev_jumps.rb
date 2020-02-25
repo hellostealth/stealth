@@ -27,6 +27,11 @@ module Stealth
           _, flow, state = current_message.message.split('/')
           flow = nil if flow.blank?
 
+          Stealth::Logger.l(
+            topic: 'dev_jump',
+            message: "Dev Jump detected: Flow: #{flow.inspect} State: #{state.inspect}"
+          )
+
           step_to flow: flow, state: state
         end
       end
