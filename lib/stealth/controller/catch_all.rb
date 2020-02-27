@@ -27,11 +27,8 @@ module Stealth
             else
               # We are out of bounds, do nothing to prevent an infinite loop
               Stealth::Logger.l(topic: 'catch_all', message: 'Stopping; we\'ve exceeded the number of defined catch_all states.')
-              release_lock!
               return false
             end
-          else
-            release_lock!
           end
         end
 
