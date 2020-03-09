@@ -366,34 +366,69 @@ describe Stealth::Controller::Messages do
       end
 
       it 'should log the NLP result if log_all_nlp_results=true' do
-          Stealth.config.log_all_nlp_results = true
-          Stealth.config.nlp_integration = :luis
+        Stealth.config.log_all_nlp_results = true
+        Stealth.config.nlp_integration = :luis
 
-          luis_client = double('luis_client')
-          allow(luis_client).to receive(:understand).and_return(yes_intent_nlp_result)
-          allow(Stealth::Nlp::Luis::Client).to receive(:new).and_return(luis_client)
+        luis_client = double('luis_client')
+        allow(luis_client).to receive(:understand).and_return(yes_intent_nlp_result)
+        allow(Stealth::Nlp::Luis::Client).to receive(:new).and_return(luis_client)
 
-          expect(Stealth::Logger).to receive(:l).with(
-            topic: :nlp,
-            message: "User 8b3e0a3c-62f1-401e-8b0f-615c9d256b1f -> Performing NLP."
-          )
-          expect(Stealth::Logger).to receive(:l).with(
-            topic: :nlp,
-            message: "User 8b3e0a3c-62f1-401e-8b0f-615c9d256b1f -> NLP Result: #{yes_intent_nlp_result.parsed_result.inspect}"
-          )
-          test_controller.current_message.message = "YAS"
-          x = 0
-          test_controller.send(
-            :handle_message, {
-              'Buy' => proc { x += 1 },
-              :yes => proc { x += 9 },
-              :no => proc { x += 8 }
-            }
-          )
+        expect(Stealth::Logger).to receive(:l).with(
+          topic: :nlp,
+          message: "User 8b3e0a3c-62f1-401e-8b0f-615c9d256b1f -> Performing NLP."
+        )
+        expect(Stealth::Logger).to receive(:l).with(
+          topic: :nlp,
+          message: "User 8b3e0a3c-62f1-401e-8b0f-615c9d256b1f -> NLP Result: #{yes_intent_nlp_result.parsed_result.inspect}"
+        )
+        test_controller.current_message.message = "YAS"
+        x = 0
+        test_controller.send(
+          :handle_message, {
+            'Buy' => proc { x += 1 },
+            :yes => proc { x += 9 },
+            :no => proc { x += 8 }
+          }
+        )
 
-          Stealth.config.log_all_nlp_results = false
-          Stealth.config.nlp_integration = nil
-        end
+        Stealth.config.log_all_nlp_results = false
+        Stealth.config.nlp_integration = nil
+      end
+    end
+
+    describe 'nil matcher' do
+      it "should match the respective ordinal" do
+        test_controller.current_message.message = "C"
+        x = 0
+        test_controller.handle_message(
+          'Buy' => proc { x += 1 },
+          'Refinance' => proc { x += 2 },
+          nil => proc { x += 10 }
+        )
+        expect(x).to eq 10
+      end
+
+      it "should match an unknown ordinal" do
+        test_controller.current_message.message = "D"
+        x = 0
+        test_controller.handle_message(
+          'Buy' => proc { x += 1 },
+          'Refinance' => proc { x += 2 },
+          nil => proc { x += 10 }
+        )
+        expect(x).to eq 10
+      end
+
+      it "should match free-form text" do
+        test_controller.current_message.message = "Hello world!"
+        x = 0
+        test_controller.handle_message(
+          'Buy' => proc { x += 1 },
+          'Refinance' => proc { x += 2 },
+          nil => proc { x += 10 }
+        )
+        expect(x).to eq 10
+      end
     end
 
     it "should raise Stealth::Errors::MessageNotRecognized if the reply does not match" do
