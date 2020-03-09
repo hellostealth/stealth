@@ -21,7 +21,7 @@ module Stealth
         #   "100k" => proc { step_back }, "200k" => proc { step_to flow :hello }
         # }
         def handle_message(message_tuples)
-          match = nil
+          match = 0xdeadbeef # dummy value since nils are used
           message_tuples.keys.each_with_index do |msg, i|
             # Before checking content, match against our ordinals
             if message_matches_ordinal?(msg, i)
@@ -41,13 +41,19 @@ module Stealth
               end
             end
 
+            # custom mismatch handler; any nil key results in a match
+            if msg.nil?
+              match = msg
+              break
+            end
+
             if message_matches?(msg)
               match = msg
               break
             end
           end
 
-          if match.present?
+          if match != 0xdeadbeef
             instance_eval(&message_tuples[match])
           else
             handle_mismatch(true)
