@@ -71,6 +71,15 @@ describe Stealth::Controller::Messages do
       }.to raise_error(Stealth::Errors::MessageNotRecognized)
     end
 
+    it "should not run NLP entity detection if an ordinal is entered by the user" do
+      test_controller.current_message.message = "C"
+
+      expect(test_controller).to_not receive(:perform_nlp!)
+      expect(
+        test_controller.get_match([:yes, :no, 'unsubscribe'])
+      ).to eq('unsubscribe')
+    end
+
     describe "entity detection" do
       let(:no_intent) { :no }
       let(:yes_intent) { :yes }
@@ -323,6 +332,19 @@ describe Stealth::Controller::Messages do
       )
 
       expect(x).to eq 2
+    end
+
+    it "should not run NLP if an ordinal is entered by the user" do
+      test_controller.current_message.message = "C"
+      x = 0
+      test_controller.handle_message(
+        :yes => proc { x += 1 },
+        :no => proc { x += 2 },
+        'Unsubscribe' => proc { x += 3 }
+      )
+
+      expect(test_controller).to_not receive(:perform_nlp!)
+      expect(x).to eq 3
     end
 
     describe "intent detection" do

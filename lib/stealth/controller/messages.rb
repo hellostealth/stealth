@@ -10,6 +10,10 @@ module Stealth
           ALPHA_ORDINALS = ('A'..'Z').to_a.freeze
         end
 
+        unless defined?(NO_MATCH)
+          NO_MATCH = 0xdeadbeef
+        end
+
         def normalized_msg
           current_message.message&.upcase&.strip
         end
@@ -21,39 +25,44 @@ module Stealth
         #   "100k" => proc { step_back }, "200k" => proc { step_to flow :hello }
         # }
         def handle_message(message_tuples)
-          match = 0xdeadbeef # dummy value since nils are used
-          message_tuples.keys.each_with_index do |msg, i|
-            # Before checking content, match against our ordinals
-            if message_matches_ordinal?(msg, i)
-              match = msg
-              break
-            end
+          match = NO_MATCH # dummy value since nils are used for matching
 
-            # intent detection
-            if msg.is_a?(Symbol)
-              perform_nlp! unless nlp_result.present?
+          # Before checking content, match against our ordinals
+          if idx = message_is_an_ordinal?
+            # find the value stored in the message tuple via the index
+            matched_value = message_tuples.keys[idx]
+            match = matched_value unless matched_value.nil?
+          end
 
-              if intent_matched?(msg)
+          if match == NO_MATCH
+            message_tuples.keys.each_with_index do |msg, i|
+              # intent detection
+              if msg.is_a?(Symbol)
+                perform_nlp! unless nlp_result.present?
+
+                if intent_matched?(msg)
+                  match = msg
+                  break
+                else
+                  next
+                end
+              end
+
+              # custom mismatch handler; any nil key results in a match
+              if msg.nil?
                 match = msg
                 break
-              else
-                next
               end
-            end
 
-            # custom mismatch handler; any nil key results in a match
-            if msg.nil?
-              match = msg
-              break
-            end
-
-            if message_matches?(msg)
-              match = msg
-              break
+              # check if the normalized message matches exactly
+              if message_matches?(msg)
+                match = msg
+                break
+              end
             end
           end
 
-          if match != 0xdeadbeef
+          if match != NO_MATCH
             instance_eval(&message_tuples[match])
           else
             handle_mismatch(true)
@@ -63,12 +72,12 @@ module Stealth
         # Matches the message or the oridinal value entered (via SMS)
         # Ignores case and strips leading and trailing whitespace before matching.
         def get_match(messages, raise_on_mismatch: true, fuzzy_match: true)
-          messages.each_with_index do |msg, i|
-            # Before checking content, match against our ordinals
-            if message_matches_ordinal?(msg, i)
-              return msg
-            end
+          # Before checking content, match against our ordinals
+          if idx = message_is_an_ordinal?
+            return messages[idx] unless messages[idx].nil?
+          end
 
+          messages.each_with_index do |msg, i|
             # entity detection
             if msg.is_a?(Symbol)
               perform_nlp! unless nlp_result.present?
@@ -114,8 +123,9 @@ module Stealth
           end
         end
 
-        def message_matches_ordinal?(msg, pos)
-          normalized_msg == ALPHA_ORDINALS[pos]
+        # Returns the index of the ordinal, nil if not found
+        def message_is_an_ordinal?
+          ALPHA_ORDINALS.index(normalized_msg)
         end
 
         def message_matches?(msg)
