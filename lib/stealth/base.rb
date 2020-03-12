@@ -62,16 +62,16 @@ module Stealth
   end
 
   def self.set_config_defaults(config)
-    config.dynamic_delay_muliplier = 1.0
-    config.session_ttl = 0
-    config.lock_autorelease = 30
-    config.transcript_logging = false
-    config.hot_reload = Stealth.env.development?
-    config.eager_load = Stealth.env.production?
-    config.autoload_paths = Stealth.default_autoload_paths
+    config.dynamic_delay_muliplier ||= 1.0
+    config.session_ttl ||= 0
+    config.lock_autorelease ||= 30
+    config.transcript_logging ||= false
+    config.hot_reload ||= Stealth.env.development?
+    config.eager_load ||= Stealth.env.production?
+    config.autoload_paths ||= Stealth.default_autoload_paths
     config.autoload_ignore_paths ||= []
-    config.nlp_integration = nil
-    config.log_all_nlp_results = false
+    config.nlp_integration ||= nil
+    config.log_all_nlp_results ||= false
   end
 
   # Loads the services.yml configuration unless one has already been loaded
