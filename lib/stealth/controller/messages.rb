@@ -140,7 +140,7 @@ module Stealth
           if nlp_result.entities.has_key?(entity)
             match_count = nlp_result.entities[entity].size
             if match_count > 1 && !fuzzy_match
-              log_nlp_result
+              log_nlp_result unless Stealth.config.log_all_nlp_results # Already logged
 
               raise(
                 Stealth::Errors::MessageNotRecognized,
@@ -170,7 +170,7 @@ module Stealth
           unless fuzzy_match
             entities.each do |entity|
               unless nlp_entities[entity].blank?
-                log_nlp_result
+                log_nlp_result unless Stealth.config.log_all_nlp_results # Already logged
                 leftover_count = nlp_entities[entity].size
                 raise(
                   Stealth::Errors::MessageNotRecognized,
