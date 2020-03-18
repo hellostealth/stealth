@@ -1,6 +1,6 @@
 # <a href='https://hellostealth.org'><img src='logo.svg' height='120' alt='Stealth Logo' aria-label='hellostealth.org' /></a>
 
-Stealth is an open source Ruby framework for creating text and voice chatbots. It's design is inspired by Ruby on Rails's philosophy of convention over configuration. It has an MVC architecture with the slight caveat that `views` are aptly named `replies`.
+Stealth is a Ruby framework for creating text and voice chatbots. It's design is inspired by Ruby on Rails's philosophy of convention over configuration. It has an MVC architecture with the slight caveat that `views` are aptly named `replies`.
 
 [![CircleCI](https://circleci.com/gh/whoisblackops/stealth.svg?style=svg&circle-token=63fb0f94994daf358fab46dd716e4da3578fd530)](https://circleci.com/gh/whoisblackops/stealth)
 
@@ -52,4 +52,4 @@ Stealth is versioned uses [Semantic Versioning](https://semver.org), but it's mo
 
 ## License
 
-"Stealth" and the Stealth logo are copyright (c) 2019 The Black Ops Bureau Inc.
+"Stealth" and the Stealth logo are copyright (c) 2020 The Black Ops Bureau Inc.
