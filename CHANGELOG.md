@@ -1,4 +1,11 @@
-# Changelog for Stealth v2.0.0 (unreleased)
+# Changelog for Stealth v2.1.0
+
+## Enhancements
+
+* [Errors] `Stealth::Errors::MessageNotRecognized` has been renamed to `Stealth::Errors::UnrecognizedMessage`
+* [Controllers] When `handle_message` or `get_match` raise a ``Stealth::Errors::UnrecognizedMessage`, the user is first routed to a new `UnrecognizedMessagesController` to perform NLP. If that controller fails to match, the `catch_all` is run as normal.
+
+# Changelog for Stealth v2.0.0
 
 ## Enhancements
 
@@ -13,8 +20,8 @@
 * [Logging] `primary_session`, `previous_session`, and `back_to_session` now explicitly logged
 * [Sessions] The session is no longer set on update or stepping witht destination flow and state match the existing session.
 * [Scheduled Replies] The `service_message.target_id` is now set for scheduled replies. NOTE: scheduled replies that are already enqueued will NOT have this set.
-* [Server] Updated to Puma 4.1.1
-* [Server] Updated to Sinatra 1.0.7
+* [Server] Updated to Puma 4.3
+* [Server] Updated to Sinatra 2.0
 * [Sessions] Added `to_s` for sessions to pretty print the slug. Useful when debugging.
 * `send_reples` now supports two additional options for replies:
   `send_replies(custom_reply: 'hello/say_hello')`
@@ -30,6 +37,10 @@
 * [Logging] Add option, `Stealth.config.transcript_logging`, to log incoming and outgoing messages.
 * [Server] The only HTTP header passed along to `handle_message_job` is now `HTTP_HOST`.
 * [Controllers] Added `set_back_to` and `step_back` to allow user specified "redirect back". Useful for multi-state transitions that would otherwise not be possible with just `previous_session`.
+* [Configuration] Stealth::Configuration now returns `nil` for a configuration option that is missing. It still returns a `NoMethodError` if attempting to access a key from a parent node that is also missing.
+* [Reloading] Bots in development mode now hot reload! It's no longer necessary to stop your local server.
+* [Production] Production bots now eager load bot code to improve copy-on-write performance. The `puma.rb` config has been updated with instructions for multiple workers.
+* [Flows] You can now specify custom options when defining states. These options can later be accessed via the flow specification.
 
 ## Bug Fixes
 
@@ -47,6 +58,7 @@
 ## Deprecations
 
 * [Controllers] current_user_id has now been completely removed since becoming deprecated in 1.1.0.
+* [Ruby] MRI 2.4 is no longer supported as we depend on ActiveSupport 6.0 now. Rails 6.0 only supports Ruby MRI 2.5+.
 
 # Changelog for Stealth v1.1.5
 

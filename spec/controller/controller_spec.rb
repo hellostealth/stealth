@@ -1,7 +1,6 @@
-# coding: utf-8
 # frozen_string_literal: true
 
-require File.expand_path(File.join(File.dirname(__FILE__), '..', '/spec_helper'))
+require 'spec_helper'
 
 describe "Stealth::Controller" do
 
@@ -25,7 +24,7 @@ describe "Stealth::Controller" do
     end
 
     def other_action2
-
+      step_to state: :other_action4
     end
 
     def other_action3
@@ -34,6 +33,14 @@ describe "Stealth::Controller" do
 
     def other_action4
       do_nothing
+    end
+
+    def broken_action
+      raise StandardError
+    end
+
+    def parts_unknown
+      step_to flow: :parts, state: :unknown
     end
   end
 
@@ -51,6 +58,8 @@ describe "Stealth::Controller" do
       state :other_action2
       state :other_action3
       state :other_action4
+      state :broken_action
+      state :part_unknown
       state :deprecated_action, redirects_to: :other_action
       state :deprecated_action2, redirects_to: 'mr_robot->my_action'
     end
@@ -176,13 +185,14 @@ describe "Stealth::Controller" do
       controller.step_to session: controller.current_session
     end
 
-    it "should accept flow and string specified as symbols" do
-      expect_any_instance_of(MrRobotsController).to receive(:my_action3)
+    it "should pass along the service_message" do
+      robot_controller_dbl = double('MrRobotsController').as_null_object
+      expect(MrRobotsController).to receive(:new).with(service_message: controller.current_message).and_return(robot_controller_dbl)
       controller.step_to flow: :mr_robot, state: :my_action3
     end
 
-    it "should lock the session" do
-      expect(controller).to receive(:lock_session!).with(session_slug: 'mr_robot->my_action3')
+    it "should accept flow and string specified as symbols" do
+      expect_any_instance_of(MrRobotsController).to receive(:my_action3)
       controller.step_to flow: :mr_robot, state: :my_action3
     end
 
@@ -248,11 +258,6 @@ describe "Stealth::Controller" do
       controller.update_session_to flow: :mr_robot, state: :my_action3
       expect(controller.current_session.flow_string).to eq('mr_robot')
       expect(controller.current_session.state_string).to eq('my_action3')
-    end
-
-    it "should release the lock on the session" do
-      expect(controller).to receive(:release_lock!)
-      controller.update_session_to flow: :mr_robot, state: :my_action3
     end
 
     it "should check if an interruption occured" do
@@ -661,11 +666,6 @@ describe "Stealth::Controller" do
       controller.action(action: :other_action4)
       expect(controller.progressed?).to be_truthy
     end
-
-    it "should release the lock on the session" do
-      expect(controller).to receive(:release_lock!)
-      controller.do_nothing
-    end
   end
 
   describe "update_session" do
@@ -691,6 +691,8 @@ describe "Stealth::Controller" do
   end
 
   describe "dev jumps" do
+    let!(:dev_env) { ActiveSupport::StringInquirer.new('development') }
+
     describe "dev_jump_detected?" do
       it "should return false if the enviornment is not 'development'" do
         expect(Stealth.env).to eq 'test'
@@ -698,16 +700,30 @@ describe "Stealth::Controller" do
       end
 
       it "should return false if the message does not match the jump format" do
-        allow(Stealth).to receive(:env).and_return('development')
+        allow(Stealth).to receive(:env).and_return(dev_env)
         controller.current_message.message = 'hello world'
-        expect(Stealth.env).to eq 'development'
+        expect(Stealth.env.development?).to be true
+        expect(controller.send(:dev_jump_detected?)).to be false
+      end
+
+      it "should return false if the message looks like an American date" do
+        allow(Stealth).to receive(:env).and_return(dev_env)
+        controller.current_message.message = '1/23/84'
+        expect(Stealth.env.development?).to be true
+        expect(controller.send(:dev_jump_detected?)).to be false
+      end
+
+      it "should return false if the message looks like an American date that is zero padded" do
+        allow(Stealth).to receive(:env).and_return(dev_env)
+        controller.current_message.message = '01/23/1984'
+        expect(Stealth.env.development?).to be true
         expect(controller.send(:dev_jump_detected?)).to be false
       end
 
       describe "with a dev jump message" do
         before(:each) do
           expect(controller).to receive(:handle_dev_jump).and_return(true)
-          expect(Stealth).to receive(:env).and_return('development')
+          expect(Stealth).to receive(:env).and_return(dev_env)
         end
 
         it "should return true if the message is in the format /flow/state" do
@@ -744,6 +760,34 @@ describe "Stealth::Controller" do
         controller.current_message.message = '//my_action'
         expect(controller).to receive(:step_to).with(flow: nil, state: 'my_action')
         controller.send(:handle_dev_jump)
+      end
+    end
+
+    describe "session locking" do
+      before(:each) do
+        allow(MrTronsController).to receive(:new).and_return(controller)
+      end
+
+      it "should lock and then unlock a session when a do_nothing action is called" do
+        expect(controller).to receive(:lock_session!).once
+        expect(controller).to receive(:release_lock!).once
+        controller.action(action: :other_action4)
+      end
+
+      it "should lock and then unlock a session twice when an action steps to another" do
+        expect(controller).to receive(:lock_session!).twice
+        expect(controller).to receive(:release_lock!).twice
+        controller.action(action: :other_action2)
+      end
+
+      it 'should still release the lock even if an action raises' do
+        expect(controller).to receive(:release_lock!).once
+        controller.action(action: :broken_action)
+      end
+
+      it 'should still release the lock if an action steps to an unknown flow->state' do
+        expect(controller).to receive(:release_lock!).once
+        controller.action(action: :parts_unknown)
       end
     end
   end

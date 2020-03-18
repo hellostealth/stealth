@@ -29,22 +29,22 @@ Stealth is extensible. All service integrations are split out into separate Ruby
 Currently, there are gems for:
 
 ### Messaging
-* [Facebook Messenger](https://github.com/whoisblackops/stealth-facebook)
-* [Twilio SMS](https://github.com/whoisblackops/stealth-twilio)
-* [Smooch](https://github.com/whoisblackops/stealth-smooch)
+* [Facebook Messenger](https://github.com/hellostealth/stealth-facebook)
+* [Twilio SMS](https://github.com/hellostealth/stealth-twilio)
+* [Smooch](https://github.com/hellostealth/stealth-smooch)
 
 ### Voice
-* [Alexa Skill](https://github.com/whoisblackops/stealth-alexa) (Early alpha)
+* [Alexa Skill](https://github.com/hellostealth/stealth-alexa) (Early alpha)
 
 ### Natural Language Processing
-* [AWS Comprehend](https://github.com/whoisblackops/stealth-aws-comprehend)
+* [AWS Comprehend](https://github.com/hellostealth/stealth-aws-comprehend)
 
 ### Analytics
-* [Mixpanel](https://github.com/whoisblackops/stealth-mixpanel)
+* [Mixpanel](https://github.com/hellostealth/stealth-mixpanel)
 
 ## Docs
 
-You can find our full docs [here](https://www.notion.so/whoisblackops/Stealth-6b6e164381fe41cb9896cebf8302fa42). If something is not clear in the docs, please file an issue! We consider all shortcomings in the docs as bugs.
+You can find our full docs [here](https://hellostealth.org/docs/). If something is not clear in the docs, please file an issue! We consider all shortcomings in the docs as bugs.
 
 ## Versioning
 

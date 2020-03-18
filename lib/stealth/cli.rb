@@ -80,7 +80,6 @@ module Stealth
 
     $ > stealth console --engine=pry
     EOS
-    method_option :environment, desc: 'Path to environment configuration (config/environment.rb)'
     method_option :engine, desc: "Choose a specific console engine: (#{Stealth::Commands::Console::ENGINES.keys.join('/')})"
     method_option :help, desc: 'Displays the usage method'
     def console
@@ -114,7 +113,7 @@ module Stealth
     EOS
     define_method 'sessions:clear' do
       Stealth.load_environment
-      $redis.flushdb if Stealth.env == 'development'
+      $redis.flushdb if Stealth.env.development?
     end
 
 

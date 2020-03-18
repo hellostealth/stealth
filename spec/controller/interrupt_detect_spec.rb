@@ -1,4 +1,3 @@
-# coding: utf-8
 # frozen_string_literal: true
 
 require 'spec_helper'
@@ -81,7 +80,7 @@ describe "Stealth::Controller::InterruptDetect" do
       controller.run_interrupt_action
     end
 
-    it "should catch StandardError from InterruptController and log it" do
+    it "should catch StandardError from within InterruptController and log it" do
       class InterruptsController < Stealth::Controller
         def say_interrupted
           raise Stealth::Errors::ReplyNotFound

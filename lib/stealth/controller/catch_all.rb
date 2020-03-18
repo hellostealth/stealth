@@ -9,9 +9,26 @@ module Stealth
 
       included do
 
-        def run_catch_all(reason: nil)
+        def run_catch_all(err:)
           error_level = fetch_error_level
-          Stealth::Logger.l(topic: 'catch_all', message: "CatchAll #{calculate_catch_all_state(error_level)} triggered for #{error_slug}: #{reason}")
+
+          if err.class == Stealth::Errors::UnrecognizedMessage
+            Stealth::Logger.l(
+              topic: 'catch_all',
+              message: "[Level #{error_level}] #{err.message}"
+            )
+          else
+            Stealth::Logger.l(
+              topic: 'catch_all',
+              message: "[Level #{error_level}] #{[err.message, err.backtrace.join("\n")].join("\n")}"
+            )
+          end
+
+          # Store the reason so it can be accessed by the CatchAllsController
+          current_message.catch_all_reason = {
+            err: err.class,
+            err_msg: err.message
+          }
 
           # Don't run catch_all from the catch_all controller
           if current_session.flow_string == 'catch_all'
@@ -27,11 +44,8 @@ module Stealth
             else
               # We are out of bounds, do nothing to prevent an infinite loop
               Stealth::Logger.l(topic: 'catch_all', message: 'Stopping; we\'ve exceeded the number of defined catch_all states.')
-              release_lock!
               return false
             end
-          else
-            release_lock!
           end
         end
 

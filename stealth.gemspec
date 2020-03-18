@@ -13,16 +13,16 @@ Gem::Specification.new do |s|
   s.email = 'mauricio@edge14.com'
 
   s.add_dependency 'sinatra', '~> 2.0'
-  s.add_dependency 'puma', '>= 3.10', '< 5.0'
-  s.add_dependency 'thor', '~> 0.20'
+  s.add_dependency 'puma', '>= 4.2', '< 5.0'
+  s.add_dependency 'thor', '~> 1.0'
   s.add_dependency 'multi_json', '~> 1.12'
-  s.add_dependency 'sidekiq', '~> 5.0'
-  s.add_dependency 'activesupport', '~> 5.2'
+  s.add_dependency 'sidekiq', '~> 6.0'
+  s.add_dependency 'activesupport', '~> 6.0'
 
-  s.add_development_dependency 'rspec', '~> 3.6'
+  s.add_development_dependency 'rspec', '~> 3.9'
   s.add_development_dependency 'rspec_junit_formatter', '~> 0.3'
   s.add_development_dependency 'rack-test', '~> 1.1'
-  s.add_development_dependency 'mock_redis', '~> 0.17'
+  s.add_development_dependency 'mock_redis', '~> 0.22'
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")

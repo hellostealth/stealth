@@ -45,8 +45,10 @@ module Stealth
                 :blue
               when :smooch
                 :magenta
-              when :alexa
+              when :alexa, :unrecognized_message
                 :light_cyan
+              when :nlp
+                :cyan
               when :catch_all
                 :red
               when :user

@@ -34,11 +34,11 @@ module Stealth
             return false
           end
 
-          begin
-            interrupt_controller = InterruptsController.new(
-              service_message: current_message
-            )
+          interrupt_controller = InterruptsController.new(
+            service_message: current_message
+          )
 
+          begin
             # Run say_interrupted action
             interrupt_controller.say_interrupted
 
@@ -84,10 +84,11 @@ module Stealth
             lock.create
           end
 
-          # Yields control to other threads to take action on this sessions
+          # Yields control to other threads to take action on this session
           # by releasing the lock.
           def release_lock!
-            # We cannot release the lock from within the interrupt handler
+            # We don't want to release the lock from within InterruptsController
+            # otherwise the InterruptsController can get interrupted.
             unless self.class.to_s == 'InterruptsController'
               current_lock&.release
             end

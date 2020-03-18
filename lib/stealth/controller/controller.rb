@@ -7,18 +7,23 @@ module Stealth
     include Stealth::Controller::Callbacks
     include Stealth::Controller::DynamicDelay
     include Stealth::Controller::Replies
+    include Stealth::Controller::Messages
+    include Stealth::Controller::UnrecognizedMessage
     include Stealth::Controller::CatchAll
     include Stealth::Controller::Helpers
     include Stealth::Controller::InterruptDetect
     include Stealth::Controller::DevJumps
+    include Stealth::Controller::Nlp
 
     attr_reader :current_message, :current_service, :flow_controller,
                 :action_name, :current_session_id
+    attr_accessor :nlp_result
 
     def initialize(service_message:)
       @current_message = service_message
       @current_service = service_message.service
       @current_session_id = service_message.sender_id
+      @nlp_result = service_message.nlp_result
       @progressed = false
     end
 
@@ -57,32 +62,45 @@ module Stealth
     end
 
     def action(action: nil)
-      @action_name = action
-      @action_name ||= current_session.state_string
-
-      # Check if the user needs to be redirected
-      if current_session.flow.current_state.redirects_to.present?
-        Stealth::Logger.l(
-          topic: "redirect",
-          message: "From #{current_session.session} to #{current_session.flow.current_state.redirects_to.session}"
-        )
-        step_to(session: current_session.flow.current_state.redirects_to)
-        return
-      end
-
-      run_callbacks :action do
-        begin
-          flow_controller.send(@action_name)
-          unless flow_controller.progressed?
-            run_catch_all(reason: 'Did not send replies, update session, or step')
-          end
-        rescue StandardError => e
-          Stealth::Logger.l(
-            topic: "catch_all",
-            message: [e.message, e.backtrace.join("\n")].join("\n")
+      begin
+        # Grab a mutual exclusion lock on the session
+        lock_session!(
+          session_slug: Session.slugify(
+            flow: current_session.flow_string,
+            state: current_session.state_string
           )
-          run_catch_all(reason: e.message)
+        )
+
+        @action_name = action
+        @action_name ||= current_session.state_string
+
+        # Check if the user needs to be redirected
+        if current_session.flow.current_state.redirects_to.present?
+          Stealth::Logger.l(
+            topic: "redirect",
+            message: "From #{current_session.session} to #{current_session.flow.current_state.redirects_to.session}"
+          )
+          step_to(session: current_session.flow.current_state.redirects_to)
+          return
         end
+
+        run_callbacks :action do
+          begin
+            flow_controller.send(@action_name)
+            unless flow_controller.progressed?
+              run_catch_all(reason: 'Did not send replies, update session, or step')
+            end
+          rescue StandardError => e
+            if e.class == Stealth::Errors::UnrecognizedMessage
+              run_unrecognized_message(err: e)
+            else
+              run_catch_all(err: e)
+            end
+          end
+        end
+      ensure
+        # Release mutual exclusion lock on the session
+        release_lock!
       end
     end
 
@@ -130,8 +148,6 @@ module Stealth
         state: state
       )
 
-      lock_session!(session_slug: Session.slugify(flow: flow, state: state))
-
       step(flow: flow, state: state)
     end
 
@@ -147,7 +163,6 @@ module Stealth
         state: state
       )
       update_session(flow: flow, state: state)
-      release_lock!
     end
 
     def set_back_to(session: nil, flow: nil, state:)
@@ -182,7 +197,6 @@ module Stealth
 
     def do_nothing
       @progressed = :do_nothing
-      release_lock!
     end
 
     private
