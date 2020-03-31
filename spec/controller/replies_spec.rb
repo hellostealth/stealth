@@ -463,4 +463,85 @@ describe "Stealth::Controller replies" do
     end
   end
 
+  describe "client errors" do
+    let(:stubbed_handler) { double("handler") }
+    let(:stubbed_client) { double("client") }
+
+    before(:each) do
+      allow(Stealth::Services::Facebook::ReplyHandler).to receive(:new).and_return(stubbed_handler)
+      allow(Stealth::Services::Facebook::Client).to receive(:new).and_return(stubbed_client)
+      allow(controller.current_session).to receive(:flow_string).and_return("message")
+      allow(controller.current_session).to receive(:state_string).and_return("say_offer")
+      allow(stubbed_handler).to receive(:text).exactly(1).times
+    end
+
+    describe "Stealth::Errors::UserOptOut" do
+      before(:each) do
+        expect(stubbed_client).to receive(:transmit).and_raise(
+          Stealth::Errors::UserOptOut.new('boom')
+        ).once # Retuns early; doesn't send the remaining replies in the file
+      end
+
+      it "should log the unhandled exception if the controller does not have a handle_opt_out method" do
+        expect(Stealth::Logger).to receive(:l).with(
+          topic: :err,
+          message: "User #{facebook_message.sender_id} unhandled exception due to opt-out."
+        )
+        expect(controller).to receive(:do_nothing)
+        controller.say_offer
+      end
+
+      it "should call handle_opt_out method" do
+        expect(controller).to receive(:handle_opt_out)
+        expect(Stealth::Logger).to receive(:l).with(
+          topic: 'facebook',
+          message: "User #{facebook_message.sender_id} opted out. [boom]"
+        )
+        expect(controller).to receive(:do_nothing)
+        controller.say_offer
+      end
+    end
+
+    describe "Stealth::Errors::InvalidSessionID" do
+      before(:each) do
+        expect(stubbed_client).to receive(:transmit).and_raise(
+          Stealth::Errors::InvalidSessionID.new('boom')
+        ).once # Retuns early; doesn't send the remaining replies in the file
+      end
+
+      it "should log the unhandled exception if the controller does not have a handle_invalid_session_id method" do
+        expect(Stealth::Logger).to receive(:l).with(
+          topic: :err,
+          message: "User #{facebook_message.sender_id} unhandled exception due to invalid session_id."
+        )
+        expect(controller).to receive(:do_nothing)
+        controller.say_offer
+      end
+
+      it "should call handle_invalid_session_id method" do
+        expect(controller).to receive(:handle_invalid_session_id)
+        expect(Stealth::Logger).to receive(:l).with(
+          topic: 'facebook',
+          message: "User #{facebook_message.sender_id} has an invalid session_id. [boom]"
+        )
+        expect(controller).to receive(:do_nothing)
+        controller.say_offer
+      end
+    end
+
+    describe 'an unknown client error' do
+      before(:each) do
+        allow(stubbed_client).to receive(:transmit).and_raise(
+          StandardError
+        )
+      end
+
+      it 'should raise the error' do
+        expect {
+          controller.say_offer
+        }.to raise_error(StandardError)
+      end
+    end
+  end
+
 end

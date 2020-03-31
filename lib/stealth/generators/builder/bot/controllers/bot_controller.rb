@@ -26,7 +26,7 @@ class BotController < Stealth::Controller
     end
   end
 
-  private
+private
 
   # Handle payloads globally since payload buttons remain in the chat
   # and we cannot guess in which states they will be tapped.
@@ -37,6 +37,19 @@ class BotController < Stealth::Controller
     when 'goodbye'
       step_to flow: 'goodbye'
     end
+  end
+
+  # Automatically called when clients receive an opt-out error from
+  # the platform. You can write your own steps for handling.
+  def handle_opt_out
+    do_nothing
+  end
+
+  # Automatically called when clients receive an invalid session_id error from
+  # the platform. For example, attempting to text a landline.
+  # You can write your own steps for handling.
+  def handle_invalid_session_id
+    do_nothing
   end
 
 end

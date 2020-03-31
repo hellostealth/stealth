@@ -51,7 +51,16 @@ module Stealth
 
             translated_reply = handler.send(reply.reply_type)
             client = service_client.new(reply: translated_reply)
-            client.transmit
+
+            begin
+              client.transmit
+            rescue Stealth::Errors::UserOptOut => e
+              user_opt_out_handler(msg: e.message)
+              return
+            rescue Stealth::Errors::InvalidSessionID => e
+              invalid_session_id_handler(msg: e.message)
+              return
+            end
 
             if Stealth.config.transcript_logging
               log_reply(reply)
@@ -80,6 +89,7 @@ module Stealth
           end
 
           @progressed = :sent_replies
+        ensure
           release_lock!
         end
 
@@ -176,6 +186,40 @@ module Stealth
             end
 
             return file_contents, selected_preprocessor
+          end
+
+          def user_opt_out_handler(msg:)
+            if self.respond_to?(:handle_opt_out, true)
+              self.send(:handle_opt_out)
+              Stealth::Logger.l(
+                topic: current_service,
+                message: "User #{current_session_id} opted out. [#{msg}]"
+              )
+            else
+              Stealth::Logger.l(
+                topic: :err,
+                message: "User #{current_session_id} unhandled exception due to opt-out."
+              )
+            end
+
+            do_nothing
+          end
+
+          def invalid_session_id_handler(msg:)
+            if self.respond_to?(:handle_invalid_session_id, true)
+              self.send(:handle_invalid_session_id)
+              Stealth::Logger.l(
+                topic: current_service,
+                message: "User #{current_session_id} has an invalid session_id. [#{msg}]"
+              )
+            else
+              Stealth::Logger.l(
+                topic: :err,
+                message: "User #{current_session_id} unhandled exception due to invalid session_id."
+              )
+            end
+
+            do_nothing
           end
 
           def log_reply(reply)

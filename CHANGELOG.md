@@ -1,3 +1,9 @@
+# Changelog for Stealth v2.2.0
+
+## Enhancements
+
+* [Errors] Client errors now call respective BotController actions: `handle_opt_out` and `handle_invalid_session_id`. Each client is responsible for raising `Stealth::Errors::UserOptOut` or `Stealth::Errors::InvalidSessionId` errors.
+
 # Changelog for Stealth v2.1.0
 
 ## Enhancements

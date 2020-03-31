@@ -20,7 +20,7 @@ module Stealth
           else
             Stealth::Logger.l(
               topic: 'catch_all',
-              message: "[Level #{error_level}] #{[err.message, err.backtrace.join("\n")].join("\n")}"
+              message: "[Level #{error_level}] #{[err.class, err.message, err.backtrace.join("\n")].join("\n")}"
             )
           end
 

@@ -49,7 +49,7 @@ module Stealth
                 :light_cyan
               when :nlp
                 :cyan
-              when :catch_all
+              when :catch_all, :err
                 :red
               when :user
                 :white

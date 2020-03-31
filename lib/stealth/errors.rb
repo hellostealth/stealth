@@ -43,5 +43,11 @@ module Stealth
     class FlowDefinitionError < Errors
     end
 
+    class InvalidSessionID < Errors
+    end
+
+    class UserOptOut < Errors
+    end
+
   end
 end
