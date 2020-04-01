@@ -1,7 +1,6 @@
 # coding: utf-8
 # frozen_string_literal: true
 
-require 'stealth/flow/core_ext'
 require 'stealth/flow/specification'
 require 'stealth/flow/state'
 

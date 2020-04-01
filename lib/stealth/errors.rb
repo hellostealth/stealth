@@ -49,5 +49,8 @@ module Stealth
     class UserOptOut < Errors
     end
 
+    class ReservedHomophoneUsed < Errors
+    end
+
   end
 end

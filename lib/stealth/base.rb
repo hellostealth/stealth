@@ -16,6 +16,7 @@ end
 # core
 require 'stealth/version'
 require 'stealth/errors'
+require 'stealth/core_ext'
 require 'stealth/logger'
 require 'stealth/configuration'
 require 'stealth/reloader'

@@ -1,3 +1,11 @@
+# Changelog for Stealth v2.3.0
+
+## Enhancements
+
+* [Controllers] `handle_message` and `get_match` now detect homophones for alpha ordinals (A-Z)
+* [Controllers] `handle_message` and `get_match` now ignore single and double quotes for alpha-ordinals
+* [CoreExt] Strings now have a `normalize` method for removing padding and quotes
+
 # Changelog for Stealth v2.2.0
 
 ## Enhancements

@@ -16,6 +16,8 @@ describe Stealth::Controller::Messages do
   describe "normalized_msg" do
     let(:padded_msg) { '  Hello World! 👋  ' }
     let(:weird_case_msg) { 'Oh BaBy Oh BaBy' }
+    let(:double_quoted_ordinal) { ' "A" ' }
+    let(:single_quoted_ordinal) { "    'C' " }
 
     it 'should normalize blank-padded messages' do
       test_controller.current_message.message = padded_msg
@@ -25,6 +27,25 @@ describe Stealth::Controller::Messages do
     it 'should normalize differently cased messages' do
       test_controller.current_message.message = weird_case_msg
       expect(test_controller.normalized_msg).to eq('OH BABY OH BABY')
+    end
+
+    it 'should normalize double-quoted alpha ordinals' do
+      test_controller.current_message.message = double_quoted_ordinal
+      expect(test_controller.normalized_msg).to eq('A')
+    end
+
+    it 'should normalize single-quoted alpha ordinals' do
+      test_controller.current_message.message = single_quoted_ordinal
+      expect(test_controller.normalized_msg).to eq('C')
+    end
+  end
+
+  describe "homophone_translated_msg" do
+    it 'should convert homophones to their respective alpha ordinal' do
+      Stealth::Controller::Messages::HOMOPHONES.each do |homophone, ordinal|
+        test_controller.current_message.message = homophone
+        expect(test_controller.homophone_translated_msg).to eq(ordinal)
+      end
     end
   end
 
@@ -55,6 +76,34 @@ describe Stealth::Controller::Messages do
       expect(
         test_controller.get_match(['nice', 'woot'])
       ).to eq('woot')
+    end
+
+    it "should match messages utilizing a single-quoted SMS quick reply" do
+      test_controller.current_message.message = "'B'"
+      expect(
+        test_controller.get_match(['nice', 'woot'])
+      ).to eq('woot')
+    end
+
+    it "should match messages utilizing a double-quoted SMS quick reply" do
+      test_controller.current_message.message = '"A"'
+      expect(
+        test_controller.get_match(['nice', 'woot'])
+      ).to eq('nice')
+    end
+
+    it "should match messages utilizing a homophone" do
+      test_controller.current_message.message = " bee "
+      expect(
+        test_controller.get_match(['nice', 'woot'])
+      ).to eq('woot')
+    end
+
+    it "should raise ReservedHomophoneUsed if a homophone is used" do
+      test_controller.current_message.message = " B "
+      expect {
+        test_controller.get_match(['nice', 'woot', 'sea', 'bee'])
+      }.to raise_error(Stealth::Errors::ReservedHomophoneUsed, 'Cannot use `SEA, BEE`. Reserved for homophones.')
     end
 
     it "should raise Stealth::Errors::UnrecognizedMessage if a response was not matched" do
@@ -332,6 +381,53 @@ describe Stealth::Controller::Messages do
       )
 
       expect(x).to eq 2
+    end
+
+    it "should match against single-quoted ordinals" do
+      test_controller.current_message.message = "'B'"
+      x = 0
+      test_controller.handle_message(
+        'Buy' => proc { x += 1 },
+        'Refinance' => proc { x += 2 }
+      )
+
+      expect(x).to eq 2
+    end
+
+    it "should match against double-quoted ordinals" do
+      test_controller.current_message.message = '"A"'
+      x = 0
+      test_controller.handle_message(
+        'Buy' => proc { x += 1 },
+        'Refinance' => proc { x += 2 }
+      )
+
+      expect(x).to eq 1
+    end
+
+    it "should match homophones" do
+      test_controller.current_message.message = 'sea'
+      x = 0
+      test_controller.handle_message(
+        'Buy' => proc { x += 1 },
+        'Refinance' => proc { x += 2 },
+        'Other' => proc { x += 3 }
+      )
+
+      expect(x).to eq 3
+    end
+
+    it "should raise ReservedHomophoneUsed error if an arm contains a reserved homophone" do
+      test_controller.current_message.message = "B"
+      x = 0
+
+      expect {
+        test_controller.handle_message(
+          'Buy' => proc { x += 1 },
+          :woot => proc { x += 2 },
+          'Sea' => proc { x += 3 }
+        )
+      }.to raise_error(Stealth::Errors::ReservedHomophoneUsed, 'Cannot use `SEA`. Reserved for homophones.')
     end
 
     it "should not run NLP if an ordinal is entered by the user" do

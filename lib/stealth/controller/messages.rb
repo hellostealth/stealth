@@ -14,8 +14,47 @@ module Stealth
           NO_MATCH = 0xdeadbeef
         end
 
+        unless defined?(HOMOPHONES)
+          HOMOPHONES = {
+            'EH' => 'A',
+            'BE' => 'B',
+            'BEE' => 'B',
+            'CEE' => 'C',
+            'SEA' => 'C',
+            'SEE' => 'C',
+            'DEE' => 'D',
+            'GEE' => 'G',
+            'EYE' => 'I',
+            'AYE' => 'I',
+            'JAY' => 'J',
+            'KAY' => 'K',
+            'KAYE' => 'K',
+            'OH' => 'O',
+            'OWE' => 'O',
+            'PEA' => 'P',
+            'PEE' => 'P',
+            'CUE' => 'Q',
+            'QUEUE' => 'Q',
+            'ARR' => 'R',
+            'YOU' => 'U',
+            'YEW' => 'U',
+            'EX' => 'X',
+            'WHY' => 'Y',
+            'ZEE' => 'Z'
+          }
+        end
+
         def normalized_msg
-          current_message.message&.upcase&.strip
+          current_message.message.normalize
+        end
+
+        # Converts homophones into alpha-ordinals
+        def homophone_translated_msg
+          if HOMOPHONES[normalized_msg].present?
+            HOMOPHONES[normalized_msg]
+          else
+            normalized_msg
+          end
         end
 
         # Hash for message and lambda pairs. If the message is matched, the
@@ -26,6 +65,13 @@ module Stealth
         # }
         def handle_message(message_tuples)
           match = NO_MATCH # dummy value since nils are used for matching
+
+          if reserved_homophones_used = contains_homophones?(message_tuples.keys)
+            raise(
+              Stealth::Errors::ReservedHomophoneUsed,
+              "Cannot use `#{reserved_homophones_used.join(', ')}`. Reserved for homophones."
+            )
+          end
 
           # Before checking content, match against our ordinals
           if idx = message_is_an_ordinal?
@@ -72,6 +118,13 @@ module Stealth
         # Matches the message or the oridinal value entered (via SMS)
         # Ignores case and strips leading and trailing whitespace before matching.
         def get_match(messages, raise_on_mismatch: true, fuzzy_match: true)
+          if reserved_homophones_used = contains_homophones?(messages)
+            raise(
+              Stealth::Errors::ReservedHomophoneUsed,
+              "Cannot use `#{reserved_homophones_used.join(', ')}`. Reserved for homophones."
+            )
+          end
+
           # Before checking content, match against our ordinals
           if idx = message_is_an_ordinal?
             return messages[idx] unless messages[idx].nil?
@@ -123,13 +176,22 @@ module Stealth
           end
         end
 
+        def contains_homophones?(arr)
+          arr = arr.map do |elem|
+            elem.normalize if elem.is_a?(String)
+          end.compact
+
+          homophones = arr & HOMOPHONES.keys
+          homophones.any? ? homophones : false
+        end
+
         # Returns the index of the ordinal, nil if not found
         def message_is_an_ordinal?
-          ALPHA_ORDINALS.index(normalized_msg)
+          ALPHA_ORDINALS.index(homophone_translated_msg)
         end
 
         def message_matches?(msg)
-          normalized_msg == msg.upcase
+          homophone_translated_msg == msg.upcase
         end
 
         def intent_matched?(intent)
