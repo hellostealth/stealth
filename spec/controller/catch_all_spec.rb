@@ -115,8 +115,8 @@ describe "Stealth::Controller::CatchAll" do
       end
 
       it "should log the error message" do
-        expect(Stealth::Logger).to receive(:l).with(topic: 'catch_all', message: "[Level 1] OpenStruct\noops\n/stealth/lib/stealth/controller/controller.rb\n/stealth/lib/stealth/controller/catch_all.rb")
-        expect(Stealth::Logger).to receive(:l).with(topic: 'catch_all', message: 'CatchAll triggered from within CatchAll; ignoring.')
+        expect(Stealth::Logger).to receive(:l).with(topic: 'catch_all', message: "[Level 1] for user #{facebook_message.sender_id} OpenStruct\noops\n/stealth/lib/stealth/controller/controller.rb\n/stealth/lib/stealth/controller/catch_all.rb")
+        expect(Stealth::Logger).to receive(:l).with(topic: 'catch_all', message: "CatchAll triggered for user #{facebook_message.sender_id} from within CatchAll; ignoring.")
         controller.run_catch_all(err: e)
       end
     end

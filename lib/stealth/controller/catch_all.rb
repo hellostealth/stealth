@@ -15,12 +15,12 @@ module Stealth
           if err.class == Stealth::Errors::UnrecognizedMessage
             Stealth::Logger.l(
               topic: 'catch_all',
-              message: "[Level #{error_level}] #{err.message}"
+              message: "[Level #{error_level}] for user #{current_session_id} #{err.message}"
             )
           else
             Stealth::Logger.l(
               topic: 'catch_all',
-              message: "[Level #{error_level}] #{[err.class, err.message, err.backtrace.join("\n")].join("\n")}"
+              message: "[Level #{error_level}] for user #{current_session_id} #{[err.class, err.message, err.backtrace.join("\n")].join("\n")}"
             )
           end
 
@@ -32,7 +32,7 @@ module Stealth
 
           # Don't run catch_all from the catch_all controller
           if current_session.flow_string == 'catch_all'
-            Stealth::Logger.l(topic: 'catch_all', message: "CatchAll triggered from within CatchAll; ignoring.")
+            Stealth::Logger.l(topic: 'catch_all', message: "CatchAll triggered for user #{current_session_id} from within CatchAll; ignoring.")
             return false
           end
 
@@ -43,7 +43,7 @@ module Stealth
               step_to flow: :catch_all, state: catch_all_state
             else
               # We are out of bounds, do nothing to prevent an infinite loop
-              Stealth::Logger.l(topic: 'catch_all', message: 'Stopping; we\'ve exceeded the number of defined catch_all states.')
+              Stealth::Logger.l(topic: 'catch_all', message: "Stopping; we\'ve exceeded the number of defined catch_all states for user #{current_session_id}.")
               return false
             end
           end

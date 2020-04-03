@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    stealth (2.2.0)
+    stealth (2.3.0)
       activesupport (~> 6.0)
       multi_json (~> 1.12)
       puma (>= 4.2, < 5.0)
@@ -67,7 +67,7 @@ GEM
     thor (1.0.1)
     thread_safe (0.3.6)
     tilt (2.0.10)
-    tzinfo (1.2.6)
+    tzinfo (1.2.7)
       thread_safe (~> 0.1)
     zeitwerk (2.3.0)
 
@@ -83,4 +83,4 @@ DEPENDENCIES
   stealth!
 
 BUNDLED WITH
-   2.1.2
+   2.1.4
