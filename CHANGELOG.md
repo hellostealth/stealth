@@ -1,3 +1,9 @@
+# Changelog for Stealth v2.3.1
+
+## Bug Fixes
+
+* [Catch All] Log output from all catch_all logging now includes the session_id so they can be included in log searches.
+
 # Changelog for Stealth v2.3.0
 
 ## Enhancements
