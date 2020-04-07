@@ -27,7 +27,7 @@ describe "Stealth::Controller::UnrecognizedMessage" do
       it "should log and run catch_all" do
         expect(Stealth::Logger).to receive(:l).with(
           topic: 'unrecognized_message',
-          message: "The message \"Hello World!\" was not recognized."
+          message: "The message \"Hello World!\" was not recognized in the original context."
         ).ordered
 
         expect(Stealth::Logger).to receive(:l).with(
@@ -47,7 +47,16 @@ describe "Stealth::Controller::UnrecognizedMessage" do
         end
       end
 
-      expect_any_instance_of(UnrecognizedMessagesController).to receive(:handle_unrecognized_message)
+      expect(Stealth::Logger).to receive(:l).with(
+        topic: 'unrecognized_message',
+        message: "The message \"Hello World!\" was not recognized in the original context."
+      ).ordered
+
+      expect(Stealth::Logger).to receive(:l).with(
+        topic: 'unrecognized_message',
+        message: 'A match was detected. Skipping catch-all.'
+      ).ordered
+
       controller.run_unrecognized_message(err: e)
     end
 
@@ -60,7 +69,7 @@ describe "Stealth::Controller::UnrecognizedMessage" do
 
       expect(Stealth::Logger).to receive(:l).with(
         topic: 'unrecognized_message',
-        message: "The message \"Hello World!\" was not recognized."
+        message: "The message \"Hello World!\" was not recognized in the original context."
       ).ordered
 
       expect(Stealth::Logger).to receive(:l).with(
@@ -99,7 +108,7 @@ describe "Stealth::Controller::UnrecognizedMessage" do
 
         expect(Stealth::Logger).to receive(:l).with(
           topic: 'unrecognized_message',
-          message: "The message \"Hello World!\" was not recognized."
+          message: "The message \"Hello World!\" was not recognized in the original context."
         ).ordered
 
         expect(controller).to receive(:run_catch_all).with(err: $err)

@@ -10,7 +10,7 @@ module Stealth
       included do
 
         def run_unrecognized_message(err:)
-          err_message = "The message \"#{current_message.message}\" was not recognized."
+          err_message = "The message \"#{current_message.message}\" was not recognized in the original context."
 
           Stealth::Logger.l(
             topic: 'unrecognized_message',
@@ -35,7 +35,12 @@ module Stealth
             # Run handle_unrecognized_message action
             unrecognized_msg_controller.handle_unrecognized_message
 
-            unless unrecognized_msg_controller.progressed?
+            if unrecognized_msg_controller.progressed?
+              Stealth::Logger.l(
+                topic: 'unrecognized_message',
+                message: 'A match was detected. Skipping catch-all.'
+              )
+            else
               # Log, but we don't want to run the catch_all for a poorly
               # coded UnrecognizedMessagesController
               Stealth::Logger.l(

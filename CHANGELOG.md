@@ -1,3 +1,9 @@
+# Changelog for Stealth v2.3.2
+
+## Enhancements
+
+* [Controllers] Improved logging when `UnrecognizedMessagesController` runs.
+
 # Changelog for Stealth v2.3.1
 
 ## Bug Fixes
