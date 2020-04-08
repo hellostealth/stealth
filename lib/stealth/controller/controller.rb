@@ -104,13 +104,18 @@ module Stealth
       end
     end
 
-    def step_to_in(delay, session: nil, flow: nil, state: nil)
+    def step_to_in(delay, session: nil, flow: nil, state: nil, slug: nil)
       if interrupt_detected?
         run_interrupt_action
         return :interrupted
       end
 
-      flow, state = get_flow_and_state(session: session, flow: flow, state: state)
+      flow, state = get_flow_and_state(
+        session: session,
+        flow: flow,
+        state: state,
+        slug: slug
+      )
 
       unless delay.is_a?(ActiveSupport::Duration)
         raise ArgumentError, "Please specify your step_to_in `delay` parameter using ActiveSupport::Duration, e.g. `1.day` or `5.hours`"
@@ -120,13 +125,18 @@ module Stealth
       Stealth::Logger.l(topic: "session", message: "User #{current_session_id}: scheduled session step to #{flow}->#{state} in #{delay} seconds")
     end
 
-    def step_to_at(timestamp, session: nil, flow: nil, state: nil)
+    def step_to_at(timestamp, session: nil, flow: nil, state: nil, slug: nil)
       if interrupt_detected?
         run_interrupt_action
         return :interrupted
       end
 
-      flow, state = get_flow_and_state(session: session, flow: flow, state: state)
+      flow, state = get_flow_and_state(
+        session: session,
+        flow: flow,
+        state: state,
+        slug: slug
+      )
 
       unless timestamp.is_a?(DateTime)
         raise ArgumentError, "Please specify your step_to_at `timestamp` parameter as a DateTime"
@@ -136,7 +146,7 @@ module Stealth
       Stealth::Logger.l(topic: "session", message: "User #{current_session_id}: scheduled session step to #{flow}->#{state} at #{timestamp.iso8601}")
     end
 
-    def step_to(session: nil, flow: nil, state: nil)
+    def step_to(session: nil, flow: nil, state: nil, slug: nil)
       if interrupt_detected?
         run_interrupt_action
         return :interrupted
@@ -145,13 +155,14 @@ module Stealth
       flow, state = get_flow_and_state(
         session: session,
         flow: flow,
-        state: state
+        state: state,
+        slug: slug
       )
 
       step(flow: flow, state: state)
     end
 
-    def update_session_to(session: nil, flow: nil, state: nil)
+    def update_session_to(session: nil, flow: nil, state: nil, slug: nil)
       if interrupt_detected?
         run_interrupt_action
         return :interrupted
@@ -160,12 +171,14 @@ module Stealth
       flow, state = get_flow_and_state(
         session: session,
         flow: flow,
-        state: state
+        state: state,
+        slug: slug
       )
+
       update_session(flow: flow, state: state)
     end
 
-    def set_back_to(session: nil, flow: nil, state:)
+    def set_back_to(session: nil, flow: nil, state: nil, slug: nil)
       if interrupt_detected?
         run_interrupt_action
         return :interrupted
@@ -174,8 +187,10 @@ module Stealth
       flow, state = get_flow_and_state(
         session: session,
         flow: flow,
-        state: state
+        state: state,
+        slug: slug
       )
+
       store_back_to_session(flow: flow, state: state)
     end
 
@@ -203,7 +218,7 @@ module Stealth
 
       def update_session(flow:, state:)
         @progressed = :updated_session
-        @current_session = Stealth::Session.new(id: current_session_id)
+        @current_session = Session.new(id: current_session_id)
 
         unless current_session.flow_string == flow.to_s && current_session.state_string == state.to_s
           @current_session.set_session(new_flow: flow, new_state: state)
@@ -211,7 +226,7 @@ module Stealth
       end
 
       def store_back_to_session(flow:, state:)
-        back_to_session = Stealth::Session.new(
+        back_to_session = Session.new(
           id: current_session_id,
           type: :back_to
         )
@@ -227,13 +242,18 @@ module Stealth
         flow_controller.action(action: state)
       end
 
-      def get_flow_and_state(session: nil, flow: nil, state: nil)
-        if session.nil? && flow.nil? && state.nil?
-          raise(ArgumentError, "A session, flow, or state must be specified")
+      def get_flow_and_state(session: nil, flow: nil, state: nil, slug: nil)
+        if session.nil? && flow.nil? && state.nil? && slug.nil?
+          raise(ArgumentError, "A session, flow, state, or slug must be specified")
         end
 
         if session.present?
           return session.flow_string, session.state_string
+        end
+
+        if slug.present?
+          flow_state = Session.flow_and_state_from_session_slug(slug: slug)
+          return flow_state[:flow], flow_state[:state]
         end
 
         if flow.present?

@@ -185,6 +185,11 @@ describe "Stealth::Controller" do
       controller.step_to session: controller.current_session
     end
 
+    it "should call a controller's corresponding action when a session slug is provided" do
+      expect_any_instance_of(MrRobotsController).to receive(:my_action3)
+      controller.step_to slug: 'mr_robot->my_action3'
+    end
+
     it "should pass along the service_message" do
       robot_controller_dbl = double('MrRobotsController').as_null_object
       expect(MrRobotsController).to receive(:new).with(service_message: controller.current_message).and_return(robot_controller_dbl)
@@ -250,6 +255,14 @@ describe "Stealth::Controller" do
       controller.update_session_to session: session
       expect(controller.current_session.flow_string).to eq('mr_robot')
       expect(controller.current_session.state_string).to eq('my_action3')
+    end
+
+    it "should update session to controller's corresponding action when a session slug is provided" do
+      expect_any_instance_of(MrRobotsController).to_not receive(:my_action3)
+      expect(controller.current_session.flow_string).to eq('mr_robot')
+      expect(controller.current_session.state_string).to eq('my_action3')
+
+      controller.update_session_to slug: 'mr_robot->my_action3'
     end
 
     it "should accept flow and string specified as symbols" do
@@ -355,6 +368,23 @@ describe "Stealth::Controller" do
 
       expect {
         controller.step_to_in 100.seconds, session: session
+      }.to_not change(controller.current_session, :get_session)
+    end
+
+    it "should update session to controller's corresponding action when a session slug is provided" do
+      expect_any_instance_of(MrRobotsController).to_not receive(:my_action)
+
+      expect(Stealth::ScheduledReplyJob).to receive(:perform_in).with(
+        100.seconds,
+        controller.current_service,
+        controller.current_session_id,
+        'mr_robot',
+        'my_action3',
+        nil
+      )
+
+      expect {
+        controller.step_to_in 100.seconds, slug: 'mr_robot->my_action3'
       }.to_not change(controller.current_session, :get_session)
     end
 
@@ -489,6 +519,23 @@ describe "Stealth::Controller" do
       }.to_not change(controller.current_session, :get_session)
     end
 
+    it "should update session to controller's corresponding action when a session slug is provided" do
+      expect_any_instance_of(MrRobotsController).to_not receive(:my_action)
+
+      expect(Stealth::ScheduledReplyJob).to receive(:perform_at).with(
+        future_timestamp,
+        controller.current_service,
+        controller.current_session_id,
+        'mr_robot',
+        'my_action3',
+        nil
+      )
+
+      expect {
+        controller.step_to_at future_timestamp, slug: 'mr_robot->my_action3'
+      }.to_not change(controller.current_session, :get_session)
+    end
+
     it "should accept flow and string specified as symbols" do
       expect_any_instance_of(MrRobotsController).to_not receive(:my_action)
 
@@ -533,9 +580,44 @@ describe "Stealth::Controller" do
   end
 
   describe "set_back_to" do
-    it "should set the back_to session" do
+    it "should raise an ArgumentError if a session, flow, or state is not specified" do
+      expect {
+        controller.set_back_to
+      }.to raise_error(ArgumentError)
+    end
+
+    it "should call the flow's first state's controller action when only a flow is provided" do
+      expect {
+        controller.set_back_to(flow: :mr_robot)
+      }.to change{ $redis.get([controller.current_session_id, 'back_to'].join('-')) }.to('mr_robot->my_action')
+    end
+
+    it "should call a controller's corresponding action when only a state is provided" do
+      controller.current_session.set_session(new_flow: 'mr_tron', new_state: 'other_action')
+
+      expect {
+        controller.set_back_to(state: :other_action3)
+      }.to change{ $redis.get([controller.current_session_id, 'back_to'].join('-')) }.to('mr_tron->other_action3')
+    end
+
+    it "should call a controller's corresponding action when a state and flow is provided" do
       expect {
         controller.set_back_to(flow: 'marco', state: 'polo')
+      }.to change{ $redis.get([controller.current_session_id, 'back_to'].join('-')) }.to('marco->polo')
+    end
+
+    it "should call a controller's corresponding action when a session is provided" do
+      allow(controller.current_session).to receive(:flow_string).and_return("mr_robot")
+      allow(controller.current_session).to receive(:state_string).and_return("my_action3")
+
+      expect {
+        controller.set_back_to(session: controller.current_session)
+      }.to change{ $redis.get([controller.current_session_id, 'back_to'].join('-')) }.to('mr_robot->my_action3')
+    end
+
+    it "should call a controller's corresponding action when a session slug is provided" do
+      expect {
+        controller.set_back_to(slug: 'marco->polo')
       }.to change{ $redis.get([controller.current_session_id, 'back_to'].join('-')) }.to('marco->polo')
     end
 

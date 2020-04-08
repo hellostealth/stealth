@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    stealth (2.3.2)
+    stealth (2.4.0)
       activesupport (~> 6.0)
       multi_json (~> 1.12)
       puma (>= 4.2, < 5.0)

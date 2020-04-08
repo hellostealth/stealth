@@ -1,3 +1,9 @@
+# Changelog for Stealth v2.4.0
+
+## Enhancements
+
+* [Controllers] State transitions (via `step_to`, `update_session_to`, `step_to_at`, `step_to_in`, and `set_back_to`) now accept a session `slug` argument.
+
 # Changelog for Stealth v2.3.2
 
 ## Enhancements
