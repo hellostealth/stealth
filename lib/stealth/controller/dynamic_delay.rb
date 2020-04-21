@@ -12,17 +12,15 @@ module Stealth
       LONG_DELAY = 7.0
 
       included do
-        def dynamic_delay(service_replies:, position:)
-          if position <= 0
-            calculate_delay(previous_reply: {})
-          else
-            calculate_delay(previous_reply: service_replies[position - 1])
-          end
+        def dynamic_delay(previous_reply:)
+          calculate_delay(previous_reply: previous_reply)
         end
 
         private
 
         def calculate_delay(previous_reply:)
+          return SHORT_DELAY if previous_reply.blank?
+
           case previous_reply['reply_type']
           when 'text'
             calculate_delay_from_text(previous_reply['text'])

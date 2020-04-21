@@ -19,5 +19,18 @@ module Stealth
       @reply[key] = value
     end
 
+    def delay?
+      reply_type == 'delay'
+    end
+
+    def self.dynamic_delay
+      self.new(
+        unstructured_reply: {
+          'reply_type' => 'delay',
+          'duration' => 'dynamic'
+        }
+      )
+    end
+
   end
 end

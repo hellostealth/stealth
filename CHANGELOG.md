@@ -1,3 +1,10 @@
+# Changelog for Stealth v2.5.0
+
+## Enhancements
+
+* [Replies] Added support for sub-state replies. `step_to` can now take a `pos` argument that will force any resulting `send_replies` to be sent starting at the `pos` specified. `pos` can also be negative, for example, `-1` will force `send_replies` to send replies starting at (only) the last reply.
+* [Replies] Dynamic delays are automatically sent before each reply. This can be disabled by setting `Stealth.config.auto_insert_delays` to `false`. If a delay is already included, the auto-delay is skipped.
+
 # Changelog for Stealth v2.4.0
 
 ## Enhancements

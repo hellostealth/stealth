@@ -38,6 +38,10 @@ describe "Stealth::Controller replies" do
       send_replies
     end
 
+    def say_msgs_without_breaks
+      send_replies
+    end
+
     def say_uh_oh
       send_replies
     end
@@ -52,6 +56,10 @@ describe "Stealth::Controller replies" do
 
     def say_custom_reply
       send_replies custom_reply: 'messages/say_offer'
+    end
+
+    def say_howdy_with_dynamic
+      send_replies
     end
 
     def say_nested_custom_reply
@@ -125,6 +133,11 @@ describe "Stealth::Controller replies" do
       allow(Stealth::Services::Facebook::Client).to receive(:new).and_return(stubbed_client)
       allow(controller.current_session).to receive(:flow_string).and_return("message")
       allow(controller.current_session).to receive(:state_string).and_return("say_oi")
+      Stealth.config.auto_insert_delays = false
+    end
+
+    after(:each) do
+      Stealth.config.auto_insert_delays = true
     end
 
     it "should translate each reply_type in the reply" do
@@ -164,6 +177,11 @@ describe "Stealth::Controller replies" do
       allow(Stealth::Services::Facebook::Client).to receive(:new).and_return(stubbed_client)
       allow(controller.current_session).to receive(:flow_string).and_return("message")
       allow(controller.current_session).to receive(:state_string).and_return("say_offer")
+      Stealth.config.auto_insert_delays = false
+    end
+
+    after(:each) do
+      Stealth.config.auto_insert_delays = true
     end
 
     it "should translate each reply_type in the reply" do
@@ -203,6 +221,11 @@ describe "Stealth::Controller replies" do
       allow(Stealth::Services::Facebook::Client).to receive(:new).and_return(stubbed_client)
       allow(controller.current_session).to receive(:flow_string).and_return("message")
       allow(controller.current_session).to receive(:state_string).and_return("say_custom_reply")
+      Stealth.config.auto_insert_delays = false
+    end
+
+    after(:each) do
+      Stealth.config.auto_insert_delays = true
     end
 
     it "should translate each reply_type in the reply" do
@@ -251,6 +274,11 @@ describe "Stealth::Controller replies" do
       allow(Stealth::Services::Facebook::Client).to receive(:new).and_return(stubbed_client)
       allow(controller.current_session).to receive(:flow_string).and_return("message")
       allow(controller.current_session).to receive(:state_string).and_return("say_inline_reply")
+      Stealth.config.auto_insert_delays = false
+    end
+
+    after(:each) do
+      Stealth.config.auto_insert_delays = true
     end
 
     it "should translate each reply_type in the reply" do
@@ -281,6 +309,48 @@ describe "Stealth::Controller replies" do
     end
   end
 
+  describe "auto delays" do
+    let(:stubbed_handler) { double("handler") }
+    let(:stubbed_client) { double("client") }
+
+    before(:each) do
+      allow(Stealth::Services::Facebook::ReplyHandler).to receive(:new).and_return(stubbed_handler)
+      allow(Stealth::Services::Facebook::Client).to receive(:new).and_return(stubbed_client)
+      allow(controller.current_session).to receive(:flow_string).and_return("message")
+      allow(controller.current_session).to receive(:state_string).and_return("say_msgs_without_breaks")
+    end
+
+    it "should add two additional delays to a reply without delays" do
+      allow(stubbed_client).to receive(:transmit).and_return(true)
+      allow(controller).to receive(:sleep).and_return(true)
+
+      expect(stubbed_handler).to receive(:text).exactly(2).times
+      expect(stubbed_handler).to receive(:delay).exactly(2).times
+      controller.say_msgs_without_breaks
+    end
+
+    it "should only add a single delay to a reply that already contains a delay" do
+      allow(stubbed_client).to receive(:transmit).and_return(true)
+      allow(controller).to receive(:sleep).and_return(true)
+
+      expect(stubbed_handler).to receive(:text).exactly(2).times
+      expect(stubbed_handler).to receive(:delay).exactly(2).times
+      controller.say_offer
+    end
+
+    it "should not add delays if auto_insert_delays = false" do
+      allow(stubbed_client).to receive(:transmit).and_return(true)
+      allow(controller).to receive(:sleep).and_return(true)
+
+      expect(stubbed_handler).to receive(:text).exactly(2).times
+      expect(stubbed_handler).to_not receive(:delay)
+
+      Stealth.config.auto_insert_delays = false
+      controller.say_msgs_without_breaks
+      Stealth.config.auto_insert_delays = true
+    end
+  end
+
   describe "session locking" do
     let(:stubbed_handler) { double("handler") }
     let(:stubbed_client) { double("client") }
@@ -290,6 +360,11 @@ describe "Stealth::Controller replies" do
       allow(Stealth::Services::Facebook::Client).to receive(:new).and_return(stubbed_client)
       allow(controller.current_session).to receive(:flow_string).and_return("message")
       allow(controller.current_session).to receive(:state_string).and_return("say_offer")
+      Stealth.config.auto_insert_delays = false
+    end
+
+    after(:each) do
+      Stealth.config.auto_insert_delays = true
     end
 
     it "should update the lock for each reply_type in the reply" do
@@ -331,6 +406,47 @@ describe "Stealth::Controller replies" do
       expect(stubbed_handler).to receive(:delay).exactly(1).times
       controller.say_offer
     end
+
+    it "should update the lock position with an offset for each reply_type in the reply" do
+      allow(stubbed_client).to receive(:transmit).and_return(true)
+      allow(controller).to receive(:sleep).and_return(true)
+
+      controller.pos = 17 # set the offset
+
+      expect(controller).to receive(
+        :lock_session!
+      ).with(
+        session_slug: controller.current_session.get_session,
+        position: 17
+      ).exactly(1).times
+
+      expect(controller).to receive(
+        :lock_session!
+      ).with(
+        session_slug: controller.current_session.get_session,
+        position: 18
+      ).exactly(1).times
+
+      expect(controller).to receive(
+        :lock_session!
+      ).with(
+        session_slug: controller.current_session.get_session,
+        position: 19
+      ).exactly(1).times
+
+      expect(controller).to receive(
+        :lock_session!
+      ).with(
+        session_slug: controller.current_session.get_session,
+        position: 20
+      ).exactly(1).times
+
+      expect(stubbed_handler).to receive(:cards).exactly(1).time
+      expect(stubbed_handler).to receive(:list).exactly(1).time
+      expect(stubbed_handler).to receive(:delay).exactly(2).times
+      allow(controller.current_session).to receive(:state_string).and_return("say_howdy_with_dynamic")
+      controller.say_howdy_with_dynamic
+    end
   end
 
   describe "dynamic delays" do
@@ -346,33 +462,33 @@ describe "Stealth::Controller replies" do
 
     it "should use the default multiplier if none is set" do
       allow(stubbed_handler).to receive(:text).exactly(2).times
-      allow(stubbed_handler).to receive(:delay).exactly(1).times
-      allow(stubbed_client).to receive(:transmit).exactly(3).times
+      allow(stubbed_handler).to receive(:delay).exactly(2).times
+      allow(stubbed_client).to receive(:transmit).exactly(4).times
 
       delay = Stealth.config.dynamic_delay_muliplier * Stealth::Controller::DynamicDelay::SHORT_DELAY
-      expect(controller).to receive(:sleep).exactly(1).times.with(delay)
+      expect(controller).to receive(:sleep).exactly(2).times.with(delay)
       controller.say_offer_with_dynamic
     end
 
     it "should slow down SHORT_DELAY if dynamic_delay_muliplier > 1" do
       allow(stubbed_handler).to receive(:text).exactly(2).times
-      allow(stubbed_handler).to receive(:delay).exactly(1).times
-      allow(stubbed_client).to receive(:transmit).exactly(3).times
+      allow(stubbed_handler).to receive(:delay).exactly(2).times
+      allow(stubbed_client).to receive(:transmit).exactly(4).times
 
       Stealth.config.dynamic_delay_muliplier = 5
       delay = Stealth.config.dynamic_delay_muliplier * Stealth::Controller::DynamicDelay::SHORT_DELAY
-      expect(controller).to receive(:sleep).exactly(1).times.with(delay)
+      expect(controller).to receive(:sleep).exactly(2).times.with(delay)
       controller.say_offer_with_dynamic
     end
 
     it "should speed up SHORT_DELAY if dynamic_delay_muliplier < 1" do
       allow(stubbed_handler).to receive(:text).exactly(2).times
-      allow(stubbed_handler).to receive(:delay).exactly(1).times
-      allow(stubbed_client).to receive(:transmit).exactly(3).times
+      allow(stubbed_handler).to receive(:delay).exactly(2).times
+      allow(stubbed_client).to receive(:transmit).exactly(4).times
 
       Stealth.config.dynamic_delay_muliplier = 0.1
       delay = Stealth.config.dynamic_delay_muliplier * Stealth::Controller::DynamicDelay::SHORT_DELAY
-      expect(controller).to receive(:sleep).exactly(1).times.with(delay)
+      expect(controller).to receive(:sleep).exactly(2).times.with(delay)
       controller.say_offer_with_dynamic
     end
   end
@@ -432,6 +548,11 @@ describe "Stealth::Controller replies" do
       before(:each) do
         allow(controller.current_session).to receive(:flow_string).and_return("message")
         allow(controller.current_session).to receive(:state_string).and_return("say_randomize_text")
+        Stealth.config.auto_insert_delays = false
+      end
+
+      after(:each) do
+        Stealth.config.auto_insert_delays = true
       end
 
       it "should receive a single text string" do
@@ -439,27 +560,52 @@ describe "Stealth::Controller replies" do
           expect(args.first[:reply]['text']).to be_a(String)
           stubbed_handler
         end
-        allow(stubbed_handler).to receive(:text).exactly(1).times
-        expect(stubbed_client).to receive(:transmit).exactly(1).times
+        allow(stubbed_handler).to receive(:text).exactly(1).time
+        expect(stubbed_client).to receive(:transmit).exactly(1).time
         controller.say_randomize_text
       end
     end
+  end
 
-    describe "text replies" do
-      before(:each) do
-        allow(controller.current_session).to receive(:flow_string).and_return("message")
-        allow(controller.current_session).to receive(:state_string).and_return("say_randomize_speech")
-      end
+  describe "sub-state replies" do
+    let(:stubbed_handler) { double("handler") }
+    let(:stubbed_client) { double("client") }
 
-      it "should receive a single text string" do
-        allow(Stealth::Services::Facebook::ReplyHandler).to receive(:new) do |*args|
-          expect(args.first[:reply]['text']).to be_a(String)
-          stubbed_handler
-        end
-        allow(stubbed_handler).to receive(:speech).exactly(1).times
-        expect(stubbed_client).to receive(:transmit).exactly(1).times
-        controller.say_randomize_speech
-      end
+    before(:each) do
+      allow(Stealth::Services::Facebook::ReplyHandler).to receive(:new).and_return(stubbed_handler)
+      allow(Stealth::Services::Facebook::Client).to receive(:new).and_return(stubbed_client)
+      allow(controller.current_session).to receive(:flow_string).and_return("message")
+      allow(controller.current_session).to receive(:state_string).and_return("say_offer")
+      allow(stubbed_client).to receive(:transmit).and_return(true)
+      allow(controller).to receive(:sleep).and_return(true)
+    end
+
+    it "should transmit only the last reply in the file when @pos = -1" do
+      expect(stubbed_handler).to receive(:text).exactly(1).time
+      expect(stubbed_handler).to receive(:delay).exactly(1).time # auto-delay
+      controller.pos = -1
+      controller.say_offer
+    end
+
+    it "should transmit the last two replies in the file when @pos = -2" do
+      expect(stubbed_handler).to receive(:text).exactly(1).time
+      expect(stubbed_handler).to receive(:delay).exactly(1).time
+      controller.pos = -2
+      controller.say_offer
+    end
+
+    it "should transmit all the replies in the file when @pos = 0" do
+      expect(stubbed_handler).to receive(:text).exactly(2).times
+      expect(stubbed_handler).to receive(:delay).exactly(2).times
+      controller.pos = 0
+      controller.say_offer
+    end
+
+    it "should transmit all the replies in the file when @pos = nil" do
+      expect(stubbed_handler).to receive(:text).exactly(2).times
+      expect(stubbed_handler).to receive(:delay).exactly(2).times
+      expect(controller.pos).to be_nil
+      controller.say_offer
     end
   end
 
@@ -472,7 +618,8 @@ describe "Stealth::Controller replies" do
       allow(Stealth::Services::Facebook::Client).to receive(:new).and_return(stubbed_client)
       allow(controller.current_session).to receive(:flow_string).and_return("message")
       allow(controller.current_session).to receive(:state_string).and_return("say_offer")
-      allow(stubbed_handler).to receive(:text).exactly(1).times
+      allow(stubbed_handler).to receive(:delay).exactly(1).time
+      allow(stubbed_handler).to receive(:text).exactly(1).time
     end
 
     describe "Stealth::Errors::UserOptOut" do

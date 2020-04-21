@@ -192,7 +192,7 @@ describe "Stealth::Controller" do
 
     it "should pass along the service_message" do
       robot_controller_dbl = double('MrRobotsController').as_null_object
-      expect(MrRobotsController).to receive(:new).with(service_message: controller.current_message).and_return(robot_controller_dbl)
+      expect(MrRobotsController).to receive(:new).with(service_message: controller.current_message, pos: nil).and_return(robot_controller_dbl)
       controller.step_to flow: :mr_robot, state: :my_action3
     end
 
@@ -210,6 +210,18 @@ describe "Stealth::Controller" do
       expect(controller).to receive(:interrupt_detected?).and_return(true)
       expect(controller).to receive(:run_interrupt_action)
       expect(controller.step_to(flow: :mr_robot, state: :my_action3)).to eq :interrupted
+    end
+
+    it "should set @pos if it is specified in the arguments" do
+      expect_any_instance_of(MrRobotsController).to receive(:my_action3)
+      controller.step_to flow: :mr_robot, state: :my_action3, pos: -1
+      expect(controller.pos).to eq -1
+    end
+
+    it "should leave @pos as nil if the pos argument is not specified" do
+      expect_any_instance_of(MrRobotsController).to receive(:my_action3)
+      controller.step_to flow: :mr_robot, state: :my_action3
+      expect(controller.pos).to be_nil
     end
   end
 

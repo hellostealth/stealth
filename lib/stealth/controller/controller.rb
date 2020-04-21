@@ -17,13 +17,14 @@ module Stealth
 
     attr_reader :current_message, :current_service, :flow_controller,
                 :action_name, :current_session_id
-    attr_accessor :nlp_result
+    attr_accessor :nlp_result, :pos
 
-    def initialize(service_message:)
+    def initialize(service_message:, pos: nil)
       @current_message = service_message
       @current_service = service_message.service
       @current_session_id = service_message.sender_id
       @nlp_result = service_message.nlp_result
+      @pos = pos
       @progressed = false
     end
 
@@ -46,7 +47,7 @@ module Stealth
     def flow_controller
       @flow_controller ||= begin
         flow_controller = [current_session.flow_string.pluralize, 'controller'].join('_').classify.constantize
-        flow_controller.new(service_message: @current_message)
+        flow_controller.new(service_message: @current_message, pos: @pos)
       end
     end
 
@@ -80,7 +81,7 @@ module Stealth
             topic: "redirect",
             message: "From #{current_session.session} to #{current_session.flow.current_state.redirects_to.session}"
           )
-          step_to(session: current_session.flow.current_state.redirects_to)
+          step_to(session: current_session.flow.current_state.redirects_to, pos: @pos)
           return
         end
 
@@ -146,7 +147,7 @@ module Stealth
       Stealth::Logger.l(topic: "session", message: "User #{current_session_id}: scheduled session step to #{flow}->#{state} at #{timestamp.iso8601}")
     end
 
-    def step_to(session: nil, flow: nil, state: nil, slug: nil)
+    def step_to(session: nil, flow: nil, state: nil, slug: nil, pos: nil)
       if interrupt_detected?
         run_interrupt_action
         return :interrupted
@@ -159,7 +160,7 @@ module Stealth
         slug: slug
       )
 
-      step(flow: flow, state: state)
+      step(flow: flow, state: state, pos: pos)
     end
 
     def update_session_to(session: nil, flow: nil, state: nil, slug: nil)
@@ -233,11 +234,12 @@ module Stealth
         back_to_session.set_session(new_flow: flow, new_state: state)
       end
 
-      def step(flow:, state:)
+      def step(flow:, state:, pos: nil)
         update_session(flow: flow, state: state)
         @progressed = :stepped
         @flow_controller = nil
         @current_flow = current_session.flow
+        @pos = pos
 
         flow_controller.action(action: state)
       end

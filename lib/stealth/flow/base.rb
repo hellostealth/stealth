@@ -54,7 +54,7 @@ module Stealth
       private
 
         def flow_and_state
-          [current_flow, current_state].join("->")
+          [current_flow, current_state].join(Stealth::Session::SLUG_SEPARATOR)
         end
 
         def state_exists?(potential_flow:, potential_state:)

@@ -13,30 +13,51 @@ module Stealth
         class_attribute :_replies_path, default: [Stealth.root, 'bot', 'replies']
 
         def send_replies(custom_reply: nil, inline: nil)
-          if inline.present?
-            service_reply = Stealth::ServiceReply.new(
-              recipient_id: current_session_id,
-              yaml_reply: inline,
-              preprocessor: :none,
-              context: nil
-            )
-          else
-            yaml_reply, preprocessor = action_replies(custom_reply)
+          service_reply = load_service_reply(
+            custom_reply: custom_reply,
+            inline: inline
+          )
 
-            service_reply = Stealth::ServiceReply.new(
-              recipient_id: current_session_id,
-              yaml_reply: yaml_reply,
-              preprocessor: preprocessor,
-              context: binding
-            )
-          end
+          # Determine if we start at the beginning or somewhere else
+          reply_range = calculate_reply_range
+          offset = reply_range.first
 
-          service_reply.replies.each_with_index do |reply, i|
+          @previous_reply = nil
+          service_reply.replies.slice(reply_range).each_with_index do |reply, i|
             # Updates the lock with the current position of the reply
             lock_session!(
               session_slug: current_session.get_session,
-              position: i
+              position: i + offset # Otherwise this won't account for explicit starting points
             )
+
+            begin
+              send_reply(reply: reply)
+            rescue Stealth::Errors::UserOptOut => e
+              user_opt_out_handler(msg: e.message)
+              return
+            rescue Stealth::Errors::InvalidSessionID => e
+              invalid_session_id_handler(msg: e.message)
+              return
+            end
+
+            @previous_reply = reply
+          end
+
+          @progressed = :sent_replies
+        ensure
+          release_lock!
+        end
+
+        private
+
+          def send_reply(reply:)
+            if !reply.delay? && Stealth.config.auto_insert_delays
+              # if it's the first reply in the service_reply or the previous reply
+              # wasn't a custom delay, then insert a delay
+              if @previous_reply.blank? || !@previous_reply.delay?
+                send_reply(reply: Reply.dynamic_delay)
+              end
+            end
 
             # Support randomized replies for text and speech replies.
             # We select one before handing the reply off to the driver.
@@ -51,49 +72,51 @@ module Stealth
 
             translated_reply = handler.send(reply.reply_type)
             client = service_client.new(reply: translated_reply)
+            client.transmit
 
-            begin
-              client.transmit
-            rescue Stealth::Errors::UserOptOut => e
-              user_opt_out_handler(msg: e.message)
-              return
-            rescue Stealth::Errors::InvalidSessionID => e
-              invalid_session_id_handler(msg: e.message)
-              return
-            end
-
-            if Stealth.config.transcript_logging
-              log_reply(reply)
-            end
+            log_reply(reply) if Stealth.config.transcript_logging
 
             # If this was a 'delay' type of reply, we insert the delay
-            if reply.reply_type == 'delay'
-              begin
-                if reply['duration'] == 'dynamic'
-                  m = Stealth.config.dynamic_delay_muliplier
-                  duration = dynamic_delay(
-                    service_replies: service_reply.replies,
-                    position: i
-                  )
-
-                  sleep_duration = Stealth.config.dynamic_delay_muliplier * duration
-                else
-                  sleep_duration = Float(reply['duration'])
-                end
-
-                sleep(sleep_duration)
-              rescue ArgumentError, TypeError
-                raise(ArgumentError, 'Invalid duration specified. Duration must be a float')
-              end
+            if reply.delay?
+              insert_delay(duration: reply['duration'])
             end
           end
 
-          @progressed = :sent_replies
-        ensure
-          release_lock!
-        end
+          def insert_delay(duration:)
+            begin
+              sleep_duration = if duration == 'dynamic'
+                dyn_duration = dynamic_delay(previous_reply: @previous_reply)
 
-        private
+                Stealth.config.dynamic_delay_muliplier * dyn_duration
+              else
+                Float(duration)
+              end
+
+              sleep(sleep_duration)
+            rescue ArgumentError, TypeError
+              raise(ArgumentError, 'Invalid duration specified. Duration must be a Numeric')
+            end
+          end
+
+          def load_service_reply(custom_reply:, inline:)
+            if inline.present?
+              Stealth::ServiceReply.new(
+                recipient_id: current_session_id,
+                yaml_reply: inline,
+                preprocessor: :none,
+                context: nil
+              )
+            else
+              yaml_reply, preprocessor = action_replies(custom_reply)
+
+              Stealth::ServiceReply.new(
+                recipient_id: current_session_id,
+                yaml_reply: yaml_reply,
+                preprocessor: preprocessor,
+                context: binding
+              )
+            end
+          end
 
           def service_client
             begin
@@ -220,6 +243,16 @@ module Stealth
             end
 
             do_nothing
+          end
+
+          def calculate_reply_range
+            # if an explicit starting point is specified, use that until the
+            # end of the range, otherwise start at the beginning
+            if @pos.present?
+              (@pos..-1)
+            else
+              (0..-1)
+            end
           end
 
           def log_reply(reply)
