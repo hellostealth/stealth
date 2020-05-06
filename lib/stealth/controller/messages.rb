@@ -211,7 +211,15 @@ module Stealth
             else
               # For single entity matches, just return the value
               # rather than a single-element array
-              nlp_result.entities[entity].first
+              matched_entity = nlp_result.entities[entity].first
+
+              # Custom LUIS List entities return a single element array for some
+              # reason
+              if matched_entity.is_a?(Array) && matched_entity.size == 1
+                matched_entity.first
+              else
+                matched_entity
+              end
             end
           end
         end

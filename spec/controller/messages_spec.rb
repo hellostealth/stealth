@@ -285,6 +285,20 @@ describe Stealth::Controller::Messages do
           Stealth.config.nlp_integration = nil
         end
       end
+
+      describe 'custom entities' do
+        let(:custom_entity_nlp_result) { TestNlpResult::Luis.new(intent: yes_intent, entity: :custom_entity) }
+
+        it 'should return the text matched by the custom entity' do
+          allow(test_controller).to receive(:perform_nlp!).and_return(custom_entity_nlp_result)
+          test_controller.nlp_result = custom_entity_nlp_result
+
+          test_controller.current_message.message = "call me right away"
+          expect(
+            test_controller.get_match(['nice', :asap])
+          ).to eq 'right away'
+        end
+      end
     end
 
     describe "mismatch" do

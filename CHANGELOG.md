@@ -1,3 +1,9 @@
+# Changelog for Stealth v2.5.1
+
+## Bug Fixes
+
+* [NLP] Strip out values from single element arrays in the case of custom LUIS List entities.
+
 # Changelog for Stealth v2.5.0
 
 ## Enhancements

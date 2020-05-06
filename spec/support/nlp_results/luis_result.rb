@@ -34,7 +34,12 @@ module TestNlpResult
       _entities = {}
 
       raw_entities.each do |type, values|
-        _entities[ENTITY_MAP[type]] = values
+        if ENTITY_MAP[type]
+          _entities[ENTITY_MAP[type]] = values
+        else
+          # A custom entity
+          _entities[type.to_sym] = values
+        end
       end
 
       _entities
@@ -127,6 +132,27 @@ module TestNlpResult
             "sentiment" => {
               "label" => "negative",
               "score" => 0.309174955
+            }
+          }
+        },
+
+        custom_entity: {
+          "query" => "call me right away",
+          "prediction" => {
+            "topIntent" => "now",
+            "intents" => {
+              "now" => {
+                "score" => 0.781227
+              }
+            },
+            "entities" => {
+              "asap" => [
+                ["right away"]
+              ]
+            },
+            "sentiment" => {
+              "label" => "neutral",
+              "score" => 0.5
             }
           }
         }
