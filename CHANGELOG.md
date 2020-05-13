@@ -1,3 +1,12 @@
+# Changelog for Stealth v2.5.2
+
+## Enhancements
+
+* [CoreExt] Added a `String#without_punctuation` method. Removes a lot of common punctuation.
+* [CoreExt] `String#normalize` no longer removes quotation marks.
+* [Controllers] Alpha ordinal checks are now done against a "normalized" string without punctuation. See above.
+* [Controllers] `normalized_msg` and `homophone_translated_msg` are now memoized for performance.
+
 # Changelog for Stealth v2.5.1
 
 ## Bug Fixes

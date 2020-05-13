@@ -16,8 +16,6 @@ describe Stealth::Controller::Messages do
   describe "normalized_msg" do
     let(:padded_msg) { '  Hello World! 👋  ' }
     let(:weird_case_msg) { 'Oh BaBy Oh BaBy' }
-    let(:double_quoted_ordinal) { ' "A" ' }
-    let(:single_quoted_ordinal) { "    'C' " }
 
     it 'should normalize blank-padded messages' do
       test_controller.current_message.message = padded_msg
@@ -28,22 +26,13 @@ describe Stealth::Controller::Messages do
       test_controller.current_message.message = weird_case_msg
       expect(test_controller.normalized_msg).to eq('OH BABY OH BABY')
     end
-
-    it 'should normalize double-quoted alpha ordinals' do
-      test_controller.current_message.message = double_quoted_ordinal
-      expect(test_controller.normalized_msg).to eq('A')
-    end
-
-    it 'should normalize single-quoted alpha ordinals' do
-      test_controller.current_message.message = single_quoted_ordinal
-      expect(test_controller.normalized_msg).to eq('C')
-    end
   end
 
   describe "homophone_translated_msg" do
     it 'should convert homophones to their respective alpha ordinal' do
       Stealth::Controller::Messages::HOMOPHONES.each do |homophone, ordinal|
         test_controller.current_message.message = homophone
+        test_controller.normalized_msg = test_controller.homophone_translated_msg = nil
         expect(test_controller.homophone_translated_msg).to eq(ordinal)
       end
     end
@@ -90,6 +79,48 @@ describe Stealth::Controller::Messages do
       expect(
         test_controller.get_match(['nice', 'woot'])
       ).to eq('nice')
+    end
+
+    it "should match messages utilizing a double-smartquoted SMS quick reply" do
+      test_controller.current_message.message = '“A”'
+      expect(
+        test_controller.get_match(['nice', 'woot'])
+      ).to eq('nice')
+    end
+
+    it "should match messages utilizing a single-smartquoted SMS quick reply" do
+      test_controller.current_message.message = '‘A’'
+      expect(
+        test_controller.get_match(['nice', 'woot'])
+      ).to eq('nice')
+    end
+
+    it "should match messages with a period in the SMS quick reply" do
+      test_controller.current_message.message = 'A.'
+      expect(
+        test_controller.get_match(['nice', 'woot'])
+      ).to eq('nice')
+    end
+
+    it "should match messages with a question mark in the SMS quick reply" do
+      test_controller.current_message.message = 'B?'
+      expect(
+        test_controller.get_match(['nice', 'woot'])
+      ).to eq('woot')
+    end
+
+    it "should match messages in parens in the SMS quick reply" do
+      test_controller.current_message.message = '(B)'
+      expect(
+        test_controller.get_match(['nice', 'woot'])
+      ).to eq('woot')
+    end
+
+    it "should match messages with backticks in the SMS quick reply" do
+      test_controller.current_message.message = '`B`'
+      expect(
+        test_controller.get_match(['nice', 'woot'])
+      ).to eq('woot')
     end
 
     it "should match messages utilizing a homophone" do
@@ -410,6 +441,72 @@ describe Stealth::Controller::Messages do
 
     it "should match against double-quoted ordinals" do
       test_controller.current_message.message = '"A"'
+      x = 0
+      test_controller.handle_message(
+        'Buy' => proc { x += 1 },
+        'Refinance' => proc { x += 2 }
+      )
+
+      expect(x).to eq 1
+    end
+
+    it "should match against double-smartquoted ordinals" do
+      test_controller.current_message.message = '“A”'
+      x = 0
+      test_controller.handle_message(
+        'Buy' => proc { x += 1 },
+        'Refinance' => proc { x += 2 }
+      )
+
+      expect(x).to eq 1
+    end
+
+    it "should match against single-smartquoted ordinals" do
+      test_controller.current_message.message = '‘A’'
+      x = 0
+      test_controller.handle_message(
+        'Buy' => proc { x += 1 },
+        'Refinance' => proc { x += 2 }
+      )
+
+      expect(x).to eq 1
+    end
+
+    it "should match against ordinals with periods" do
+      test_controller.current_message.message = 'A.'
+      x = 0
+      test_controller.handle_message(
+        'Buy' => proc { x += 1 },
+        'Refinance' => proc { x += 2 }
+      )
+
+      expect(x).to eq 1
+    end
+
+    it "should match against ordinals with question marks" do
+      test_controller.current_message.message = 'A?'
+      x = 0
+      test_controller.handle_message(
+        'Buy' => proc { x += 1 },
+        'Refinance' => proc { x += 2 }
+      )
+
+      expect(x).to eq 1
+    end
+
+    it "should match against ordinals with parens" do
+      test_controller.current_message.message = '(A)'
+      x = 0
+      test_controller.handle_message(
+        'Buy' => proc { x += 1 },
+        'Refinance' => proc { x += 2 }
+      )
+
+      expect(x).to eq 1
+    end
+
+    it "should match against ordinals with backticks" do
+      test_controller.current_message.message = '`A`'
       x = 0
       test_controller.handle_message(
         'Buy' => proc { x += 1 },

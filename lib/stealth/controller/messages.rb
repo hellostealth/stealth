@@ -6,6 +6,8 @@ module Stealth
       extend ActiveSupport::Concern
 
       included do
+        attr_accessor :normalized_msg, :homophone_translated_msg
+
         unless defined?(ALPHA_ORDINALS)
           ALPHA_ORDINALS = ('A'..'Z').to_a.freeze
         end
@@ -45,15 +47,18 @@ module Stealth
         end
 
         def normalized_msg
-          current_message.message.normalize
+          @normalized_msg ||= current_message.message.normalize
         end
 
         # Converts homophones into alpha-ordinals
         def homophone_translated_msg
-          if HOMOPHONES[normalized_msg].present?
-            HOMOPHONES[normalized_msg]
-          else
-            normalized_msg
+          @homophone_translated_msg ||= begin
+            ord = normalized_msg.without_punctuation
+            if HOMOPHONES[ord].present?
+              HOMOPHONES[ord]
+            else
+              ord
+            end
           end
         end
 
@@ -191,7 +196,7 @@ module Stealth
         end
 
         def message_matches?(msg)
-          homophone_translated_msg == msg.upcase
+          normalized_msg == msg.upcase
         end
 
         def intent_matched?(intent)
