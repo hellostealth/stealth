@@ -1,3 +1,9 @@
+# Changelog for Stealth v2.6.0
+
+## Enhancements
+
+* [Controllers] `handle_message` now supports `Regexp` keys.
+
 # Changelog for Stealth v2.5.2
 
 ## Enhancements

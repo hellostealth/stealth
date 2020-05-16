@@ -99,6 +99,15 @@ module Stealth
                 end
               end
 
+              if msg.is_a?(Regexp)
+                if normalized_msg =~ msg
+                  match = msg
+                  break
+                else
+                  next
+                end
+              end
+
               # custom mismatch handler; any nil key results in a match
               if msg.nil?
                 match = msg

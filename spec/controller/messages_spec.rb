@@ -625,6 +625,41 @@ describe Stealth::Controller::Messages do
       end
     end
 
+    describe 'Regexp matcher' do
+      it "should match when the Regexp matches" do
+        test_controller.current_message.message = "About Encom"
+        x = 0
+        test_controller.handle_message(
+          'Buy' => proc { x += 1 },
+          'Refinance' => proc { x += 2 },
+          /about/i => proc { x += 10 }
+        )
+        expect(x).to eq 10
+      end
+
+      it "should match positional Regexes" do
+        test_controller.current_message.message = "Jump about"
+        x = 0
+        test_controller.handle_message(
+          'Buy' => proc { x += 1 },
+          /\Aabout/i => proc { x += 2 },
+          /about/i => proc { x += 10 }
+        )
+        expect(x).to eq 10
+      end
+
+      it "should match as an alpha ordinal" do
+        test_controller.current_message.message = "C"
+        x = 0
+        test_controller.handle_message(
+          'Buy' => proc { x += 1 },
+          'Refinance' => proc { x += 2 },
+          /about/i => proc { x += 10 }
+        )
+        expect(x).to eq 10
+      end
+    end
+
     describe 'nil matcher' do
       it "should match the respective ordinal" do
         test_controller.current_message.message = "C"
