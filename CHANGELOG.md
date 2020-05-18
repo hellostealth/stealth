@@ -1,4 +1,4 @@
-# Changelog for Stealth v2.6.0
+# Changelog for Stealth v2.5.3
 
 ## Enhancements
 
