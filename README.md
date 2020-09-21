@@ -2,7 +2,7 @@
 
 Stealth is a Ruby framework for creating text and voice chatbots. It's design is inspired by Ruby on Rails's philosophy of convention over configuration. It has an MVC architecture with the slight caveat that `views` are aptly named `replies`.
 
-[![CircleCI](https://circleci.com/gh/whoisblackops/stealth.svg?style=svg&circle-token=63fb0f94994daf358fab46dd716e4da3578fd530)](https://circleci.com/gh/whoisblackops/stealth)
+[![CircleCI](https://circleci.com/gh/hellostealth/stealth.svg?style=svg)](https://circleci.com/gh/hellostealth/stealth)
 
 ## Features
 
@@ -44,12 +44,12 @@ Currently, there are gems for:
 
 ## Docs
 
-You can find our full docs [here](https://hellostealth.org/docs/). If something is not clear in the docs, please file an issue! We consider all shortcomings in the docs as bugs.
+You can find our full docs [here](https://github.com/hellostealth/stealth/wiki). If something is not clear in the docs, please file an issue! We consider all shortcomings in the docs as bugs.
 
 ## Versioning
 
-Stealth is versioned uses [Semantic Versioning](https://semver.org), but it's more like the Linux Kernel. Major version releases are just as arbitrary as minor version releases. We strive to never break anything with any version change. Patches are still issues as the "third dot" in the version string.
+Stealth is versioned using [Semantic Versioning](https://semver.org), but it's more like the Linux Kernel. Major version releases are just as arbitrary as minor version releases. We strive to never break anything with any version change. Patches are still issues as the "third dot" in the version string.
 
 ## License
 
-"Stealth" and the Stealth logo are copyright (c) 2020 The Black Ops Bureau Inc.
+"Stealth" and the Stealth logo are Copyright (c) 2020 Mauricio Gomes and Mav Automation Ventures Inc.
