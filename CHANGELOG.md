@@ -1,70 +1,3 @@
-# Changelog for Stealth v2.5.3
-
-## Enhancements
-
-* [Controllers] `handle_message` now supports `Regexp` keys.
-
-# Changelog for Stealth v2.5.2
-
-## Enhancements
-
-* [CoreExt] Added a `String#without_punctuation` method. Removes a lot of common punctuation.
-* [CoreExt] `String#normalize` no longer removes quotation marks.
-* [Controllers] Alpha ordinal checks are now done against a "normalized" string without punctuation. See above.
-* [Controllers] `normalized_msg` and `homophone_translated_msg` are now memoized for performance.
-
-# Changelog for Stealth v2.5.1
-
-## Bug Fixes
-
-* [NLP] Strip out values from single element arrays in the case of custom LUIS List entities.
-
-# Changelog for Stealth v2.5.0
-
-## Enhancements
-
-* [Replies] Added support for sub-state replies. `step_to` can now take a `pos` argument that will force any resulting `send_replies` to be sent starting at the `pos` specified. `pos` can also be negative, for example, `-1` will force `send_replies` to send replies starting at (only) the last reply.
-* [Replies] Dynamic delays are automatically sent before each reply. This can be disabled by setting `Stealth.config.auto_insert_delays` to `false`. If a delay is already included, the auto-delay is skipped.
-
-# Changelog for Stealth v2.4.0
-
-## Enhancements
-
-* [Controllers] State transitions (via `step_to`, `update_session_to`, `step_to_at`, `step_to_in`, and `set_back_to`) now accept a session `slug` argument.
-
-# Changelog for Stealth v2.3.2
-
-## Enhancements
-
-* [Controllers] Improved logging when `UnrecognizedMessagesController` runs.
-
-# Changelog for Stealth v2.3.1
-
-## Bug Fixes
-
-* [Catch All] Log output from all catch_all logging now includes the session_id so they can be included in log searches.
-
-# Changelog for Stealth v2.3.0
-
-## Enhancements
-
-* [Controllers] `handle_message` and `get_match` now detect homophones for alpha ordinals (A-Z)
-* [Controllers] `handle_message` and `get_match` now ignore single and double quotes for alpha-ordinals
-* [CoreExt] Strings now have a `normalize` method for removing padding and quotes
-
-# Changelog for Stealth v2.2.0
-
-## Enhancements
-
-* [Errors] Client errors now call respective BotController actions: `handle_opt_out` and `handle_invalid_session_id`. Each client is responsible for raising `Stealth::Errors::UserOptOut` or `Stealth::Errors::InvalidSessionId` errors.
-
-# Changelog for Stealth v2.1.0
-
-## Enhancements
-
-* [Errors] `Stealth::Errors::MessageNotRecognized` has been renamed to `Stealth::Errors::UnrecognizedMessage`
-* [Controllers] When `handle_message` or `get_match` raise a ``Stealth::Errors::UnrecognizedMessage`, the user is first routed to a new `UnrecognizedMessagesController` to perform NLP. If that controller fails to match, the `catch_all` is run as normal.
-
 # Changelog for Stealth v2.0.0
 
 ## Enhancements
@@ -101,6 +34,21 @@
 * [Reloading] Bots in development mode now hot reload! It's no longer necessary to stop your local server.
 * [Production] Production bots now eager load bot code to improve copy-on-write performance. The `puma.rb` config has been updated with instructions for multiple workers.
 * [Flows] You can now specify custom options when defining states. These options can later be accessed via the flow specification.
+* [CoreExt] Added a `String#without_punctuation` method. Removes a lot of common punctuation.
+* [CoreExt] `String#normalize` no longer removes quotation marks.
+* [Controllers] Alpha ordinal checks are now done against a "normalized" string without punctuation. See above.
+* [Controllers] `normalized_msg` and `homophone_translated_msg` are now memoized for performance.
+* [Errors] `Stealth::Errors::MessageNotRecognized` has been renamed to `Stealth::Errors::UnrecognizedMessage`
+* [Controllers] When `handle_message` or `get_match` raise a `Stealth::Errors::UnrecognizedMessage`, the user is first routed to a new `UnrecognizedMessagesController` to perform NLP. If that controller fails to match, the `catch_all` is run as normal.
+* [Errors] Client errors now call respective BotController actions: `handle_opt_out` and `handle_invalid_session_id`. Each client is responsible for raising `Stealth::Errors::UserOptOut` or `Stealth::Errors::InvalidSessionId` errors.
+* [Controllers] `handle_message` and `get_match` now detect homophones for alpha ordinals (A-Z)
+* [Controllers] `handle_message` and `get_match` now ignore single and double quotes for alpha-ordinals
+* [CoreExt] Strings now have a `normalize` method for removing padding and quotes
+* [Controllers] Improved logging when `UnrecognizedMessagesController` runs.
+* [Controllers] State transitions (via `step_to`, `update_session_to`, `step_to_at`, `step_to_in`, and `set_back_to`) now accept a session `slug` argument.
+* [Replies] Added support for sub-state replies. `step_to` can now take a `pos` argument that will force any resulting `send_replies` to be sent starting at the `pos` specified. `pos` can also be negative, for example, `-1` will force `send_replies` to send replies starting at (only) the last reply.
+* [Replies] Dynamic delays are automatically sent before each reply. This can be disabled by setting `Stealth.config.auto_insert_delays` to `false`. If a delay is already included, the auto-delay is skipped.
+* [Controllers] `handle_message` now supports `Regexp` keys.
 
 ## Bug Fixes
 
@@ -114,6 +62,8 @@
 * Leading dynamic delays in a reply are not sent again on SMS platforms.
 * [Sessions] Sessions retrieved when session expiration was enabled would return as an Array rather than a slug.
 * [Sessions] previous_session now respects session_ttl values.
+* [Catch All] Log output from all catch_all logging now includes the session_id so they can be included in log searches.
+* [NLP] Strip out values from single element arrays in the case of custom LUIS List entities.
 
 ## Deprecations
 
