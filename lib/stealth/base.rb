@@ -126,8 +126,9 @@ module Stealth
       if ENV['DATABASE_URL'].present?
         ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'])
       else
+        database_config = File.read(File.join(Stealth.root, 'config', 'database.yml'))
         ActiveRecord::Base.establish_connection(
-          YAML::load_file("config/database.yml")[Stealth.env]
+          YAML.load(ERB.new(database_config).result)[Stealth.env]
         )
       end
     end
