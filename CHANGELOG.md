@@ -49,6 +49,7 @@
 * [Replies] Added support for sub-state replies. `step_to` can now take a `pos` argument that will force any resulting `send_replies` to be sent starting at the `pos` specified. `pos` can also be negative, for example, `-1` will force `send_replies` to send replies starting at (only) the last reply.
 * [Replies] Dynamic delays are automatically sent before each reply. This can be disabled by setting `Stealth.config.auto_insert_delays` to `false`. If a delay is already included, the auto-delay is skipped.
 * [Controllers] `handle_message` now supports `Regexp` keys.
+* [Configuration] `database.yml` is now parsed with ERB in order to support environment variables. Thanks @malkovro.
 
 ## Bug Fixes
 
