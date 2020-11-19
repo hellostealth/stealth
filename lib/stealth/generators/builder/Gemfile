@@ -15,5 +15,5 @@ gem 'sqlite3'
 
 group :development do
   gem 'foreman'
-  gem 'listen', '~> 3.1'
+  gem 'listen', '~> 3.3'
 end
