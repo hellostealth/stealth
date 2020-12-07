@@ -63,17 +63,20 @@ module Stealth
   end
 
   def self.set_config_defaults(config)
-    config.dynamic_delay_muliplier ||= 1.0
-    config.session_ttl ||= 0
-    config.lock_autorelease ||= 30
-    config.transcript_logging ||= false
-    config.hot_reload ||= Stealth.env.development?
-    config.eager_load ||= Stealth.env.production?
-    config.autoload_paths ||= Stealth.default_autoload_paths
-    config.autoload_ignore_paths ||= []
-    config.nlp_integration ||= nil
-    config.log_all_nlp_results ||= false
-    config.auto_insert_delays ||= true
+    defaults = {
+      dynamic_delay_muliplier: 1.0,                     # values > 1 increase, values < 1 decrease delay
+      session_ttl: 0,                                   # 0 seconds; don't expire sessions
+      lock_autorelease: 30,                             # 30 seconds
+      transcript_logging: false,                        # show user replies in the logs
+      hot_reload: Stealth.env.development?,             # hot reload bot files on change (dev only)
+      eager_load: Stealth.env.production?,              # eager load bot files for performance (prod only)
+      autoload_paths: Stealth.default_autoload_paths,   # array of autoload paths used in eager and hot reloading
+      autoload_ignore_paths: [],                        # paths to exclude from eager and hot reloading
+      nlp_integration: nil,                             # NLP service to use, defaults to none
+      log_all_nlp_results: false,                       # log NLP service requests; useful for debugging/improving NLP models
+      auto_insert_delays: true                          # automatically insert delays/typing indicators between all replies
+    }
+    defaults.each { |option, default| config.set_default(option, default) }
   end
 
   # Loads the services.yml configuration unless one has already been loaded
@@ -142,15 +145,15 @@ module Stealth
     for_each_file_in(directory) { |file| require_relative(file) }
   end
 
-  private
+private
 
-    def self.for_each_file_in(directory, &blk)
-      directory = directory.to_s.gsub(%r{(\/|\\)}, File::SEPARATOR)
-      directory = Pathname.new(Dir.pwd).join(directory).to_s
-      directory = File.join(directory, '**', '*.rb') unless directory =~ /(\*\*)/
+  def self.for_each_file_in(directory, &blk)
+    directory = directory.to_s.gsub(%r{(\/|\\)}, File::SEPARATOR)
+    directory = Pathname.new(Dir.pwd).join(directory).to_s
+    directory = File.join(directory, '**', '*.rb') unless directory =~ /(\*\*)/
 
-      Dir.glob(directory).sort.each(&blk)
-    end
+    Dir.glob(directory).sort.each(&blk)
+  end
 
 end
 
