@@ -65,6 +65,7 @@
 * [Sessions] previous_session now respects session_ttl values.
 * [Catch All] Log output from all catch_all logging now includes the session_id so they can be included in log searches.
 * [NLP] Strip out values from single element arrays in the case of custom LUIS List entities.
+* [Config] Attempting to overwrite default config values with `nil` or `false` now correctly sets those config values.
 
 ## Deprecations
 
