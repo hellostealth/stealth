@@ -60,6 +60,14 @@ module Stealth
         reply_format_not_supported(format: 'delay')
       end
 
+      def speech
+        reply_format_not_supported(format: 'speech')
+      end
+
+      def ssml
+        reply_format_not_supported(format: 'ssml')
+      end
+
     end
   end
 end
