@@ -257,8 +257,12 @@ module Stealth
 
           def log_reply(reply)
             message = case reply.reply_type
-                      when 'text', 'speech'
+                      when 'text'
                         reply['text']
+                      when 'speech'
+                        reply['speech']
+                      when 'ssml'
+                        reply['ssml']
                       when 'delay'
                         '<typing indicator>'
                       else
