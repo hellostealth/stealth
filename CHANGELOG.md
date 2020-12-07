@@ -50,6 +50,7 @@
 * [Replies] Dynamic delays are automatically sent before each reply. This can be disabled by setting `Stealth.config.auto_insert_delays` to `false`. If a delay is already included, the auto-delay is skipped.
 * [Controllers] `handle_message` now supports `Regexp` keys.
 * [Configuration] `database.yml` is now parsed with ERB in order to support environment variables. Thanks @malkovro.
+* [Replies] Speech and SSML replies now use `speech` and `ssml` as keys, respectively, instead of `text`
 
 ## Bug Fixes
 
