@@ -22,6 +22,12 @@ module Stealth
       end
     end
 
+    def set_default(key, default_value)
+      if self[key.to_s] == nil
+        self[key.to_s] = store(default_value)
+      end
+    end
+
     private
 
       def store(value)

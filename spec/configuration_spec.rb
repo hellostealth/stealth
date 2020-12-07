@@ -57,4 +57,37 @@ describe "Stealth::Configuration" do
     end
   end
 
+  describe "configuring with default values" do
+    let(:config) {
+      Stealth::Configuration.new(
+        { 'a' => nil, 'x' => 0, 'y' => false, 'z' => '' }
+      )
+    }
+
+    it 'should replace a nil value' do
+      config.set_default('a', 99)
+      expect(config.a).to eq 99
+    end
+
+    it 'should NOT replace a zero value' do
+      config.set_default('x', 99)
+      expect(config.x).to eq 0
+    end
+
+    it 'should NOT replace a false value' do
+      config.set_default('y', 99)
+      expect(config.y).to be false
+    end
+
+    it 'should NOT replace a blank string value' do
+      config.set_default('z', 99)
+      expect(config.z).to eq ''
+    end
+
+    it 'should replace a not-set key' do
+      config.set_default('zz', 99)
+      expect(config.zz).to eq 99
+    end
+  end
+
 end
