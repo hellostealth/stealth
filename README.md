@@ -52,4 +52,4 @@ Stealth is versioned using [Semantic Versioning](https://semver.org), but it's m
 
 ## License
 
-"Stealth" and the Stealth logo are Copyright (c) 2020 Mauricio Gomes and Mav Automation Ventures Inc.
+"Stealth" and the Stealth logo are Copyright (c) 2020 Mauricio Gomes
