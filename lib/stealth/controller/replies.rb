@@ -238,7 +238,8 @@ module Stealth
             else
               Stealth::Logger.l(
                 topic: :err,
-                message: "User #{current_session_id} unhandled exception due to invalid session_id."
+                message: "User #{current_session_id} unhandled exception due to an " \
+                         "invalid session_id. [#{msg}]"
               )
             end
 
