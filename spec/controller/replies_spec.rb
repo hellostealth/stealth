@@ -659,7 +659,9 @@ describe "Stealth::Controller replies" do
       it "should log the unhandled exception if the controller does not have a handle_invalid_session_id method" do
         expect(Stealth::Logger).to receive(:l).with(
           topic: :err,
-          message: "User #{facebook_message.sender_id} unhandled exception due to invalid session_id."
+          message:
+            "User #{facebook_message.sender_id} unhandled exception due to " \
+            "an invalid session_id. [boom]"
         )
         expect(controller).to receive(:do_nothing)
         controller.say_offer
