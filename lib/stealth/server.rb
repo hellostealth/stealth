@@ -44,6 +44,11 @@ module Stealth
         headers: get_helpers_from_request(request)
       )
 
+      headers 'Access-Control-Allow-Origin' => '*',
+              'Access-Control-Allow-Methods' => ['OPTIONS', 'GET', 'POST']
+      # content_type 'audio/mp3'
+      content_type 'application/octet-stream'
+
       dispatcher.coordinate
     end
 
