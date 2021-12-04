@@ -115,7 +115,13 @@ describe "Stealth::Controller::CatchAll" do
       end
 
       it "should log the error message" do
-        expect(Stealth::Logger).to receive(:l).with(topic: 'catch_all', message: "[Level 1] for user #{facebook_message.sender_id} OpenStruct\noops\n/stealth/lib/stealth/controller/controller.rb\n/stealth/lib/stealth/controller/catch_all.rb")
+        err_klass = if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('3.0.0')
+          "RuntimeError"
+        else
+          "OpenStruct"
+        end
+
+        expect(Stealth::Logger).to receive(:l).with(topic: 'catch_all', message: "[Level 1] for user #{facebook_message.sender_id} #{err_klass}\noops\n/stealth/lib/stealth/controller/controller.rb\n/stealth/lib/stealth/controller/catch_all.rb")
         expect(Stealth::Logger).to receive(:l).with(topic: 'catch_all', message: "CatchAll triggered for user #{facebook_message.sender_id} from within CatchAll; ignoring.")
         controller.run_catch_all(err: e)
       end
