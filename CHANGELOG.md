@@ -2,6 +2,7 @@
 
 ## Enhancements
 
+* Added support for Ruby 3.0
 * [Controllers] Added support for Dev Jumping. This feature allows developers to jump around flows and states for bot's in development.
 * [NLP] Added base classes for `Stealth::Nlp::Result` and `Stealth::Nlp::Client` to be used by NLP drivers.
 * [Controllers] Scheduled replies no longer call `controller.route` when they run. Instead we `step_to` to the flow and state directly. This ensures the `route` is reserved for incoming messages.
@@ -13,7 +14,8 @@
 * [Logging] `primary_session`, `previous_session`, and `back_to_session` now explicitly logged
 * [Sessions] The session is no longer set on update or stepping witht destination flow and state match the existing session.
 * [Scheduled Replies] The `service_message.target_id` is now set for scheduled replies. NOTE: scheduled replies that are already enqueued will NOT have this set.
-* [Server] Updated to Puma 4.3
+* [Server] Updated to Puma 5.5
+* [Server] Updated to Sidekiq 6.3
 * [Server] Updated to Sinatra 2.1
 * [Sessions] Added `to_s` for sessions to pretty print the slug. Useful when debugging.
 * `send_reples` now supports two additional options for replies:
