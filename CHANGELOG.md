@@ -42,7 +42,7 @@
 * [Controllers] `normalized_msg` and `homophone_translated_msg` are now memoized for performance.
 * [Errors] `Stealth::Errors::MessageNotRecognized` has been renamed to `Stealth::Errors::UnrecognizedMessage`
 * [Controllers] When `handle_message` or `get_match` raise a `Stealth::Errors::UnrecognizedMessage`, the user is first routed to a new `UnrecognizedMessagesController` to perform NLP. If that controller fails to match, the `catch_all` is run as normal.
-* [Errors] Client errors now call respective BotController actions: `handle_opt_out` and `handle_invalid_session_id`. Each client is responsible for raising `Stealth::Errors::UserOptOut` or `Stealth::Errors::InvalidSessionId` errors.
+* [Errors] Client errors now call respective BotController actions: `handle_opt_out`, `handle_invalid_session_id`, `handle_message_filtered`, `handle_unknown_error`. Each client is responsible for raising `Stealth::Errors::UserOptOut`, `Stealth::Errors::InvalidSessionId`, `Stealth::Errors::MessageFiltered`, `Stealth::Errors::UnknownError` errors, respectively.
 * [Controllers] `handle_message` and `get_match` now detect homophones for alpha ordinals (A-Z)
 * [Controllers] `handle_message` and `get_match` now ignore single and double quotes for alpha-ordinals
 * [CoreExt] Strings now have a `normalize` method for removing padding and quotes
