@@ -43,12 +43,20 @@ module Stealth
     class FlowDefinitionError < Errors
     end
 
+    # Service errors
     class InvalidSessionID < Errors
     end
 
     class UserOptOut < Errors
     end
 
+    class MessageFiltered < Errors
+    end
+
+    class UnknownServiceError < Errors
+    end
+
+    # Homophone errors
     class ReservedHomophoneUsed < Errors
     end
 

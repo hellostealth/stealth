@@ -33,10 +33,32 @@ module Stealth
             begin
               send_reply(reply: reply)
             rescue Stealth::Errors::UserOptOut => e
-              user_opt_out_handler(msg: e.message)
+              msg = "User #{current_session_id} opted out. [#{e.message}]"
+              service_error_dispatcher(
+                handler_method: :handle_opt_out,
+                error_msg: msg
+              )
               return
             rescue Stealth::Errors::InvalidSessionID => e
-              invalid_session_id_handler(msg: e.message)
+              msg = "User #{current_session_id} has an invalid session_id. [#{e.message}]"
+              service_error_dispatcher(
+                handler_method: :handle_invalid_session_id,
+                error_msg: msg
+              )
+              return
+            rescue MessageFiltered => e
+              msg = "Message to user #{current_session_id} was filtered. [#{e.message}]"
+              service_error_dispatcher(
+                handler_method: :handle_message_filtered,
+                error_msg: msg
+              )
+              return
+            rescue UnknownServiceError => e
+              msg = "User #{current_session_id} had an unknown error. [#{e.message}]"
+              service_error_dispatcher(
+                handler_method: :handle_unknown_error,
+                error_msg: msg
+              )
               return
             end
 
@@ -211,35 +233,17 @@ module Stealth
             return file_contents, selected_preprocessor
           end
 
-          def user_opt_out_handler(msg:)
-            if self.respond_to?(:handle_opt_out, true)
-              self.send(:handle_opt_out)
+          def service_error_dispatcher(handler_method:, error_msg:)
+            if self.respond_to?(handler_method, true)
               Stealth::Logger.l(
                 topic: current_service,
-                message: "User #{current_session_id} opted out. [#{msg}]"
+                message: error_msg
               )
+              self.send(handler_method)
             else
               Stealth::Logger.l(
                 topic: :err,
-                message: "User #{current_session_id} unhandled exception due to opt-out."
-              )
-            end
-
-            do_nothing
-          end
-
-          def invalid_session_id_handler(msg:)
-            if self.respond_to?(:handle_invalid_session_id, true)
-              self.send(:handle_invalid_session_id)
-              Stealth::Logger.l(
-                topic: current_service,
-                message: "User #{current_session_id} has an invalid session_id. [#{msg}]"
-              )
-            else
-              Stealth::Logger.l(
-                topic: :err,
-                message: "User #{current_session_id} unhandled exception due to an " \
-                         "invalid session_id. [#{msg}]"
+                message: "Unhandled service exception for user #{current_session_id}. No error handler for `#{handler_method}` found."
               )
             end
 
