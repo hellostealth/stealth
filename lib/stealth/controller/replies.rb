@@ -46,14 +46,14 @@ module Stealth
                 error_msg: msg
               )
               return
-            rescue MessageFiltered => e
+            rescue Stealth::Errors::MessageFiltered => e
               msg = "Message to user #{current_session_id} was filtered. [#{e.message}]"
               service_error_dispatcher(
                 handler_method: :handle_message_filtered,
                 error_msg: msg
               )
               return
-            rescue UnknownServiceError => e
+            rescue Stealth::Errors::UnknownServiceError => e
               msg = "User #{current_session_id} had an unknown error. [#{e.message}]"
               service_error_dispatcher(
                 handler_method: :handle_unknown_error,
