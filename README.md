@@ -38,6 +38,7 @@ Currently, there are gems for:
 * [Alexa Skill](https://github.com/hellostealth/stealth-alexa) (Early alpha)
 
 ### Natural Language Processing
+* [Microsoft LUIS](https://github.com/hellostealth/stealth-luis)
 * [AWS Comprehend](https://github.com/hellostealth/stealth-aws-comprehend)
 
 ### Analytics
@@ -53,4 +54,4 @@ Stealth is versioned using [Semantic Versioning](https://semver.org), but it's m
 
 ## License
 
-"Stealth" and the Stealth logo are Copyright (c) 2020 Mauricio Gomes
+"Stealth" and the Stealth logo are Copyright (c) 2017-2022 MAV Automated Ventures Inc.
