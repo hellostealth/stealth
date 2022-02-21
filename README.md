@@ -2,7 +2,8 @@
 
 Stealth is a Ruby framework for creating text and voice chatbots. It's design is inspired by Ruby on Rails's philosophy of convention over configuration. It has an MVC architecture with the slight caveat that `views` are aptly named `replies`.
 
-[![CircleCI](https://circleci.com/gh/hellostealth/stealth.svg?style=svg)](https://circleci.com/gh/hellostealth/stealth)
+![CircleCI](https://img.shields.io/circleci/build/github/hellostealth/stealth?style=for-the-badge)
+![Gem (including prereleases)](https://img.shields.io/gem/v/stealth?include_prereleases&style=for-the-badge)
 
 ## Features
 
@@ -37,6 +38,7 @@ Currently, there are gems for:
 * [Alexa Skill](https://github.com/hellostealth/stealth-alexa) (Early alpha)
 
 ### Natural Language Processing
+* [Microsoft LUIS](https://github.com/hellostealth/stealth-luis)
 * [AWS Comprehend](https://github.com/hellostealth/stealth-aws-comprehend)
 
 ### Analytics
@@ -52,4 +54,4 @@ Stealth is versioned using [Semantic Versioning](https://semver.org), but it's m
 
 ## License
 
-"Stealth" and the Stealth logo are Copyright (c) 2020 Mauricio Gomes
+"Stealth" and the Stealth logo are Copyright (c) 2017-2022 MAV Automated Ventures Inc.
