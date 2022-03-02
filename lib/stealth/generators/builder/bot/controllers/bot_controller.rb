@@ -40,15 +40,27 @@ private
   end
 
   # Automatically called when clients receive an opt-out error from
-  # the platform. You can write your own steps for handling.
+  # the platform. You may write your own steps for handling.
   def handle_opt_out
     do_nothing
   end
 
   # Automatically called when clients receive an invalid session_id error from
   # the platform. For example, attempting to text a landline.
-  # You can write your own steps for handling.
+  # You may write your own steps for handling.
   def handle_invalid_session_id
+    do_nothing
+  end
+
+  # Automatically called when a transmitted message is filtered/marked as spam.
+  # You may write your own steps for handling.
+  def handle_message_filtered
+    do_nothing
+  end
+
+  # Automatically called when an unknown error is returned by the platform.
+  # You may write your own steps for handling.
+  def handle_unknown_error
     do_nothing
   end
 

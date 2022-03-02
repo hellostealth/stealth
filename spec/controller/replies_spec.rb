@@ -632,7 +632,7 @@ describe "Stealth::Controller replies" do
       it "should log the unhandled exception if the controller does not have a handle_opt_out method" do
         expect(Stealth::Logger).to receive(:l).with(
           topic: :err,
-          message: "User #{facebook_message.sender_id} unhandled exception due to opt-out."
+          message: "Unhandled service exception for user #{facebook_message.sender_id}. No error handler for `handle_opt_out` found."
         )
         expect(controller).to receive(:do_nothing)
         controller.say_offer
@@ -659,7 +659,7 @@ describe "Stealth::Controller replies" do
       it "should log the unhandled exception if the controller does not have a handle_invalid_session_id method" do
         expect(Stealth::Logger).to receive(:l).with(
           topic: :err,
-          message: "User #{facebook_message.sender_id} unhandled exception due to an invalid session_id. [boom]"
+          message: "Unhandled service exception for user #{facebook_message.sender_id}. No error handler for `handle_invalid_session_id` found."
         )
         expect(controller).to receive(:do_nothing)
         controller.say_offer
@@ -670,6 +670,60 @@ describe "Stealth::Controller replies" do
         expect(Stealth::Logger).to receive(:l).with(
           topic: 'facebook',
           message: "User #{facebook_message.sender_id} has an invalid session_id. [boom]"
+        )
+        expect(controller).to receive(:do_nothing)
+        controller.say_offer
+      end
+    end
+
+    describe "Stealth::Errors::MessageFiltered" do
+      before(:each) do
+        expect(stubbed_client).to receive(:transmit).and_raise(
+          Stealth::Errors::MessageFiltered.new('boom')
+        ).once # Retuns early; doesn't send the remaining replies in the file
+      end
+
+      it "should log the unhandled exception if the controller does not have a handle_message_filtered method" do
+        expect(Stealth::Logger).to receive(:l).with(
+          topic: :err,
+          message: "Unhandled service exception for user #{facebook_message.sender_id}. No error handler for `handle_message_filtered` found."
+        )
+        expect(controller).to receive(:do_nothing)
+        controller.say_offer
+      end
+
+      it "should call handle_message_filtered method" do
+        expect(controller).to receive(:handle_message_filtered)
+        expect(Stealth::Logger).to receive(:l).with(
+          topic: 'facebook',
+          message: "Message to user #{facebook_message.sender_id} was filtered. [boom]"
+        )
+        expect(controller).to receive(:do_nothing)
+        controller.say_offer
+      end
+    end
+
+    describe "Stealth::Errors::UnknownServiceError" do
+      before(:each) do
+        expect(stubbed_client).to receive(:transmit).and_raise(
+          Stealth::Errors::UnknownServiceError.new('boom')
+        ).once # Retuns early; doesn't send the remaining replies in the file
+      end
+
+      it "should log the unhandled exception if the controller does not have a handle_unknown_error method" do
+        expect(Stealth::Logger).to receive(:l).with(
+          topic: :err,
+          message: "Unhandled service exception for user #{facebook_message.sender_id}. No error handler for `handle_unknown_error` found."
+        )
+        expect(controller).to receive(:do_nothing)
+        controller.say_offer
+      end
+
+      it "should call handle_unknown_error method" do
+        expect(controller).to receive(:handle_unknown_error)
+        expect(Stealth::Logger).to receive(:l).with(
+          topic: 'facebook',
+          message: "User #{facebook_message.sender_id} had an unknown error. [boom]"
         )
         expect(controller).to receive(:do_nothing)
         controller.say_offer
