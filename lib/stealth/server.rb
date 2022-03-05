@@ -21,7 +21,7 @@ module Stealth
           <body>
             <center>
               <a href='https://hellostealth.org'>
-                <img src='http://assets.blackops.nyc/stealth/logo.svg' height='120' alt='Stealth Logo' aria-label='hellostealth.org' />
+                <img src='https://raw.githubusercontent.com/hellostealth/stealth/master/logo.svg' height='120' alt='Stealth Logo' aria-label='hellostealth.org' />
               </a>
             </center>
           </body>
