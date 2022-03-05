@@ -45,7 +45,7 @@ module Stealth
                 :blue
               when :smooch
                 :magenta
-              when :alexa, :voice, :unrecognized_message
+              when :alexa, :voice, :twilio_voice, :unrecognized_message
                 :light_cyan
               when :nlp
                 :cyan
