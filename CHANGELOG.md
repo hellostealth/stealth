@@ -53,6 +53,8 @@
 * [Controllers] `handle_message` now supports `Regexp` keys.
 * [Configuration] `database.yml` is now parsed with ERB in order to support environment variables. Thanks @malkovro.
 * [Replies] Speech and SSML replies now use `speech` and `ssml` as keys, respectively, instead of `text`
+* [Replies] Voice services (determined by having "voice" in the name) now automatically skip auto-delays.
+* [Controllers] `current_message` now has a `confidence` attribute containing a float with the confidence value of the transcription (from 0 to 1).
 
 ## Bug Fixes
 
