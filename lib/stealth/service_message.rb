@@ -6,7 +6,7 @@ module Stealth
 
     attr_accessor :sender_id, :target_id, :timestamp, :service, :message,
                   :location, :attachments, :payload, :referral, :nlp_result,
-                  :catch_all_reason
+                  :catch_all_reason, :confidence
 
     def initialize(service:)
       @service = service

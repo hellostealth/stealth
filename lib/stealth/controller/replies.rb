@@ -72,8 +72,12 @@ module Stealth
 
         private
 
+          def voice_service?
+            current_service.match?(/voice/)
+          end
+
           def send_reply(reply:)
-            if !reply.delay? && Stealth.config.auto_insert_delays
+            if !reply.delay? && Stealth.config.auto_insert_delays && !voice_service?
               # if it's the first reply in the service_reply or the previous reply
               # wasn't a custom delay, then insert a delay
               if @previous_reply.blank? || !@previous_reply.delay?

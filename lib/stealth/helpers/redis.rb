@@ -21,9 +21,9 @@ module Stealth
       end
 
       def getex(key, expiration=Stealth.config.session_ttl)
-        $redis.multi do
-          $redis.expire(key, expiration)
-          $redis.get(key)
+        $redis.multi do |pipeline|
+          pipeline.expire(key, expiration)
+          pipeline.get(key)
         end.last
       end
 
