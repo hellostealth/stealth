@@ -6,7 +6,7 @@ describe "Stealth::Configuration" do
 
   describe "accessing via method calling" do
     let(:services_yml) { File.read(File.join(File.dirname(__FILE__), 'support', 'services.yml')) }
-    let(:parsed_config) { YAML.load(ERB.new(services_yml).result)[Stealth.env] }
+    let(:parsed_config) { YAML.safe_load(ERB.new(services_yml).result, aliases: true)[Stealth.env] }
     let(:config) { Stealth.load_services_config!(services_yml) }
 
     it "should return the root node" do

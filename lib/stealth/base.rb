@@ -88,7 +88,7 @@ module Stealth
 
     Thread.current[:configuration] ||= begin
       @semaphore.synchronize do
-        services_config = YAML.load(ERB.new(services_yaml).result)
+        services_config = YAML.safe_load(ERB.new(services_yaml).result, aliases: true)
 
         unless services_config.has_key?(env)
           raise Stealth::Errors::ConfigurationError, "Could not find services.yml configuration for #{env} environment"
