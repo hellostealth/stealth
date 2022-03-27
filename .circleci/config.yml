@@ -3,7 +3,7 @@ version: 2
 jobs:
   ruby_2_6:
     docker:
-      - image: circleci/ruby:2.6-node-browsers
+      - image: cimg/ruby:2.6
         environment:
           STEALTH_ENV: test
 
@@ -56,7 +56,7 @@ jobs:
           destination: test-results
   ruby_2_7:
     docker:
-      - image: circleci/ruby:2.7-node-browsers
+      - image: cimg/ruby:2.7
         environment:
           STEALTH_ENV: test
 
@@ -110,7 +110,7 @@ jobs:
 
   ruby_3_0:
     docker:
-      - image: circleci/ruby:3.0-node-browsers
+      - image: cimg/ruby:3.0
         environment:
           STEALTH_ENV: test
 
@@ -164,7 +164,7 @@ jobs:
 
   ruby_3_1:
     docker:
-      - image: circleci/ruby:3.1-node-browsers
+      - image: cimg/ruby:3.1
         environment:
           STEALTH_ENV: test
 
