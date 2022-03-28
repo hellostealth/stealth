@@ -42,6 +42,11 @@ describe "Stealth::Controller" do
     def parts_unknown
       step_to flow: :parts, state: :unknown
     end
+
+    def halted
+      halt!
+      step_to state: :other_action2
+    end
   end
 
   class FlowMap
@@ -60,6 +65,7 @@ describe "Stealth::Controller" do
       state :other_action4
       state :broken_action
       state :part_unknown
+      state :halted
       state :deprecated_action, redirects_to: :other_action
       state :deprecated_action2, redirects_to: 'mr_robot->my_action'
     end
@@ -882,6 +888,34 @@ describe "Stealth::Controller" do
       it 'should still release the lock if an action steps to an unknown flow->state' do
         expect(controller).to receive(:release_lock!).once
         controller.action(action: :parts_unknown)
+      end
+    end
+
+    describe "halt!" do
+      it "should catch the error and log the sessio halt" do
+        ### It's lame we have to include these two
+        expect(Stealth::Logger).to receive(:l).with(
+          topic: "primary_session",
+          message: "User #{facebook_message.sender_id}: setting session to mr_tron->halted"
+        )
+        expect(Stealth::Logger).to receive(:l).with(
+          topic: "previous_session",
+          message: "User #{facebook_message.sender_id}: setting to parts->unknown"
+        )
+        ###
+
+        expect(Stealth::Logger).to receive(:l).with(
+          topic: "session",
+          message: "User #{facebook_message.sender_id}: session halted."
+        )
+
+        controller.step_to(flow: :mr_tron, state: :halted)
+      end
+
+      it "should NOT continue with the rest of the controller code" do
+        expect_any_instance_of(MrTronsController).to_not receive(:other_action2)
+        expect_any_instance_of(MrTronsController).to_not receive(:step_to).with(state: :other_action2)
+        controller.step_to(flow: :mr_tron, state: :halted)
       end
     end
   end
