@@ -60,5 +60,8 @@ module Stealth
     class ReservedHomophoneUsed < Errors
     end
 
+    class Halted < Errors
+    end
+
   end
 end

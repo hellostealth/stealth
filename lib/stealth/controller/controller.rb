@@ -91,6 +91,11 @@ module Stealth
             unless flow_controller.progressed?
               run_catch_all(reason: 'Did not send replies, update session, or step')
             end
+          rescue Stealth::Errors::Halted
+            Stealth::Logger.l(
+              topic: "session",
+              message: "User #{current_session_id}: session halted."
+            )
           rescue StandardError => e
             if e.class == Stealth::Errors::UnrecognizedMessage
               run_unrecognized_message(err: e)
@@ -213,6 +218,10 @@ module Stealth
 
     def do_nothing
       @progressed = :do_nothing
+    end
+
+    def halt!
+      raise Stealth::Errors::Halted
     end
 
     private
