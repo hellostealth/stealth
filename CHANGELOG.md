@@ -55,6 +55,7 @@
 * [Replies] Speech and SSML replies now use `speech` and `ssml` as keys, respectively, instead of `text`
 * [Replies] Voice services (determined by having "voice" in the name) now automatically skip auto-delays.
 * [Controllers] `current_message` now has a `confidence` attribute containing a float with the confidence value of the transcription (from 0 to 1).
+* [Controllers] Added a `halt!` method that can be used with the controller error handlers to stop code execution.
 
 ## Bug Fixes
 
