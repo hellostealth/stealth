@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    stealth (2.0.0.beta4)
+    stealth (2.0.0.beta5)
       activesupport (~> 6.0)
       multi_json (~> 1.12)
       puma (>= 4.2, < 6.0)
@@ -12,13 +12,13 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (6.1.4.6)
+    activesupport (6.1.5)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
       tzinfo (~> 2.0)
       zeitwerk (~> 2.3)
-    concurrent-ruby (1.1.9)
+    concurrent-ruby (1.1.10)
     connection_pool (2.2.5)
     diff-lcs (1.3)
     i18n (1.10.0)
