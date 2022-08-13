@@ -11,7 +11,7 @@ description: >-
 
 ## What's Stealth?
 
-Stealth is an open source, <img src="../.gitbook/assets/ruby.png" alt="" data-size="line"> Ruby framework for conversational voice and text chatbots.
+Stealth is an open source, <img src=".gitbook/assets/ruby.png" alt="" data-size="line"> Ruby framework for conversational voice and text chatbots.
 
 Stealth is inspired by the Model-View-Controller (MVC) pattern. However, instead of calling them _Views,_ Stealth refers to them as _Replies_ to better match the chatbot domain.
 
