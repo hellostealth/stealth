@@ -2,7 +2,7 @@
 
 ## Overview
 
-Flows and states are the principle architectural building blocks for Stealth bots. Your bot's users can only be in a single flow and state at any given moment. The relationship between flows and states is one of parent and child, respectively. So a flow can _have many_ states and a state always _belongs to_ a single flow.
+Flows and states are the primary building blocks for Stealth bots. Your bot's users can only be in a single flow and state at any given moment. The relationship between flows and states is one of parent and child, respectively. So a flow can _have many_ states and a state always _belongs to_ a single flow.
 
 The concept is modeled after [finite-state machines](https://en.m.wikipedia.org/wiki/Finite-state\_machine), though you don't need to familiarize yourself with all of that knowledge. The outline we provide in these docs will be sufficient.
 
