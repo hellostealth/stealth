@@ -1,6 +1,6 @@
 ## Security Policy
 
-<a href='https://hiremav.com/security'><img src='logo.svg' width='400' alt='Stealth Logo' aria-label='Stealth security' /></a>
+<a href='https://hiremav.com/security'><img src='logo.svg' height='120' alt='Stealth Logo' aria-label='Stealth security' /></a>
 
 ## Reporting a Vulnerability
 

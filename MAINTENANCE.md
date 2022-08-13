@@ -1,6 +1,6 @@
 ## Maintenance Policy
 
-<a href='https://hellostealth.org'><img src='logo.svg' width='400' alt='Xip Logo' aria-label='hellostealth.org' /></a>
+<a href='https://hellostealth.org'><img src='logo.svg' height='120' alt='Xip Logo' aria-label='hellostealth.org' /></a>
 
 ## Versioning
 
