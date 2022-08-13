@@ -16,7 +16,7 @@ If the flow and/or action specified in the `step_to_at` is not declared in the [
 step_to_at Time.now.next_week, flow: 'hello'
 ```
 
-At the specified time (next week in this case), Xip will set the session's flow to `hello` and the state will be set to the **first** state in that flow (as defined by the [FlowMap](../../flows/flowmap.md)). The corresponding controller action in the `HellosController` will also be called.
+At the specified time (next week in this case), Stealth will set the session's flow to `hello` and the state will be set to the **first** state in that flow (as defined by the [FlowMap](../../flows/flowmap.md)). The corresponding controller action in the `HellosController` will also be called.
 
 {% hint style="info" %}
 The flow name can also be specified as a symbol.

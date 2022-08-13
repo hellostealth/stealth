@@ -132,4 +132,4 @@ end
 
 ```
 
-In this `CatchAllsController` we have two sets of Catch-All replies. One for when the message was unrecognized and another for when we've encountered a system error. We dynamically send the appropriate reply based on the `@reason` instance variable that we set with the `before_action` in the controller.
+In `CatchAllsController` we have two sets of Catch-All replies. One for when the message was unrecognized and another for when we've encountered a system error. We dynamically send the appropriate reply based on the `@reason` instance variable that we set with the `before_action` in the controller.
