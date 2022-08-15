@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     stealth (2.0.0.beta5)
-      activesupport (~> 6.0)
+      activesupport (>= 6, < 8)
       multi_json (~> 1.12)
       puma (>= 4.2, < 6.0)
       sidekiq (~> 6.0)
@@ -12,18 +12,17 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (6.1.5)
+    activesupport (7.0.3.1)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
       tzinfo (~> 2.0)
-      zeitwerk (~> 2.3)
     concurrent-ruby (1.1.10)
     connection_pool (2.2.5)
     diff-lcs (1.5.0)
-    i18n (1.10.0)
+    i18n (1.12.0)
       concurrent-ruby (~> 1.0)
-    minitest (5.15.0)
+    minitest (5.16.2)
     mock_redis (0.32.0)
       ruby2_keywords
     multi_json (1.15.0)
@@ -66,9 +65,8 @@ GEM
       tilt (~> 2.0)
     thor (1.2.1)
     tilt (2.0.11)
-    tzinfo (2.0.4)
+    tzinfo (2.0.5)
       concurrent-ruby (~> 1.0)
-    zeitwerk (2.5.4)
 
 PLATFORMS
   ruby
