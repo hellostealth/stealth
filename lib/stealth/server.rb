@@ -35,7 +35,12 @@ module Stealth
       # JSON params need to be parsed and added to the params
       if request.env['CONTENT_TYPE']&.match(/application\/json/i)
         json_params = MultiJson.load(request.body.read)
-        params.merge!(json_params)
+
+        if bandwidth?
+          params.merge!(json_params.first)
+        else
+          params.merge!(json_params)
+        end
       end
 
       dispatcher = Stealth::Dispatcher.new(
@@ -58,6 +63,10 @@ module Stealth
         request.env.select do |header, value|
           %w[HTTP_HOST].include?(header)
         end
+      end
+
+      def bandwidth?
+        params[:service] == "bandwidth"
       end
 
   end
