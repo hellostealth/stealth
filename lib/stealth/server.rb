@@ -37,7 +37,7 @@ module Stealth
         json_params = MultiJson.load(request.body.read)
 
         if bandwidth?
-          params[:bandwidth] = json_params.first
+          params.merge!(json_params.first)
         else
           params.merge!(json_params)
         end
