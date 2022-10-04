@@ -32,6 +32,7 @@ Currently, there are gems for:
 ### Messaging
 * [Facebook Messenger](https://github.com/hellostealth/stealth-facebook)
 * [Twilio SMS](https://github.com/hellostealth/stealth-twilio)
+* [Bandwidth](https://github.com/hellostealth/stealth-bandwidth) 
 * [Smooch](https://github.com/hellostealth/stealth-smooch)
 
 ### Voice
