@@ -123,7 +123,7 @@ module Stealth
 
     load_bot!
 
-    Sidekiq.options[:reloader] = Stealth.bot_reloader
+    Sidekiq[:reloader] = Stealth.bot_reloader
 
     if defined?(ActiveRecord)
       if ENV['DATABASE_URL'].present?
