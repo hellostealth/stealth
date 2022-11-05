@@ -56,6 +56,7 @@
 * [Replies] Voice services (determined by having "voice" in the name) now automatically skip auto-delays.
 * [Controllers] `current_message` now has a `confidence` attribute containing a float with the confidence value of the transcription (from 0 to 1).
 * [Controllers] Added a `halt!` method that can be used with the controller error handlers to stop code execution.
+* [Logger] If the driver makes the `translated_reply` instance variable available, it will now be logged.
 
 ## Bug Fixes
 
