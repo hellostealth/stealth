@@ -16,11 +16,10 @@ Gem::Specification.new do |s|
   s.add_dependency 'puma', '>= 4.2', '< 6.0'
   s.add_dependency 'thor', '~> 1.0'
   s.add_dependency 'multi_json', '~> 1.12'
-  s.add_dependency 'sidekiq', '> 6.5'
+  s.add_dependency 'sidekiq', '< 7'
   s.add_dependency 'activesupport', '~> 6.0'
 
   s.add_development_dependency 'rspec', '~> 3.9'
-  s.add_development_dependency 'rspec_junit_formatter', '~> 0.3'
   s.add_development_dependency 'rack-test', '~> 2.0'
   s.add_development_dependency 'mock_redis', '~> 0.22'
 
