@@ -96,11 +96,11 @@ module Stealth
               reply: reply
             )
 
-            translated_reply = handler.send(reply.reply_type)
-            client = service_client.new(reply: translated_reply)
+            formatted_reply = handler.send(reply.reply_type)
+            client = service_client.new(reply: formatted_reply)
             client.transmit
 
-            log_reply(reply) if Stealth.config.transcript_logging
+            log_reply(reply, handler) if Stealth.config.transcript_logging
 
             # If this was a 'delay' type of reply, we insert the delay
             if reply.delay?
@@ -264,10 +264,14 @@ module Stealth
             end
           end
 
-          def log_reply(reply)
+          def log_reply(reply, reply_handler)
             message = case reply.reply_type
                       when 'text'
-                        reply['text']
+                        if reply_handler.respond_to?(:translated_reply)
+                          reply_handler.translated_reply
+                        else
+                          reply['text']
+                        end
                       when 'speech'
                         reply['speech']
                       when 'ssml'
@@ -282,6 +286,8 @@ module Stealth
               topic: current_service,
               message: "User #{current_session_id} -> Sending: #{message}"
             )
+
+            message
           end
 
       end # instance methods
