@@ -66,6 +66,10 @@ describe "Stealth::Controller replies" do
       send_replies custom_reply: 'messages/sub1/sub2/say_nested'
     end
 
+    def say_simple_hello
+      send_replies
+    end
+
     def say_inline_reply
       reply = [
         { 'reply_type' => 'text', 'text' => 'Hi, Morty. Welcome to Stealth bot...' },
@@ -606,6 +610,50 @@ describe "Stealth::Controller replies" do
       expect(stubbed_handler).to receive(:delay).exactly(2).times
       expect(controller.pos).to be_nil
       controller.say_offer
+    end
+  end
+
+  describe "Logging replies" do
+    let(:stubbed_handler) { double("handler") }
+    let(:stubbed_client) { double("client") }
+
+    before(:each) do
+      allow(Stealth::Services::Facebook::ReplyHandler).to receive(:new).and_return(stubbed_handler)
+      allow(Stealth::Services::Facebook::Client).to receive(:new).and_return(stubbed_client)
+      allow(controller.current_session).to receive(:flow_string).and_return("message")
+      allow(controller.current_session).to receive(:state_string).and_return("say_simple_hello")
+      Stealth.config.auto_insert_delays = false
+      Stealth.config.transcript_logging = true
+    end
+
+    after(:each) do
+      Stealth.config.auto_insert_delays = true
+      Stealth.config.transcript_logging = false
+    end
+
+    it "should log replies if transcript_logging is enabled" do
+      allow(stubbed_client).to receive(:transmit).and_return(true)
+      allow(controller).to receive(:sleep).and_return(true).with(2.0)
+
+      allow(stubbed_handler).to receive(:text).exactly(1).times
+      expect(Stealth::Logger).to receive(:l).with(
+        topic: 'facebook',
+        message: "User #{controller.current_session_id} -> Sending: Hello"
+      )
+      controller.say_simple_hello
+    end
+
+    it "should log translated replies if transcript_logging is enabled and the driver supports it" do
+      allow(stubbed_client).to receive(:transmit).and_return(true)
+      allow(controller).to receive(:sleep).and_return(true).with(2.0)
+
+      allow(stubbed_handler).to receive(:text).exactly(1).times
+      allow(stubbed_handler).to receive(:translated_reply).and_return("Bonjour")
+      expect(Stealth::Logger).to receive(:l).with(
+        topic: 'facebook',
+        message: "User #{controller.current_session_id} -> Sending: Bonjour"
+      )
+      controller.say_simple_hello
     end
   end
 
