@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.email = 'mauricio@edge14.com'
 
   s.add_dependency 'sinatra', '~> 2.0'
-  s.add_dependency 'puma', '>= 4.2', '< 6.0'
+  s.add_dependency 'puma', '>= 4.2', '< 7.0'
   s.add_dependency 'thor', '~> 1.0'
   s.add_dependency 'multi_json', '~> 1.12'
   s.add_dependency 'sidekiq', '< 7'
