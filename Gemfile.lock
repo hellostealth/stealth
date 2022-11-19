@@ -8,6 +8,7 @@ PATH
       sidekiq (~> 7.0)
       sinatra (~> 2.0)
       thor (~> 1.0)
+      zeitwerk (= 2.6.4)
 
 GEM
   remote: https://rubygems.org/
@@ -67,6 +68,7 @@ GEM
     tilt (2.0.11)
     tzinfo (2.0.5)
       concurrent-ruby (~> 1.0)
+    zeitwerk (2.6.4)
 
 PLATFORMS
   ruby
