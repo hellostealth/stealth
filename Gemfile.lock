@@ -2,22 +2,21 @@ PATH
   remote: .
   specs:
     stealth (2.0.0.beta7)
-      activesupport (~> 6.0)
+      activesupport (~> 7.0)
       multi_json (~> 1.12)
-      puma (>= 4.2, < 6.0)
-      sidekiq (< 7)
+      puma (~> 6.0)
+      sidekiq (~> 7.0)
       sinatra (~> 2.0)
       thor (~> 1.0)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (6.1.7)
+    activesupport (7.0.4)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
       tzinfo (~> 2.0)
-      zeitwerk (~> 2.3)
     concurrent-ruby (1.1.10)
     connection_pool (2.3.0)
     diff-lcs (1.5.0)
@@ -30,15 +29,16 @@ GEM
     mustermann (2.0.2)
       ruby2_keywords (~> 0.0.1)
     nio4r (2.5.8)
-    oj (3.13.22)
-    puma (5.6.5)
+    oj (3.13.23)
+    puma (6.0.0)
       nio4r (~> 2.0)
     rack (2.2.4)
     rack-protection (2.2.2)
       rack
     rack-test (2.0.2)
       rack (>= 1.3)
-    redis (4.8.0)
+    redis-client (0.11.2)
+      connection_pool
     rspec (3.12.0)
       rspec-core (~> 3.12.0)
       rspec-expectations (~> 3.12.0)
@@ -53,10 +53,11 @@ GEM
       rspec-support (~> 3.12.0)
     rspec-support (3.12.0)
     ruby2_keywords (0.0.5)
-    sidekiq (6.5.8)
-      connection_pool (>= 2.2.5, < 3)
-      rack (~> 2.0)
-      redis (>= 4.5.0, < 5)
+    sidekiq (7.0.1)
+      concurrent-ruby (< 2)
+      connection_pool (>= 2.3.0)
+      rack (>= 2.2.4)
+      redis-client (>= 0.9.0)
     sinatra (2.2.2)
       mustermann (~> 2.0)
       rack (~> 2.2)
@@ -66,7 +67,6 @@ GEM
     tilt (2.0.11)
     tzinfo (2.0.5)
       concurrent-ruby (~> 1.0)
-    zeitwerk (2.6.4)
 
 PLATFORMS
   ruby
@@ -79,4 +79,4 @@ DEPENDENCIES
   stealth!
 
 BUNDLED WITH
-   2.2.32
+   2.3.26
