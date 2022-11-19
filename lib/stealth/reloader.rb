@@ -41,6 +41,7 @@ module Stealth
 
     def enable_eager_load!
       if Stealth.config.eager_load
+        @loader.setup
         @loader.eager_load
         Stealth::Logger.l(topic: 'stealth', message: 'Eager loading enabled.')
       end
