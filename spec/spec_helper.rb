@@ -16,6 +16,8 @@ Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 $redis = MockRedis.new
 $services_yml = File.read(File.join(File.dirname(__FILE__), 'support', 'services.yml'))
 
+Sidekiq.logger.level = Logger::ERROR
+
 RSpec.configure do |config|
   ENV['STEALTH_ENV'] = 'test'
 
