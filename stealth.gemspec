@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.authors = ['Mauricio Gomes', 'Matthew Black']
   s.email = 'mauricio@edge14.com'
 
-  s.add_dependency 'sinatra', '~> 2.0'
+  s.add_dependency 'sinatra', '>= 2', '< 4'
   s.add_dependency 'puma', '~> 6.0'
   s.add_dependency 'thor', '~> 1.0'
   s.add_dependency 'multi_json', '~> 1.12'
