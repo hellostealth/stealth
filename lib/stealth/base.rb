@@ -4,6 +4,7 @@
 # base requirements
 require 'yaml'
 require 'sidekiq'
+require 'redis'
 require 'active_support/all'
 
 begin
@@ -123,7 +124,9 @@ module Stealth
 
     load_bot!
 
-    Sidekiq[:reloader] = Stealth.bot_reloader
+    Sidekiq.configure_server do |config|
+      config[:reloader] = Stealth.bot_reloader
+    end
 
     if defined?(ActiveRecord)
       if ENV['DATABASE_URL'].present?
@@ -131,7 +134,7 @@ module Stealth
       else
         database_config = File.read(File.join(Stealth.root, 'config', 'database.yml'))
         ActiveRecord::Base.establish_connection(
-          YAML.load(ERB.new(database_config).result)[Stealth.env]
+          YAML.load(ERB.new(database_config).result, aliases: true)[Stealth.env]
         )
       end
     end
