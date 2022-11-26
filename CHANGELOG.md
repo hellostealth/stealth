@@ -14,9 +14,9 @@
 * [Logging] `primary_session`, `previous_session`, and `back_to_session` now explicitly logged
 * [Sessions] The session is no longer set on update or stepping witht destination flow and state match the existing session.
 * [Scheduled Replies] The `service_message.target_id` is now set for scheduled replies. NOTE: scheduled replies that are already enqueued will NOT have this set.
-* [Server] Updated to Puma 5.5
-* [Server] Updated to Sidekiq 6.3
-* [Server] Updated to Sinatra 2.1
+* [Server] Updated to Puma 6.x
+* [Server] Updated to Sidekiq 7.x
+* [Server] Updated to Sinatra 3.x
 * [Sessions] Added `to_s` for sessions to pretty print the slug. Useful when debugging.
 * `send_reples` now supports two additional options for replies:
   `send_replies(custom_reply: 'hello/say_hello')`
