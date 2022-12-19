@@ -39,6 +39,8 @@ module Stealth
         if bandwidth?
           if json_params.is_a?(Array)
             params.merge!(json_params.first)
+          else
+            # Ignoring inbound calls
           end
         else
           params.merge!(json_params)
