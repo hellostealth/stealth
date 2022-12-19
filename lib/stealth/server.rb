@@ -37,7 +37,11 @@ module Stealth
         json_params = MultiJson.load(request.body.read)
 
         if bandwidth?
-          params.merge!(json_params.first)
+          if json_params.is_a?(Array)
+            params.merge!(json_params.first)
+          else
+            return [200, 'Ok']
+          end
         else
           params.merge!(json_params)
         end
