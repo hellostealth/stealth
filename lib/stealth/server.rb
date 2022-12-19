@@ -40,7 +40,7 @@ module Stealth
           if json_params.is_a?(Array)
             params.merge!(json_params.first)
           else
-            # Ignoring inbound calls
+            return [200, 'Ok']
           end
         else
           params.merge!(json_params)
