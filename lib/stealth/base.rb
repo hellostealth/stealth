@@ -75,7 +75,13 @@ module Stealth
     if ENV['DATABASE_URL'].present? && defined?(ActiveRecord)
       ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'])
     else
-      ActiveRecord::Base.establish_connection(YAML::load_file("config/database.yml")[Stealth.env])
+      database_config = File.read(File.join(Stealth.root, 'config', 'database.yml'))
+      yaml_file = begin
+                    YAML.load(database_config, aliases: true)
+                  rescue ArgumentError
+                    YAML.load(database_config)
+                  end
+      ActiveRecord::Base.establish_connection(yaml_file[Stealth.env])
     end
   end
 
