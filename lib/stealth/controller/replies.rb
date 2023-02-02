@@ -135,6 +135,8 @@ module Stealth
             else
               yaml_reply, preprocessor = action_replies(custom_reply)
 
+              raise Stealth::Errors::EmptyReply if yaml_reply.empty?
+
               Stealth::ServiceReply.new(
                 recipient_id: current_session_id,
                 yaml_reply: yaml_reply,
