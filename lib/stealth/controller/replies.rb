@@ -135,8 +135,6 @@ module Stealth
             else
               yaml_reply, preprocessor = action_replies(custom_reply)
 
-              raise Stealth::Errors::EmptyReply if yaml_reply.empty?
-
               Stealth::ServiceReply.new(
                 recipient_id: current_session_id,
                 yaml_reply: yaml_reply,
@@ -234,6 +232,18 @@ module Stealth
               file_contents = File.read(reply_path)
             rescue Errno::ENOENT
               raise(Stealth::Errors::ReplyNotFound, "Could not find reply: '#{reply_path}'")
+            end
+
+            if file_contents.blank?
+              raise(
+                Stealth::Errors::EmptyReply,
+                "Empty reply template: '#{reply_path}'. Most likely you forgot to add content in this template."
+              )
+            elsif !YAML.load(file_contents)
+              raise(
+                Stealth::Errors::EmptyReply,
+                "Empty reply template: '#{reply_path}'. Most likely you have commented out the content in this template."
+              )
             end
 
             return file_contents, selected_preprocessor

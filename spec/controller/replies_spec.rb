@@ -46,6 +46,14 @@ describe "Stealth::Controller replies" do
       send_replies
     end
 
+    def say_empty_reply
+      send_replies
+    end
+
+    def say_commented_reply
+      send_replies
+    end
+
     def say_randomize_text
       send_replies
     end
@@ -89,6 +97,30 @@ describe "Stealth::Controller replies" do
       expect {
         controller.send_replies
       }.to raise_error(Stealth::Errors::ReplyNotFound)
+    end
+  end
+
+  describe 'empty reply' do
+    it "should raise a Stealth::Errors::EmptyReply with empty file" do
+      allow(controller.current_session).to receive(:flow_string).and_return("message")
+      allow(controller.current_session).to receive(:state_string).and_return("say_empty_reply")
+
+      expect {
+        controller.send_replies
+      }.to raise_error(
+                        Stealth::Errors::EmptyReply, /Most likely you forgot to add content in this template./
+                      )
+    end
+
+    it "should raise a Stealth::Errors::EmptyReply with commented file" do
+      allow(controller.current_session).to receive(:flow_string).and_return("message")
+      allow(controller.current_session).to receive(:state_string).and_return("say_commented_reply")
+
+      expect {
+        controller.send_replies
+      }.to raise_error(
+                        Stealth::Errors::EmptyReply, /Most likely you have commented out the content in this template./
+                      )
     end
   end
 
