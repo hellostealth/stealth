@@ -61,6 +61,29 @@ module Stealth
       dispatcher.coordinate
     end
 
+    get_or_post '/incoming/:service/inbound_call' do
+      Stealth::Logger.l(topic: params[:service], message: 'Received inbound call webhook.')
+
+      # JSON params need to be parsed and added to the params
+      if request.env['CONTENT_TYPE']&.match(/application\/json/i)
+        json_params = MultiJson.load(request.body.read)
+        params.merge!(json_params)
+      end
+
+      dispatcher = Stealth::Dispatcher.new(
+        service: params[:service],
+        params: params,
+        headers: get_helpers_from_request(request)
+      )
+
+      headers 'Access-Control-Allow-Origin' => '*',
+              'Access-Control-Allow-Methods' => ['OPTIONS', 'GET', 'POST']
+      # content_type 'audio/mp3'
+      content_type 'application/octet-stream'
+
+      dispatcher.coordinate
+    end
+
     private
 
       def get_helpers_from_request(request)
