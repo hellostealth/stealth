@@ -46,14 +46,18 @@ module Stealth
           }
         end
 
-        def normalized_msg
-          @normalized_msg ||= current_message.message.normalize
+        def normalized_msg(slice = true)
+          if slice
+            @normalized_msg ||= current_message.message.remove_signature.normalize
+          else
+            @normalized_msg ||= current_message.message.normalize
+          end
         end
 
         # Converts homophones into alpha-ordinals
-        def homophone_translated_msg
+        def homophone_translated_msg(slice = true)
           @homophone_translated_msg ||= begin
-            ord = normalized_msg.without_punctuation
+            ord = normalized_msg(slice).without_punctuation
             if HOMOPHONES[ord].present?
               HOMOPHONES[ord]
             else
@@ -68,7 +72,7 @@ module Stealth
         # Example: {
         #   "100k" => proc { step_back }, "200k" => proc { step_to flow :hello }
         # }
-        def handle_message(message_tuples)
+        def handle_message(slice = true, message_tuples)
           match = NO_MATCH # dummy value since nils are used for matching
 
           if reserved_homophones_used = contains_homophones?(message_tuples.keys)
@@ -79,7 +83,7 @@ module Stealth
           end
 
           # Before checking content, match against our ordinals
-          if idx = message_is_an_ordinal?
+          if idx = message_is_an_ordinal?(slice)
             # find the value stored in the message tuple via the index
             matched_value = message_tuples.keys[idx]
             match = matched_value unless matched_value.nil?
@@ -100,7 +104,7 @@ module Stealth
               end
 
               if msg.is_a?(Regexp)
-                if normalized_msg =~ msg
+                if normalized_msg(slice) =~ msg
                   match = msg
                   break
                 else
@@ -131,16 +135,15 @@ module Stealth
 
         # Matches the message or the oridinal value entered (via SMS)
         # Ignores case and strips leading and trailing whitespace before matching.
-        def get_match(messages, raise_on_mismatch: true, fuzzy_match: true)
+        def get_match(messages, raise_on_mismatch: true, fuzzy_match: true, slice: true)
           if reserved_homophones_used = contains_homophones?(messages)
             raise(
               Stealth::Errors::ReservedHomophoneUsed,
               "Cannot use `#{reserved_homophones_used.join(', ')}`. Reserved for homophones."
             )
           end
-
           # Before checking content, match against our ordinals
-          if idx = message_is_an_ordinal?
+          if idx = message_is_an_ordinal?(slice)
             return messages[idx] unless messages[idx].nil?
           end
 
@@ -200,8 +203,8 @@ module Stealth
         end
 
         # Returns the index of the ordinal, nil if not found
-        def message_is_an_ordinal?
-          ALPHA_ORDINALS.index(homophone_translated_msg)
+        def message_is_an_ordinal?(slice = true)
+          ALPHA_ORDINALS.index(homophone_translated_msg(slice))
         end
 
         def message_matches?(msg)

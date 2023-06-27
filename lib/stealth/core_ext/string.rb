@@ -15,4 +15,8 @@ class String
     self.gsub(EXCLUDED_CHARS_RE, '')
   end
 
+  def remove_signature
+    self.include?("\n") ? self.split("\n")[0] : self
+  end
+
 end
