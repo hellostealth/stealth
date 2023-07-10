@@ -15,8 +15,9 @@ class String
     self.gsub(EXCLUDED_CHARS_RE, '')
   end
 
-  def remove_signature
-    self.include?("\n") ? self.split("\n")[0] : self
+  # Removes signatures from text messages so the bot can correctly understand them
+  def strip_after_newline
+    Stealth.config.strip_after_newline ? self.split("\n", 2).first : self
   end
 
 end
