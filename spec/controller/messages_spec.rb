@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 require 'spec_helper'
 
 describe Stealth::Controller::Messages do
@@ -16,6 +15,7 @@ describe Stealth::Controller::Messages do
   describe "normalized_msg" do
     let(:padded_msg) { '  Hello World! 👋  ' }
     let(:weird_case_msg) { 'Oh BaBy Oh BaBy' }
+    let(:signed_msg) { "Yes\n--- My signature ---" }
 
     it 'should normalize blank-padded messages' do
       test_controller.current_message.message = padded_msg
@@ -25,6 +25,12 @@ describe Stealth::Controller::Messages do
     it 'should normalize differently cased messages' do
       test_controller.current_message.message = weird_case_msg
       expect(test_controller.normalized_msg).to eq('OH BABY OH BABY')
+    end
+
+    it 'should strip message after a newline if strip_after_newline=true' do
+      Stealth.config.strip_after_newline = true
+      test_controller.current_message.message = signed_msg
+      expect(test_controller.normalized_msg).to eq('YES')
     end
   end
 
