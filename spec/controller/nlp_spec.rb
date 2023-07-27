@@ -51,6 +51,7 @@ describe Stealth::Controller::Nlp do
       end
 
       let(:nlp_result) { Stealth::Nlp::Result.new(result: {}) }
+      let(:signed_msg) { "Yes\n--- My signature ---" }
 
       it 'should call understand on the NLP client' do
         expect(@luis_client_dbl).to receive(:understand).with(query: 'Hello World!').and_return(nlp_result)
@@ -85,6 +86,13 @@ describe Stealth::Controller::Nlp do
         expect(@luis_client_dbl).to receive(:understand).exactly(2).times.with(query: 'Hello World!').and_return(nlp_result)
         controller.perform_nlp!
         controller.nlp_result = nil
+        controller.perform_nlp!
+      end
+
+      it 'should strip the NLP query after a newline if strip_after_newline=true' do
+        Stealth.config.strip_after_newline = true
+        controller.current_message.message = signed_msg
+        expect(@luis_client_dbl).to receive(:understand).once.with(query: 'Yes').and_return(nlp_result)
         controller.perform_nlp!
       end
     end

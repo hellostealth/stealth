@@ -22,7 +22,7 @@ module Stealth
           @nlp_result ||= begin
             nlp_client = nlp_client_klass.new
             @nlp_result = @current_message.nlp_result = nlp_client.understand(
-              query: current_message.message
+              query: current_message.message.strip_after_newline
             )
 
             if Stealth.config.log_all_nlp_results

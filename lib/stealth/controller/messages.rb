@@ -47,7 +47,7 @@ module Stealth
         end
 
         def normalized_msg
-          @normalized_msg ||= current_message.message.normalize
+          @normalized_msg ||= current_message.message.strip_after_newline.normalize
         end
 
         # Converts homophones into alpha-ordinals
@@ -138,7 +138,6 @@ module Stealth
               "Cannot use `#{reserved_homophones_used.join(', ')}`. Reserved for homophones."
             )
           end
-
           # Before checking content, match against our ordinals
           if idx = message_is_an_ordinal?
             return messages[idx] unless messages[idx].nil?

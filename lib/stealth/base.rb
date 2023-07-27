@@ -74,8 +74,10 @@ module Stealth
       autoload_ignore_paths: [],                        # paths to exclude from eager and hot reloading
       nlp_integration: nil,                             # NLP service to use, defaults to none
       log_all_nlp_results: false,                       # log NLP service requests; useful for debugging/improving NLP models
-      auto_insert_delays: true                          # automatically insert delays/typing indicators between all replies
+      auto_insert_delays: true,                         # automatically insert delays/typing indicators between all replies
+      strip_after_newline: false                        # strips all characters after a newline when set to true; useful for removing text signatures
     }
+
     defaults.each { |option, default| config.set_default(option, default) }
   end
 
