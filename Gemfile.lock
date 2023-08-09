@@ -25,8 +25,7 @@ GEM
     i18n (1.13.0)
       concurrent-ruby (~> 1.0)
     minitest (5.18.0)
-    mock_redis (0.36.0)
-      ruby2_keywords
+    mock_redis (0.37.0)
     multi_json (1.15.0)
     mustermann (3.0.0)
       ruby2_keywords (~> 0.0.1)
