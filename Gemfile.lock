@@ -14,22 +14,32 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (7.0.5)
+    activesupport (7.1.1)
+      base64
+      bigdecimal
       concurrent-ruby (~> 1.0, >= 1.0.2)
+      connection_pool (>= 2.2.5)
+      drb
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
+      mutex_m
       tzinfo (~> 2.0)
+    base64 (0.1.1)
+    bigdecimal (3.1.4)
     concurrent-ruby (1.2.2)
     connection_pool (2.4.1)
     diff-lcs (1.5.0)
-    i18n (1.13.0)
+    drb (2.1.1)
+      ruby2_keywords
+    i18n (1.14.1)
       concurrent-ruby (~> 1.0)
-    minitest (5.18.0)
+    minitest (5.20.0)
     mock_redis (0.36.0)
       ruby2_keywords
     multi_json (1.15.0)
     mustermann (3.0.0)
       ruby2_keywords (~> 0.0.1)
+    mutex_m (0.1.2)
     nio4r (2.5.9)
     oj (3.14.3)
     puma (6.3.0)
