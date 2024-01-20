@@ -10,6 +10,9 @@ module Stealth
     class ReplyFormatNotSupported < Errors
     end
 
+    class EmptyReply < Errors
+    end
+
     class ServiceImpaired < Errors
     end
 

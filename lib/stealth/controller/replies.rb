@@ -234,6 +234,18 @@ module Stealth
               raise(Stealth::Errors::ReplyNotFound, "Could not find reply: '#{reply_path}'")
             end
 
+            if file_contents.blank?
+              raise(
+                Stealth::Errors::EmptyReply,
+                "Empty reply template: '#{reply_path}'. Most likely you forgot to add content in this template."
+              )
+            elsif !YAML.load(file_contents)
+              raise(
+                Stealth::Errors::EmptyReply,
+                "Empty reply template: '#{reply_path}'. Most likely you have commented out the content in this template."
+              )
+            end
+
             return file_contents, selected_preprocessor
           end
 
