@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'puma', '~> 6.0'
   s.add_dependency 'redis', '~> 5.0'
   s.add_dependency 'sidekiq', '~> 7.0'
-  s.add_dependency 'sinatra', '>= 2', '< 4'
+  s.add_dependency 'sinatra', '>= 2', '< 5'
   s.add_dependency 'thor', '~> 1.0'
   s.add_dependency 'zeitwerk', '~> 2.6'
 
