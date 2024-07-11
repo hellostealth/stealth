@@ -10,3 +10,4 @@
 .yardoc
 doc/
 *.gem
+/test/dummy
