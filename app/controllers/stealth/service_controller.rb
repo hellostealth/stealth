@@ -8,7 +8,7 @@ module Stealth
 
       case service
       when 'bandwidth'
-        handle_bandwidth
+        handle_bandwidth(request)
       # else
       # WIP will add more services here...
       end
@@ -16,15 +16,17 @@ module Stealth
 
     private
 
-    def handle_bandwidth
-      bandwidth_config = Stealth.configurations[:bandwidth]
-      account_id = bandwidth_config.account_id
-      api_username = bandwidth_config.api_username
-      api_password = bandwidth_config.api_password
-      application_id = bandwidth_config.application_id
+    def handle_bandwidth(request)
+      event_type = Stealth::Services::Bandwidth::EventHandler.determine_event_type(request)
 
-      # WIP will trigger the stealth-bandwidth driver here...
+      case event_type
+      when :text_message_receive
+        Stealth.trigger_event(:text_message, :receive, request)
+      # when :text_message_unsubscribe
+      end
+
       head :no_content
     end
+
   end
 end
