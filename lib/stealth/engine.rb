@@ -4,6 +4,7 @@ module Stealth
 
     initializer 'stealth' do
       require 'stealth/services/bandwidth/event_handler'
+      require 'stealth/services/bandwidth/service_message'
     end
   end
 end

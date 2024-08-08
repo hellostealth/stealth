@@ -17,11 +17,11 @@ module Stealth
     private
 
     def handle_bandwidth(request)
-      event_type = Stealth::Services::Bandwidth::EventHandler.determine_event_type(request)
+      event = Stealth::Services::Bandwidth::EventHandler.determine_event_type(request)
 
-      case event_type
+      case event[:type]
       when :text_message_receive
-        Stealth.trigger_event(:text_message, :receive, request)
+        Stealth.trigger_event(:text_message, :receive, event[:service_message])
       # when :text_message_unsubscribe
       end
 

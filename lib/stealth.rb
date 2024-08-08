@@ -3,6 +3,7 @@ require "stealth/engine"
 require "stealth/configuration/bandwidth"
 require "stealth/event_manager"
 require "stealth/event_triggers"
+require "stealth/service_message"
 
 module Stealth
   class << self
