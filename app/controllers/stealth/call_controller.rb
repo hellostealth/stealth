@@ -1,9 +1,9 @@
 module Stealth
-  class ServiceController < ApplicationController
+  class CallController < ApplicationController
     # skip the default Rails CSRF protection for webhook calls...
-    skip_before_action :verify_authenticity_token, only: [:service_handler]
+    skip_before_action :verify_authenticity_token, only: [:call_handler]
 
-    def service_handler
+    def call_handler
       service = params[:service]
 
       case service
@@ -17,11 +17,11 @@ module Stealth
     private
 
     def handle_bandwidth(request)
-      event = Stealth::Services::Bandwidth::EventHandler.determine_event_type(request)
+      event = Stealth::Services::Bandwidth::CallEventHandler.determine_event_type(request)
 
       case event[:type]
-      when :text_message_receive
-        Stealth.trigger_event(:text_message, :receive, event[:service_message])
+      when :call_received
+        Stealth.trigger_event(:phone_call, :call_receive, event[:service_call])
       # when :text_message_unsubscribe
       end
 

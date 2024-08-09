@@ -4,5 +4,6 @@ Stealth::Engine.routes.draw do
   # Stealth Development Dashboard
 
   # Stealth Default Service Routes
-  post 'incoming/:service', to: 'service#service_handler'
+  post ':service/text_received', to: 'message#message_handler'
+  post ':service/call_received', to: 'call#call_handler'
 end
