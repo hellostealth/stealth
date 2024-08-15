@@ -19,6 +19,8 @@ require "stealth/event_triggers"
 require "stealth/service_message"
 require "stealth/service_call"
 
+require "stealth/dispatcher"
+
 require 'stealth/errors'
 require 'stealth/logger'
 # require 'stealth/core_ext'

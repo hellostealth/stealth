@@ -2,5 +2,5 @@
 
 Stealth::Engine.routes.draw do
   # Stealth Default Service Routes
-  post '/stealth/:service', to: 'event_dispatcher#dispatch'
+  post ':service', to: 'event#dispatch'
 end
