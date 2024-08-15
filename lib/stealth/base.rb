@@ -19,9 +19,9 @@ require "stealth/event_triggers"
 require "stealth/service_message"
 require "stealth/service_call"
 
-# require 'stealth/errors'
+require 'stealth/errors'
+require 'stealth/logger'
 # require 'stealth/core_ext'
-# require 'stealth/logger'
 # require 'stealth/configuration'
 # require 'stealth/reloader'
 
@@ -145,11 +145,7 @@ require 'stealth/services/base_client'
 #       end
 #     end
 #   end
-
-#   def self.tid
-#     Thread.current.object_id.to_s(36)
-#   end
-
+#
 #   def self.require_directory(directory)
 #     for_each_file_in(directory) { |file| require_relative(file) }
 #   end
@@ -172,6 +168,8 @@ module Stealth
 
     attr_accessor :configurations
 
+    # Setup & Service Driver Configuration
+
     def setup
       self.configurations ||= {}
       yield(self)
@@ -186,6 +184,13 @@ module Stealth
       self.configurations[:slack] ||= Slack.new
       yield(configurations[:slack])
     end
+
+    # Thread Management
+
+    def self.tid
+      Thread.current.object_id.to_s(36)
+    end
+  
 
   end
 end
