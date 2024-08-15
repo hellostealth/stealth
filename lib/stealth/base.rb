@@ -9,20 +9,18 @@
 
 # core
 require 'stealth/version'
-require "stealth/engine"
-require "stealth/version"
-require "stealth/engine"
 require "stealth/configuration/bandwidth"
 require "stealth/configuration/slack"
+
 require "stealth/event_manager"
 require "stealth/event_triggers"
-require "stealth/service_message"
-require "stealth/service_call"
+
+require "stealth/service_event"
 
 require "stealth/dispatcher"
-
 require 'stealth/errors'
 require 'stealth/logger'
+
 # require 'stealth/core_ext'
 # require 'stealth/configuration'
 # require 'stealth/reloader'
