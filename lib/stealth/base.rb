@@ -163,6 +163,12 @@ require 'stealth/services/base_client'
 # end
 
 module Stealth
+
+  # Thread Management
+  def self.tid
+    Thread.current.object_id.to_s(36)
+  end    
+
   class << self
     include Stealth::EventTriggers
 
@@ -184,13 +190,6 @@ module Stealth
       self.configurations[:slack] ||= Slack.new
       yield(configurations[:slack])
     end
-
-    # Thread Management
-
-    def self.tid
-      Thread.current.object_id.to_s(36)
-    end
-  
 
   end
 end
