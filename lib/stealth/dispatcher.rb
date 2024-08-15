@@ -44,7 +44,7 @@ module Stealth
 
       def service_handler_klass
         begin
-          Kernel.const_get("Stealth::Services::#{service.classify}::MessageHandler")
+          Kernel.const_get("Stealth::Services::#{service.classify}::EventHandler")
         rescue NameError
           raise(Stealth::Errors::ServiceNotRecognized, "The service '#{service}' was not recognized")
         end
