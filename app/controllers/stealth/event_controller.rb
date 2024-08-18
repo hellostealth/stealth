@@ -28,18 +28,6 @@ module Stealth
 
     private
 
-    # def handle_bandwidth(request)
-    #   event = Stealth::Services::Bandwidth::ServiceEventHandler.determine_event_type(request)
-
-    #   case event[:type]
-    #   when :text_received
-    #     Stealth.trigger_event(:text_message, :receive, event[:service_message])
-    #   # when :text_message_unsubscribe
-    #   end
-
-    #   head :no_content
-    # end
-
     def get_helpers_from_request(request)
       request.env.select do |header, value|
         %w[HTTP_HOST].include?(header)
