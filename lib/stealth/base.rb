@@ -9,6 +9,7 @@
 
 # core
 require 'stealth/version'
+require "stealth/engine"
 require "stealth/configuration/bandwidth"
 require "stealth/configuration/slack"
 
@@ -167,7 +168,7 @@ module Stealth
   # Thread Management
   def self.tid
     Thread.current.object_id.to_s(36)
-  end    
+  end
 
   class << self
     include Stealth::EventTriggers
