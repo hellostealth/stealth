@@ -9,16 +9,16 @@
 
 # core
 require 'stealth/version'
-require "stealth/engine"
-require "stealth/configuration/bandwidth"
-require "stealth/configuration/slack"
+require 'stealth/engine'
+require 'stealth/configuration/bandwidth'
+require 'stealth/configuration/slack'
 
-require "stealth/event_manager"
-require "stealth/event_triggers"
+require 'stealth/event_manager'
+require 'stealth/event_triggers'
 
-require "stealth/service_event"
+require 'stealth/service_event'
 
-require "stealth/dispatcher"
+require 'stealth/dispatcher'
 require 'stealth/errors'
 require 'stealth/logger'
 
