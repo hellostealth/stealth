@@ -16,8 +16,7 @@ require 'stealth/configuration/slack'
 require 'stealth/event_manager'
 require 'stealth/event_triggers'
 
-require 'stealth/service_event'
-
+require 'stealth/jobs'
 require 'stealth/dispatcher'
 require 'stealth/errors'
 require 'stealth/logger'
@@ -28,6 +27,8 @@ require 'stealth/logger'
 
 # services
 require 'stealth/services/base_client'
+require 'stealth/services/jobs/handle_event_job'
+require 'stealth/service_event'
 
 # helpers
 # require 'stealth/helpers/redis'
