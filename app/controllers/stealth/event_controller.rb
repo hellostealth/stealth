@@ -14,19 +14,23 @@ module Stealth
         plain_params.merge!(json_params)
       end
 
-      dispatcher = Stealth::Dispatcher.new(
-        service: plain_params["service"],
-        params: plain_params,
-        headers: get_helpers_from_request(request)
-      )
-
       # headers 'Access-Control-Allow-Origin' => '*',
       #         'Access-Control-Allow-Methods' => ['OPTIONS', 'GET', 'POST']
 
       # content_type 'audio/mp3'
       # content_type 'application/octet-stream'
 
-      dispatcher.coordinate
+      if webhook_subscription?(plain_params)
+        render plain: plain_params['challenge']
+      else
+        dispatcher = Stealth::Dispatcher.new(
+          service: plain_params["service"],
+          params: plain_params,
+          headers: get_helpers_from_request(request)
+        )
+
+        dispatcher.coordinate
+      end
     end
 
     private
@@ -35,6 +39,10 @@ module Stealth
       request.env.select do |header, value|
         %w[HTTP_HOST].include?(header)
       end
+    end
+
+    def webhook_subscription?(plain_params)
+      plain_params['type'] == 'url_verification'
     end
 
   end

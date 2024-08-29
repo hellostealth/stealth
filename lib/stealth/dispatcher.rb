@@ -31,11 +31,14 @@ module Stealth
     def process
       service_event = service_handler.process
 
-      if Stealth.config.transcript_logging
-        log_incoming_message(service_event)
-      end
+      # if Stealth.config.transcript_logging
+      #   log_incoming_message(service_event)
+      # end
 
       # This is where we will need to route to the new eventing system
+      # event_type -> text_message, event -> receive
+      Stealth.trigger_event(service_event.event_type, service_event.event, service_event)
+
       # bot_controller = BotController.new(service_message: service_message)
       # bot_controller.route
     end
