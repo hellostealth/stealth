@@ -10,7 +10,8 @@ module Stealth
                   :message,         # Message content
                   :payload,         # Payload information
                   :attachments,     # Attachments
-                  :location         # Location information
+                  :location,        # Location information
+                  :reaction         # Reaction to a message
 
     def initialize(service:)
       @service = service

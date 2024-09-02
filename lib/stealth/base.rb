@@ -13,6 +13,7 @@ require 'stealth/engine'
 require 'stealth/configuration/bandwidth'
 require 'stealth/configuration/slack'
 
+require 'stealth/event_mapping'
 require 'stealth/event_manager'
 require 'stealth/event_triggers'
 
