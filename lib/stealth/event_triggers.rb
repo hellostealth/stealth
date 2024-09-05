@@ -1,7 +1,7 @@
 module Stealth
   module EventTriggers
-    def trigger_event(event_name, action_name, request)
-      EventManager.trigger_event(event_name, action_name, request)
+    def trigger_event(event_name, action_name, service_event)
+      EventManager.trigger_event(event_name, action_name, service_event)
     end
 
     def event(event_name, &block)

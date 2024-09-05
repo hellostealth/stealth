@@ -14,9 +14,21 @@ module Stealth
       @events[@current_event][action_name] = block
     end
 
-    def trigger_event(event_name, action_name, request)
+    def trigger_event(event_name, action_name, service_event)
       if @events[event_name] && @events[event_name][action_name]
-        @events[event_name][action_name].call(request)
+
+        controller = Stealth::Controller.new(service_event: service_event)
+
+        block_context = Class.new do
+          define_method(:current_message) { controller.current_message }
+          define_method(:current_service) { controller.current_service }
+          define_method(:current_session_id) { controller.current_session_id }
+          define_method(:current_session) { controller.current_session }
+          define_method(:has_location?) { controller.has_location? }
+          define_method(:has_attachments?) { controller.has_attachments? }
+        end.new
+
+        block_context.instance_exec(service_event, &@events[event_name][action_name])
       else
         Rails.logger.warn "No handler for #{event_name} #{action_name}"
       end
@@ -30,8 +42,8 @@ module Stealth
       instance.register_event(event_name, &block)
     end
 
-    def self.trigger_event(event_name, action_name, request)
-      instance.trigger_event(event_name, action_name, request)
+    def self.trigger_event(event_name, action_name, service_event)
+      instance.trigger_event(event_name, action_name, service_event)
     end
 
   end
