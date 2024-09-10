@@ -19,6 +19,7 @@ GEM
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
       tzinfo (~> 2.0)
+    bigdecimal (3.1.8)
     concurrent-ruby (1.2.2)
     connection_pool (2.4.1)
     diff-lcs (1.5.0)
@@ -31,7 +32,10 @@ GEM
     mustermann (3.0.0)
       ruby2_keywords (~> 0.0.1)
     nio4r (2.5.9)
-    oj (3.14.3)
+    oj (3.16.6)
+      bigdecimal (>= 3.0)
+      ostruct (>= 0.2)
+    ostruct (0.6.0)
     puma (6.3.0)
       nio4r (~> 2.0)
     rack (2.2.7)
@@ -78,7 +82,7 @@ PLATFORMS
 
 DEPENDENCIES
   mock_redis (~> 0.22)
-  oj (~> 3.14)
+  oj (~> 3.16)
   rack-test (~> 2.0)
   rspec (~> 3.9)
   stealth!
