@@ -21,6 +21,7 @@ require 'stealth/helpers/redis'
 
 require 'stealth/event_mapping'
 require 'stealth/event_manager'
+require 'stealth/event_context'
 require 'stealth/event_triggers'
 require 'stealth/jobs'
 require 'stealth/dispatcher'

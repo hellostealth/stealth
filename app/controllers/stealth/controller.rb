@@ -34,7 +34,6 @@ module Stealth
 
     def current_session
       @current_session ||= Stealth::Session.new(id: current_session_id)
-      puts "current_session: #{@current_session}"
     end
 
     # def previous_session
