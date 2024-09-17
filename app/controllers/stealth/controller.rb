@@ -217,7 +217,7 @@ module Stealth
           @current_session.set_session(new_flow: flow, new_state: state)
         end
 
-        Stealth.trigger_flow(flow, state)
+        # Stealth.trigger_flow(flow, state)
       end
 
       def store_back_to_session(flow:, state:)
