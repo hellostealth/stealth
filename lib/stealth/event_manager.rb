@@ -16,21 +16,19 @@ module Stealth
 
     def trigger_event(event_name, action_name, service_event)
       if @events[event_name] && @events[event_name][action_name]
-        controller = Stealth::Controller.new(service_event: service_event)
 
         # Always use DslEventContext if defined in the Rails app
-        # DslEventContext inherits from Stealth::EventContext
-        context_class = defined?(Stealth::DslEventContext) ? Stealth::DslEventContext : Stealth::EventContext
-        context = context_class.new(controller)
+        context_class = defined?(Stealth::DslEventContext) ? Stealth::DslEventContext : Stealth::Controller
+        context = context_class.new(service_event: service_event)
 
         block_context = Class.new do
           def initialize(context)
             @context = context
           end
 
-          def method_missing(method_name, *args, &block)
+          def method_missing(method_name, *args, **kwargs, &block)
             if @context.respond_to?(method_name)
-              @context.public_send(method_name, *args, &block)
+              @context.public_send(method_name, *args, **kwargs, &block)
             else
               super
             end
@@ -58,7 +56,5 @@ module Stealth
     def self.trigger_event(event_name, action_name, service_event)
       instance.trigger_event(event_name, action_name, service_event)
     end
-
   end
 end
-

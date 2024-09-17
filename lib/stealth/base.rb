@@ -23,7 +23,10 @@ require 'stealth/event_mapping'
 require 'stealth/event_manager'
 require 'stealth/event_context'
 require 'stealth/event_triggers'
+require 'stealth/flow_manager'
+require 'stealth/flow_triggers'
 require 'stealth/jobs'
+require 'stealth/lock'
 require 'stealth/dispatcher'
 require 'stealth/session'
 require 'stealth/errors'
@@ -169,6 +172,7 @@ module Stealth
 
   class << self
     include Stealth::EventTriggers
+    include Stealth::FlowTriggers
 
     attr_accessor :configurations
 
