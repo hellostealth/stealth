@@ -41,7 +41,7 @@ module Stealth
 
         block_context.instance_exec(service_event, &@events[event_name][action_name])
       else
-        Rails.logger.warn "No handler for #{event_name} #{action_name}"
+        Stealth::Logger.l(topic: 'user', message: "No handler for #{event_name} #{action_name}")
       end
     end
 

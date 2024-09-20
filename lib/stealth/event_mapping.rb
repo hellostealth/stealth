@@ -3,8 +3,8 @@ module Stealth
     MAPPING = {
       # slack-specific event mappings
       'slack' => {
-        'text_received' => { event_type: :text_message, event: :receive },
-        'reaction_received' => { event_type: :text_message, event: :reaction }
+        'text_received' => { event_type: :slack, event: :receive },
+        'reaction_received' => { event_type: :slack, event: :reaction }
       }
     }.freeze
 

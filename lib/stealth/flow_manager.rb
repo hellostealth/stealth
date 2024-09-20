@@ -1,24 +1,24 @@
 module Stealth
   class FlowManager
     def initialize
-      @flows = {}
+      @flows = Hash.new { |hash, key| hash[key] = {} }
     end
 
     def register_flow(flow_name, &block)
-      Rails.logger.info "Registering flow: #{flow_name}"
-      @current_flow = flow_name
+      @current_flow = flow_name.to_sym
       instance_eval(&block)
       @current_flow = nil
     end
 
     def state(state_name, &block)
-      Rails.logger.info "Registering state: #{state_name} for flow: #{@current_flow}"
       @flows[@current_flow] ||= {}
-      @flows[@current_flow][state_name] = block
+      @flows[@current_flow][state_name.to_sym] = block
     end
 
     def trigger_flow(flow_name, state_name, service_event)
-      Rails.logger.info "Attempting to trigger flow: #{flow_name} with state: #{state_name}"
+      flow_name = flow_name.to_sym
+      state_name = state_name.to_sym
+
       if @flows[flow_name] && @flows[flow_name][state_name]
         block = @flows[flow_name][state_name]
 
@@ -46,7 +46,7 @@ module Stealth
 
         block_context.instance_exec(service_event, &block)
       else
-        Rails.logger.warn "No flow found for #{flow_name} with state #{state_name}"
+        Stealth::Logger.l(topic: 'user', message: "No flow found for #{flow_name} with state #{state_name}")
       end
     end
 

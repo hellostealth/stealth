@@ -207,6 +207,16 @@ module Stealth
       raise Stealth::Errors::Halted
     end
 
+    def say(message)
+      # Sanitize the message input to prevent code execution
+      sanitized_message = ActionView::Base.full_sanitizer.sanitize(message)
+
+      service_handler_klass = Kernel.const_get("Stealth::Services::#{@current_service.classify}::ReplyHandler")
+      service_handler = service_handler_klass.new(@current_message)
+
+      service_handler.reply(sanitized_message)
+    end
+
     private
 
       def update_session(flow:, state:)
@@ -217,7 +227,6 @@ module Stealth
           @current_session.set_session(new_flow: flow, new_state: state)
         end
 
-        # Stealth.trigger_flow(flow, state)
       end
 
       def store_back_to_session(flow:, state:)
@@ -230,12 +239,14 @@ module Stealth
 
       def step(flow:, state:, pos: nil)
         update_session(flow: flow, state: state)
+        Stealth.trigger_flow(flow, state, @current_message)
+
         @progressed = :stepped
         @flow_controller = nil
         @current_flow = current_session.flow
         @pos = pos
 
-        flow_controller.action(action: state)
+        # flow_controller.action(action: state)
       end
 
       def get_flow_and_state(session: nil, flow: nil, state: nil, slug: nil)
@@ -244,7 +255,6 @@ module Stealth
         end
 
         if session.present?
-          puts "session: #{session.inspect}"
           return session.flow_string, session.state_string
         end
 
