@@ -24,6 +24,8 @@ require 'stealth/event_manager'
 require 'stealth/event_triggers'
 require 'stealth/flow_manager'
 require 'stealth/flow_triggers'
+require 'stealth/reply_manager'
+require 'stealth/reply_triggers'
 require 'stealth/reply'
 require 'stealth/jobs'
 require 'stealth/lock'
@@ -173,6 +175,7 @@ module Stealth
   class << self
     include Stealth::EventTriggers
     include Stealth::FlowTriggers
+    include Stealth::ReplyTriggers
 
     attr_accessor :configurations
 

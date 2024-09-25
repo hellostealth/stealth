@@ -70,6 +70,12 @@ module Stealth
         #   release_lock!
         # end
 
+        def send_replies
+          flow = current_session.flow_string
+          state = current_session.state_string
+          Stealth.trigger_reply(flow, state, current_message)
+        end
+
         def say(reply)
           reply_instance = Stealth::Reply.new(unstructured_reply: reply)
 
