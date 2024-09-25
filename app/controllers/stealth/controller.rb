@@ -2,6 +2,7 @@ module Stealth
   class Controller < ApplicationController
 
     include Stealth::Controller::InterruptDetect
+    include Stealth::Controller::Replies
 
     attr_reader :current_message, :current_service, :current_session_id
     attr_accessor :nlp_result, :pos
@@ -205,16 +206,6 @@ module Stealth
 
     def halt!
       raise Stealth::Errors::Halted
-    end
-
-    def say(message)
-      # Sanitize the message input to prevent code execution
-      sanitized_message = ActionView::Base.full_sanitizer.sanitize(message)
-
-      service_handler_klass = Kernel.const_get("Stealth::Services::#{@current_service.classify}::ReplyHandler")
-      service_handler = service_handler_klass.new(@current_message)
-
-      service_handler.reply(sanitized_message)
     end
 
     private
