@@ -11,3 +11,4 @@
 doc/
 *.gem
 /test/dummy
+.idea
