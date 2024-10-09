@@ -6,6 +6,7 @@ require 'yaml'
 require 'sidekiq'
 require 'redis'
 require 'active_support/all'
+require 'spectre'
 
 # core
 require 'stealth/version'
@@ -13,6 +14,7 @@ require 'stealth/engine'
 require 'stealth/configuration/configuration'
 require 'stealth/configuration/bandwidth'
 require 'stealth/configuration/slack'
+require 'stealth/configuration/spectre_configuration'
 # require 'stealth/core_ext'
 # require 'stealth/reloader'
 
@@ -195,6 +197,16 @@ module Stealth
       yield(configurations[:slack])
     end
 
+    def configure_spectre
+      self.configurations[:spectre] ||= SpectreConfiguration.new
+      yield(configurations[:spectre])
+
+      Spectre.setup do |config|
+        config.api_key = configurations[:spectre].api_key
+        config.llm_provider = configurations[:spectre].llm_provider
+        config.root = File.expand_path('../../', __dir__)
+      end
+    end
   end
 end
 
