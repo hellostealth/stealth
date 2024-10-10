@@ -16,8 +16,8 @@ module Stealth
                       intents.select { |intent| categories.include?(intent[:category]) }
                     end
 
-          system_prompt = Spectre::Prompt.render(template: 'intent_identifier/system', locals: { intents: intents })
-          user_prompt = Spectre::Prompt.render(template: 'intent_identifier/user', locals: { message: message })
+          system_prompt = Spectre::Prompt.render(template: 'intent_classifier/system', locals: { intents: intents })
+          user_prompt = Spectre::Prompt.render(template: 'intent_classifier/user', locals: { message: message })
           messages = [{ role: 'system', content: system_prompt }, { role: 'user', content: user_prompt }]
           json_schema = {
             name: "intent_response",
