@@ -42,6 +42,8 @@ module Stealth
         private
 
         def self.get_intents_file
+          return Stealth::Intents::INTENTS if defined?(Stealth::Intents::INTENTS)
+
           file_path = Pathname.new(Stealth.root).join('stealth', 'intents.rb')
 
           raise "Intents file not found: #{file_path}" unless File.exist?(file_path)
