@@ -37,6 +37,7 @@ require 'stealth/logger'
 # services
 require 'stealth/services/base_client'
 require 'stealth/services/jobs/handle_event_job'
+require 'stealth/services/jobs/scheduled_reply_job'
 require 'stealth/service_event'
 
 module Stealth
