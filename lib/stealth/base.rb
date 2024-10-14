@@ -204,7 +204,6 @@ module Stealth
       Spectre.setup do |config|
         config.api_key = configurations[:spectre].api_key
         config.llm_provider = configurations[:spectre].llm_provider
-        config.root = File.expand_path('../../', __dir__)
       end
     end
   end
