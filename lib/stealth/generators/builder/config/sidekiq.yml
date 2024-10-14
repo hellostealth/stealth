@@ -1,3 +1,0 @@
----
-:verbose: false
-:concurrency:  <%= ENV.fetch('SIDEKIQ_CONCURRENCY', 5).to_i %>

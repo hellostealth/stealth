@@ -1,7 +1,0 @@
-class <%= name.classify.pluralize %>Controller < BotController
-
-  def ask_example
-    send_replies
-  end
-
-end

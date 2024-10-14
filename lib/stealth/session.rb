@@ -48,15 +48,15 @@ module Stealth
       [flow, state].join(SLUG_SEPARATOR)
     end
 
-    def flow
-      return nil if flow_string.blank?
+    # def flow
+    #   return nil if flow_string.blank?
 
-      @flow ||= FlowMap.new.init(flow: flow_string, state: state_string)
-    end
+    #   @flow ||= FlowMap.new.init(flow: flow_string, state: state_string)
+    # end
 
-    def state
-      flow&.current_state
-    end
+    # def state
+    #   flow&.current_state
+    # end
 
     def flow_string
       session&.split(SLUG_SEPARATOR)&.first
