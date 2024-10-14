@@ -1,0 +1,11 @@
+system: |
+  Label a users message from a conversation with an intent.
+  Reply ONLY with the name of the intent.
+
+  The intent should be one of the following:
+  <% @intents.each do |intent| %>
+    - <%= intent[:name] %>
+      <%= "Description: #{intent[:description]}" %>
+      <%= "Examples: #{intent[:examples]}" %>
+  <% end %>
+  If the intent is not in the list, reply with nothing.
