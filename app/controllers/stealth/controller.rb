@@ -3,6 +3,7 @@ module Stealth
 
     include Stealth::Controller::InterruptDetect
     include Stealth::Controller::Replies
+    include Stealth::Controller::IntentClassifier
 
     attr_reader :current_message, :current_service, :current_session_id
     attr_accessor :nlp_result, :pos

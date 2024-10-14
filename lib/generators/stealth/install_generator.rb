@@ -24,6 +24,7 @@ module Stealth
         directory "flows", "stealth/flows"
         directory "models", "stealth/models"
         directory "replies", "stealth/replies"
+        template "intents.rb", "stealth"
       end
 
       def show_readme
