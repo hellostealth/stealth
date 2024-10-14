@@ -26,7 +26,7 @@ module Stealth
         dispatcher = Stealth::Dispatcher.new(
           service: plain_params["service"],
           params: plain_params,
-          headers: get_helpers_from_request(request)
+          headers: get_headers_from_request(request)
         )
 
         dispatcher.coordinate
@@ -35,7 +35,7 @@ module Stealth
 
     private
 
-    def get_helpers_from_request(request)
+    def get_headers_from_request(request)
       request.env.select do |header, value|
         %w[HTTP_HOST].include?(header)
       end
