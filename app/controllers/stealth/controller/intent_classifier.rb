@@ -17,8 +17,7 @@ module Stealth
                     end
 
           system_prompt = Spectre::Prompt.render(template: 'intent_classifier/system', locals: { intents: intents })
-          user_prompt = Spectre::Prompt.render(template: 'intent_classifier/user', locals: { message: message })
-          messages = [{ role: 'system', content: system_prompt }, { role: 'user', content: user_prompt }]
+          messages = [{ role: 'system', content: system_prompt }, { role: 'user', content: message }]
           json_schema = {
             name: "intent_response",
             schema: {
