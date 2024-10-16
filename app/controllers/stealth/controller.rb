@@ -138,7 +138,7 @@ module Stealth
       Stealth::Logger.l(topic: "session", message: "User #{current_session_id}: scheduled session step to #{flow}->#{state} at #{timestamp.iso8601}")
     end
 
-    def step_to(session: nil, flow: nil, state: nil, slug: nil, pos: nil)
+    def step_to(session: nil, flow: nil, state: nil, slug: nil, pos: nil, locals: nil)
       if interrupt_detected?
         run_interrupt_action
         return :interrupted
@@ -150,10 +150,10 @@ module Stealth
         state: state,
         slug: slug
       )
-      step(flow: flow, state: state, pos: pos)
+      step(flow: flow, state: state, pos: pos, locals: locals)
     end
 
-    def update_session_to(session: nil, flow: nil, state: nil, slug: nil)
+    def update_session_to(session: nil, flow: nil, state: nil, slug: nil, locals: nil)
       if interrupt_detected?
         run_interrupt_action
         return :interrupted
@@ -166,7 +166,7 @@ module Stealth
         slug: slug
       )
 
-      update_session(flow: flow, state: state)
+      update_session(flow: flow, state: state, locals: locals)
     end
 
     def set_back_to(session: nil, flow: nil, state: nil, slug: nil)
@@ -211,11 +211,12 @@ module Stealth
 
     private
 
-      def update_session(flow:, state:)
+      def update_session(flow:, state:, locals: nil)
         @progressed = :updated_session
         @current_session = Session.new(id: current_session_id)
 
         unless current_session.flow_string == flow.to_s && current_session.state_string == state.to_s
+          @current_session.locals = locals
           @current_session.set_session(new_flow: flow, new_state: state)
         end
 
@@ -229,8 +230,8 @@ module Stealth
         back_to_session.set_session(new_flow: flow, new_state: state)
       end
 
-      def step(flow:, state:, pos: nil)
-        update_session(flow: flow, state: state)
+      def step(flow:, state:, pos: nil, locals: nil)
+        update_session(flow: flow, state: state, locals: locals)
         Stealth.trigger_flow(flow, state, @current_message)
 
         @progressed = :stepped
