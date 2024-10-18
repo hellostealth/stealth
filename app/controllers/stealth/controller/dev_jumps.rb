@@ -10,8 +10,7 @@ module Stealth
       extend ActiveSupport::Concern
 
       included do
-        private
-
+        
         def dev_jump_detected?
           if Stealth.env.development?
             if current_message.message&.match(DEV_JUMP_REGEX)
