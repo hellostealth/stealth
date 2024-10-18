@@ -10,3 +10,5 @@
 .yardoc
 doc/
 *.gem
+/test/dummy
+.idea

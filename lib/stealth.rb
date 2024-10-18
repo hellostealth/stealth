@@ -1,1 +1,2 @@
 require 'stealth/base'
+

@@ -9,7 +9,7 @@ module Stealth
     SLUG_SEPARATOR = '->'
 
     attr_reader :flow, :state, :id, :type
-    attr_accessor :session
+    attr_accessor :session, :locals
 
     # Session types:
     #   - :primary
@@ -27,6 +27,7 @@ module Stealth
           )
         end
 
+        load_previous_locals
         get_session
       end
 
@@ -48,15 +49,15 @@ module Stealth
       [flow, state].join(SLUG_SEPARATOR)
     end
 
-    def flow
-      return nil if flow_string.blank?
+    # def flow
+    #   return nil if flow_string.blank?
 
-      @flow ||= FlowMap.new.init(flow: flow_string, state: state_string)
-    end
+    #   @flow ||= FlowMap.new.init(flow: flow_string, state: state_string)
+    # end
 
-    def state
-      flow&.current_state
-    end
+    # def state
+    #   flow&.current_state
+    # end
 
     def flow_string
       session&.split(SLUG_SEPARATOR)&.first
@@ -64,6 +65,23 @@ module Stealth
 
     def state_string
       session&.split(SLUG_SEPARATOR)&.last
+    end
+
+    def load_previous_locals
+      return if primary_session?
+
+      @locals = get_key(previous_locals_key)
+
+      if @locals.present? && @locals.is_a?(String)
+        begin
+          @locals = JSON.parse(@locals)
+        rescue JSON::ParserError => e
+          Stealth::Logger.l(
+            topic: "session",
+            message: "User #{id}: failed to parse locals from Redis -> #{@locals}, error: #{e.message}"
+          )
+        end
+      end
     end
 
     def get_session
@@ -175,6 +193,10 @@ module Stealth
         [id, 'previous'].join('-')
       end
 
+      def previous_locals_key
+        [id, 'previous', 'locals'].join('-')
+      end
+
       def back_to_key
         [id, 'back_to'].join('-')
       end
@@ -193,10 +215,8 @@ module Stealth
             message: "User #{id}: setting to #{existing_session}"
           )
 
-          persist_key(
-            key: previous_session_key,
-            value: existing_session
-          )
+          persist_key(key: previous_session_key, value: existing_session)
+          persist_key(key: previous_locals_key, value: @locals.to_json)
         end
       end
 
