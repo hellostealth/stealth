@@ -12,6 +12,7 @@ module Stealth
                   :attachments,     # Attachments
                   :location,        # Location information
                   :reaction         # Reaction to a message
+                  :selected_option  # Selected action from an interactive message
 
     def initialize(service:)
       @service = service

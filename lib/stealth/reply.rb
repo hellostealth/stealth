@@ -26,10 +26,13 @@ module Stealth
 
     def determine_reply_type
       # WIP
-      if @reply.key?(:text)
+      # makes lighter synthax for text reply type
+      if @reply.key?(:text) || @reply[:reply_type] == 'text'
         'text'
-      elsif @reply.key?(:image_url)
+      elsif @reply[:reply_type] == 'image'
         'image'
+      elsif @reply[:reply_type] == 'dropdown'
+        'dropdown'
       else
         raise "No valid reply type found."
       end

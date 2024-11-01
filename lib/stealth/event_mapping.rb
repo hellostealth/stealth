@@ -4,7 +4,8 @@ module Stealth
       # slack-specific event mappings
       'slack' => {
         'text_received' => { event_type: :slack, event: :receive },
-        'reaction_received' => { event_type: :slack, event: :reaction }
+        'reaction_received' => { event_type: :slack, event: :reaction },
+        'interactive_response_received' => { event_type: :slack, event: :interactive_response }
       }
     }.freeze
 
