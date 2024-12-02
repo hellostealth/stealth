@@ -69,34 +69,25 @@ module Stealth
     end
 
     def load_previous_locals
-      return if primary_session?
-
-      @locals = get_key(previous_locals_key)
-
-      if @locals.present? && @locals.is_a?(String)
-        begin
-          @locals = JSON.parse(@locals)
-        rescue JSON::ParserError => e
-          Stealth::Logger.l(
-            topic: "session",
-            message: "User #{id}: failed to parse locals from Redis -> #{@locals}, error: #{e.message}"
-          )
-        end
-      end
+      load_json_from_redis(previous_locals_key, :@locals)
     end
 
     def load_before_update_session_to_locals
+      load_json_from_redis(before_update_session_to_locals_key, :@before_update_session_to_locals)
+    end
+
+    def load_json_from_redis(key, instance_variable_name)
       return if primary_session?
 
-      @before_update_session_to_locals = get_key(before_update_session_to_locals_key)
+      value = get_key(key)
 
-      if @before_update_session_to_locals.present? && @before_update_session_to_locals.is_a?(String)
+      if value.present? && value.is_a?(String)
         begin
-          @before_update_session_to_locals = JSON.parse(@before_update_session_to_locals)
+          instance_variable_set(instance_variable_name, JSON.parse(value))
         rescue JSON::ParserError => e
           Stealth::Logger.l(
             topic: "session",
-            message: "User #{id}: failed to parse locals from Redis -> #{@before_update_session_to_locals}, error: #{e.message}"
+            message: "User #{id}: failed to parse locals from Redis -> #{value}, error: #{e.message}"
           )
         end
       end
