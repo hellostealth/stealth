@@ -17,7 +17,7 @@ module Stealth
     # end
 
     class ScheduledReplyJob < Stealth::Jobs
-      sidekiq_options queue: :stealth_replies, retry: false
+      sidekiq_options queue: :stealth3_replies, retry: false
 
       def perform(service, user_id, flow, state, target_id=nil)
         service_event = ServiceEvent.new(service: service)
