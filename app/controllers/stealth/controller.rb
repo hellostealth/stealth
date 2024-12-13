@@ -143,12 +143,10 @@ module Stealth
         slug: slug
       )
       current_session.locals = locals
-      persist_locals(current_session)
 
       # Workaround for update_session_to.
       if previous_session.before_update_session_to_locals.present?
         current_session.locals = previous_session.before_update_session_to_locals
-        persist_locals(current_session)
       end
       step(flow: flow, state: state, pos: pos)
     end
@@ -210,10 +208,6 @@ module Stealth
     end
 
     private
-      def persist_locals(session)
-        redis_key = [session.id, 'locals'].join('-')
-        $redis.set(redis_key, session.locals.to_json)
-      end
 
       def update_session(flow:, state:)
         @progressed = :updated_session
