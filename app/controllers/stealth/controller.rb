@@ -16,7 +16,6 @@ module Stealth
       @current_session_id = service_event.sender_id
       @current_session = Stealth::Session.new(id: current_session_id)
       @previous_session = Stealth::Session.new(id: current_session_id, type: :previous)
-      # @nlp_result = service_event.nlp_result
       @pos = pos
       @progressed = false
     end
@@ -32,61 +31,6 @@ module Stealth
     def progressed?
       @progressed
     end
-
-    # def flow_controller
-    #   @flow_controller ||= begin
-    #     flow_controller = [current_session.flow_string, 'controller'].join('_').classify.constantize
-    #     flow_controller.new(service_message: @current_message, pos: @pos)
-    #   end
-    # end
-
-    # def action(action: nil)
-    #   begin
-    #     # Grab a mutual exclusion lock on the session
-    #     lock_session!(
-    #       session_slug: Session.slugify(
-    #         flow: current_session.flow_string,
-    #         state: current_session.state_string
-    #       )
-    #     )
-
-    #     @action_name = action
-    #     @action_name ||= current_session.state_string
-
-    #     # Check if the user needs to be redirected
-    #     if current_session.flow.current_state.redirects_to.present?
-    #       Stealth::Logger.l(
-    #         topic: "redirect",
-    #         message: "From #{current_session.session} to #{current_session.flow.current_state.redirects_to.session}"
-    #       )
-    #       step_to(session: current_session.flow.current_state.redirects_to, pos: @pos)
-    #       return
-    #     end
-
-    #     run_callbacks :action do
-    #       begin
-    #         flow_controller.send(@action_name)
-    #         unless flow_controller.progressed?
-    #           run_catch_all(reason: 'Did not send replies, update session, or step')
-    #         end
-    #       rescue Stealth::Errors::Halted
-    #         Stealth::Logger.l(
-    #           topic: "session",
-    #           message: "User #{current_session_id}: session halted."
-    #         )
-    #       rescue StandardError => e
-    #         if e.class == Stealth::Errors::UnrecognizedMessage
-    #           run_unrecognized_message(err: e)
-    #         else
-    #           run_catch_all(err: e)
-    #         end
-    #       end
-    #     end
-    #   ensure
-    #     # Release mutual exclusion lock on the session
-    #     release_lock!
-    #   end
-    # end
 
     def step_to_in(delay, session: nil, flow: nil, state: nil, slug: nil)
       if interrupt_detected?
@@ -228,11 +172,7 @@ module Stealth
         Stealth.trigger_flow(flow, state, @current_message)
 
         @progressed = :stepped
-        # @flow_controller = nil
-        # @current_flow = current_session.flow
         @pos = pos
-
-        # flow_controller.action(action: state)
       end
 
       def get_flow_and_state(session: nil, flow: nil, state: nil, slug: nil)
@@ -250,10 +190,6 @@ module Stealth
         end
 
         if flow.present?
-          # Deprecated
-          # if state.blank?
-          #   state = FlowMap.flow_spec[flow.to_sym].states.keys.first.to_s
-          # end
 
           if state.blank?
             # Access the existing FlowManager instance that has the registered flows
