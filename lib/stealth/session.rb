@@ -215,22 +215,6 @@ module Stealth
       end
 
       def store_current_to_previous(existing_session:)
-        # Prevent previous_session from becoming current_session
-        # if session == existing_session
-        #   Stealth::Logger.l(
-        #     topic: "previous_session",
-        #     message: "User #{id}: skipping setting to #{session}"\
-        #              ' because it is the same as current_session'
-        #   )
-        # else
-        #   Stealth::Logger.l(
-        #     topic: "previous_session",
-        #     message: "User #{id}: setting to #{existing_session}"
-        #   )
-        #
-        #   persist_key(key: previous_session_key, value: existing_session)
-        #   persist_key(key: previous_locals_key, value: @locals.to_json)
-        # end
         Stealth::Logger.l(
           topic: "previous_session",
           message: "User #{id}: setting to #{existing_session}"
