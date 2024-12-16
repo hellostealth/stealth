@@ -9,7 +9,7 @@ module Stealth
     SLUG_SEPARATOR = '->'
 
     attr_reader :flow, :state, :id, :type
-    attr_accessor :session, :locals
+    attr_accessor :session, :locals, :before_update_session_to_locals
 
     # Session types:
     #   - :primary
@@ -28,6 +28,7 @@ module Stealth
         end
 
         load_previous_locals
+        load_before_update_session_to_locals
         get_session
       end
 
@@ -68,17 +69,25 @@ module Stealth
     end
 
     def load_previous_locals
+      load_json_from_redis(previous_locals_key, :@locals)
+    end
+
+    def load_before_update_session_to_locals
+      load_json_from_redis(before_update_session_to_locals_key, :@before_update_session_to_locals)
+    end
+
+    def load_json_from_redis(key, instance_variable_name)
       return if primary_session?
 
-      @locals = get_key(previous_locals_key)
+      value = get_key(key)
 
-      if @locals.present? && @locals.is_a?(String)
+      if value.present? && value.is_a?(String)
         begin
-          @locals = JSON.parse(@locals)
+          instance_variable_set(instance_variable_name, JSON.parse(value))
         rescue JSON::ParserError => e
           Stealth::Logger.l(
             topic: "session",
-            message: "User #{id}: failed to parse locals from Redis -> #{@locals}, error: #{e.message}"
+            message: "User #{id}: failed to parse locals from Redis -> #{value}, error: #{e.message}"
           )
         end
       end
@@ -197,27 +206,23 @@ module Stealth
         [id, 'previous', 'locals'].join('-')
       end
 
+      def before_update_session_to_locals_key
+        [id, 'before_update_session_to', 'locals'].join('-')
+      end
+
       def back_to_key
         [id, 'back_to'].join('-')
       end
 
       def store_current_to_previous(existing_session:)
-        # Prevent previous_session from becoming current_session
-        if session == existing_session
-          Stealth::Logger.l(
-            topic: "previous_session",
-            message: "User #{id}: skipping setting to #{session}"\
-                     ' because it is the same as current_session'
-          )
-        else
-          Stealth::Logger.l(
-            topic: "previous_session",
-            message: "User #{id}: setting to #{existing_session}"
-          )
+        Stealth::Logger.l(
+          topic: "previous_session",
+          message: "User #{id}: setting to #{existing_session}"
+        )
 
-          persist_key(key: previous_session_key, value: existing_session)
-          persist_key(key: previous_locals_key, value: @locals.to_json)
-        end
+        persist_key(key: previous_session_key, value: existing_session)
+        persist_key(key: previous_locals_key, value: @locals.to_json)
+        persist_key(key: before_update_session_to_locals_key, value: @before_update_session_to_locals.to_json)
       end
 
   end

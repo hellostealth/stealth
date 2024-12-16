@@ -4,17 +4,18 @@ module Stealth
     include Stealth::Controller::InterruptDetect
     include Stealth::Controller::DevJumps
     include Stealth::Controller::Replies
-    include Stealth::Controller::IntentClassifier    
+    include Stealth::Controller::IntentClassifier
 
     attr_reader :current_message, :current_service, :current_session_id
-    attr_accessor :nlp_result, :pos
+    attr_accessor :nlp_result, :pos, :current_session, :previous_session
 
     def initialize(service_event:, pos: nil)
       super()
       @current_message = service_event
       @current_service = service_event.service
       @current_session_id = service_event.sender_id
-      # @nlp_result = service_event.nlp_result
+      @current_session = Stealth::Session.new(id: current_session_id)
+      @previous_session = Stealth::Session.new(id: current_session_id, type: :previous)
       @pos = pos
       @progressed = false
     end
@@ -30,72 +31,6 @@ module Stealth
     def progressed?
       @progressed
     end
-
-    # def flow_controller
-    #   @flow_controller ||= begin
-    #     flow_controller = [current_session.flow_string, 'controller'].join('_').classify.constantize
-    #     flow_controller.new(service_message: @current_message, pos: @pos)
-    #   end
-    # end
-
-    def current_session
-      @current_session ||= Stealth::Session.new(id: current_session_id)
-    end
-
-    def previous_session
-      @previous_session ||= Stealth::Session.new(
-        id: current_session_id,
-        type: :previous
-      )
-    end
-
-    # def action(action: nil)
-    #   begin
-    #     # Grab a mutual exclusion lock on the session
-    #     lock_session!(
-    #       session_slug: Session.slugify(
-    #         flow: current_session.flow_string,
-    #         state: current_session.state_string
-    #       )
-    #     )
-
-    #     @action_name = action
-    #     @action_name ||= current_session.state_string
-
-    #     # Check if the user needs to be redirected
-    #     if current_session.flow.current_state.redirects_to.present?
-    #       Stealth::Logger.l(
-    #         topic: "redirect",
-    #         message: "From #{current_session.session} to #{current_session.flow.current_state.redirects_to.session}"
-    #       )
-    #       step_to(session: current_session.flow.current_state.redirects_to, pos: @pos)
-    #       return
-    #     end
-
-    #     run_callbacks :action do
-    #       begin
-    #         flow_controller.send(@action_name)
-    #         unless flow_controller.progressed?
-    #           run_catch_all(reason: 'Did not send replies, update session, or step')
-    #         end
-    #       rescue Stealth::Errors::Halted
-    #         Stealth::Logger.l(
-    #           topic: "session",
-    #           message: "User #{current_session_id}: session halted."
-    #         )
-    #       rescue StandardError => e
-    #         if e.class == Stealth::Errors::UnrecognizedMessage
-    #           run_unrecognized_message(err: e)
-    #         else
-    #           run_catch_all(err: e)
-    #         end
-    #       end
-    #     end
-    #   ensure
-    #     # Release mutual exclusion lock on the session
-    #     release_lock!
-    #   end
-    # end
 
     def step_to_in(delay, session: nil, flow: nil, state: nil, slug: nil)
       if interrupt_detected?
@@ -151,7 +86,13 @@ module Stealth
         state: state,
         slug: slug
       )
-      step(flow: flow, state: state, pos: pos, locals: locals)
+      current_session.locals = locals
+
+      # Workaround for update_session_to.
+      if previous_session.before_update_session_to_locals.present?
+        current_session.locals = previous_session.before_update_session_to_locals
+      end
+      step(flow: flow, state: state, pos: pos)
     end
 
     def update_session_to(session: nil, flow: nil, state: nil, slug: nil, locals: nil)
@@ -166,8 +107,8 @@ module Stealth
         state: state,
         slug: slug
       )
-
-      update_session(flow: flow, state: state, locals: locals)
+      current_session.before_update_session_to_locals = locals
+      update_session(flow: flow, state: state)
     end
 
     def set_back_to(session: nil, flow: nil, state: nil, slug: nil)
@@ -212,15 +153,10 @@ module Stealth
 
     private
 
-      def update_session(flow:, state:, locals: nil)
+      def update_session(flow:, state:)
         @progressed = :updated_session
-        @current_session = Session.new(id: current_session_id)
 
-        unless current_session.flow_string == flow.to_s && current_session.state_string == state.to_s
-          @current_session.locals = locals
-          @current_session.set_session(new_flow: flow, new_state: state)
-        end
-
+        current_session.set_session(new_flow: flow, new_state: state)
       end
 
       def store_back_to_session(flow:, state:)
@@ -231,16 +167,12 @@ module Stealth
         back_to_session.set_session(new_flow: flow, new_state: state)
       end
 
-      def step(flow:, state:, pos: nil, locals: nil)
-        update_session(flow: flow, state: state, locals: locals)
+      def step(flow:, state:, pos: nil)
+        update_session(flow: flow, state: state)
         Stealth.trigger_flow(flow, state, @current_message)
 
         @progressed = :stepped
-        # @flow_controller = nil
-        # @current_flow = current_session.flow
         @pos = pos
-
-        # flow_controller.action(action: state)
       end
 
       def get_flow_and_state(session: nil, flow: nil, state: nil, slug: nil)
@@ -258,10 +190,6 @@ module Stealth
         end
 
         if flow.present?
-          # Deprecated
-          # if state.blank?
-          #   state = FlowMap.flow_spec[flow.to_sym].states.keys.first.to_s
-          # end
 
           if state.blank?
             # Access the existing FlowManager instance that has the registered flows
