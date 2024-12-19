@@ -34,7 +34,7 @@ module Stealth
           response = Spectre::provider_module::Completions.create(messages: messages, json_schema: json_schema)
           response_intent = JSON.parse(response[:content])['intent']
           if response_intent.present?
-            { intent: response_intent, tool: intents.select{ |intent| intent[:name] == response_intent }.first[:tool] }
+            { intent: response_intent, tool: intents.select{ |intent| intent[:name] == response_intent }.first&.dig(:tool) }
           end
         end
 
