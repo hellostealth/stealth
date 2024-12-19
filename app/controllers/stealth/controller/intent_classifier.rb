@@ -12,9 +12,7 @@ module Stealth
           return nil if message.nil?
 
           intents = self.class.get_intents_file
-          intents = if categories.present?
-                      intents.select { |intent| categories.include?(intent[:category]) }
-                    end
+          intents = intents.select { |intent| categories.include?(intent[:category]) } if categories.present?
 
           system_prompt = Spectre::Prompt.render(template: 'intent_classifier/system', locals: { intents: intents })
           messages = [{ role: 'system', content: system_prompt }, { role: 'user', content: message }]
