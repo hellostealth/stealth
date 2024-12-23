@@ -76,7 +76,7 @@ module Stealth
           Stealth.trigger_reply(flow, state, current_message)
         end
 
-        def say(reply, thread_id: nil)
+        def say(reply, thread_id: nil, delete_message: nil)
           reply_instance = Stealth::Reply.new(unstructured_reply: reply)
 
           handler = reply_handler.new(
@@ -86,7 +86,12 @@ module Stealth
 
           formatted_reply = handler.send(reply_instance.reply_type)
 
-          client = service_client.new(reply: formatted_reply, thread_id: thread_id)
+          client = service_client.new(
+            reply: formatted_reply,
+            thread_id: thread_id,
+            delete_message: delete_message
+          )
+
           client.transmit
         end
 
