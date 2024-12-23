@@ -76,7 +76,10 @@ module Stealth
           Stealth.trigger_reply(flow, state, current_message)
         end
 
-        def say(reply, thread_id: nil, delete_message: nil)
+        def say(reply, **args)
+          thread_id = args[:thread_id]
+          delete_message = args[:delete_message]
+
           reply_instance = Stealth::Reply.new(unstructured_reply: reply)
 
           handler = reply_handler.new(
