@@ -3,11 +3,12 @@
 
 module Stealth
   class Reply
-    attr_reader :reply_type, :reply
+    attr_reader :reply_type, :reply, :sanitized
 
-    def initialize(unstructured_reply:)
+    def initialize(unstructured_reply:, sanitized: true)
       @reply = sanitize_reply(unstructured_reply)
       @reply_type = determine_reply_type
+      @sanitized = sanitized
     end
 
     def [](key)
@@ -50,7 +51,11 @@ module Stealth
     end
 
     def sanitize(value)
-      ActionView::Base.full_sanitizer.sanitize(value)
+      if sanitized
+        ActionView::Base.full_sanitizer.sanitize(value)
+      else
+        value
+      end
     end
   end
 end
