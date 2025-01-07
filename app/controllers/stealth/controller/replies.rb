@@ -77,9 +77,6 @@ module Stealth
         end
 
         def say(reply, **args)
-          thread_id = args[:thread_id]
-          delete_message = args[:delete_message]
-
           reply_instance = Stealth::Reply.new(unstructured_reply: reply)
 
           handler = reply_handler.new(
@@ -91,15 +88,23 @@ module Stealth
 
           client = service_client.new(
             reply: formatted_reply,
-            thread_id: thread_id,
-            delete_message: delete_message
+            **service_args(**args)
           )
 
           client.transmit
         end
 
 
-        # private
+        private
+
+        def service_args(**args)
+          case current_service
+            when 'slack'
+            return {
+              thread_id: args.fetch(:thread_id, nil)
+            }
+          end
+        end
 
         # def voice_service?
         #   current_service.match?(/voice/)
