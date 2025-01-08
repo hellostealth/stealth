@@ -77,7 +77,17 @@ module Stealth
         end
 
         def say(reply, **args)
-          reply_instance = Stealth::Reply.new(unstructured_reply: reply)
+          perform_action(:transmit, reply, **args)
+        end
+
+        def delete_message(message_id)
+          perform_action(:delete, { message_id: message_id })
+        end
+
+        private
+
+        def perform_action(action, reply_content, **args)
+          reply_instance = Stealth::Reply.new(unstructured_reply: reply_content)
 
           handler = reply_handler.new(
             recipient_id: current_message.sender_id,
@@ -86,16 +96,9 @@ module Stealth
 
           formatted_reply = handler.send(reply_instance.reply_type)
 
-          client = service_client.new(
-            reply: formatted_reply,
-            **service_args(**args)
-          )
-
-          client.transmit
+          client = service_client.new(reply: formatted_reply, **service_args(**args))
+          client.public_send(action)
         end
-
-
-        private
 
         def service_args(**args)
           case current_service
