@@ -27,7 +27,9 @@ module Stealth
     def determine_reply_type
       # WIP
       # makes lighter synthax for text reply type
-      if @reply.key?(:text) || @reply[:reply_type] == 'text'
+      if @reply.key?(:message_id)
+        'delete'
+      elsif @reply.key?(:text) || @reply[:reply_type] == 'text'
         'text'
       elsif @reply[:reply_type] == 'image'
         'image'
