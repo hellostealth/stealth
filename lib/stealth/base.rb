@@ -44,7 +44,7 @@ require 'stealth/service_event'
 
 module Stealth
   def self.env
-    @env ||= ActiveSupport::StringInquirer.new(ENV['STEALTH_ENV'] || 'development')
+    @env ||= ActiveSupport::StringInquirer.new(ENV['STEALTH_ENV'] || Rails.env)
   end
 
   def self.root
