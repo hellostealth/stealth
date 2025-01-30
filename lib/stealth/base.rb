@@ -203,19 +203,15 @@ module Stealth
       yield(configurations[:spectre])
 
       Spectre.setup do |config|
-        config.llm_provider = configurations[:spectre].llm_provider
+        config.default_llm_provider = configurations[:spectre].default_llm_provider
 
-        if configurations[:spectre].llm_provider == :openai
-          config.openai do |openai|
-            openai.api_key = configurations[:spectre].api_key
-          end
-        elsif configurations[:spectre].llm_provider == :ollama
-          config.ollama do |ollama|
-            ollama.api_key = configurations[:spectre].api_key
-            ollama.host = configurations[:spectre].ollama_host
-          end
-        else
-          raise ArgumentError, "Unsupported LLM provider: #{configurations[:spectre].llm_provider}"
+        config.openai do |openai|
+          openai.api_key = configurations[:spectre].openai_api_key
+        end
+
+        config.ollama do |ollama|
+          ollama.api_key = configurations[:spectre].ollama_api_key
+          ollama.host = configurations[:spectre].ollama_host
         end
       end
     end
