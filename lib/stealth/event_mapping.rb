@@ -8,6 +8,9 @@ module Stealth
         'reaction_received' => { event_type: :slack, event: :reaction },
         'interactive_response_received' => { event_type: :slack, event: :interactive_response },
         'assistant_thread_started' => { event_type: :slack, event: :assistant_thread_started },
+      },
+      'bandwidth' => {
+        'text_received' => { event_type: :bandwidth, event: :receive }
       }
     }.freeze
 
