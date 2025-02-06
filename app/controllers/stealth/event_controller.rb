@@ -8,9 +8,14 @@ module Stealth
 
       # Convert params to a JSON-serializable plain Ruby hash
       plain_params = JSON.parse(params.to_json)
-
       if request.env['CONTENT_TYPE']&.match(/application\/json/i)
         json_params = MultiJson.load(request.body.read)
+        json_params = json_params.is_a?(Array) ? json_params.first : json_params
+
+        if plain_params["_json"].is_a?(Array)
+          plain_params["_json"] = plain_params["_json"].first
+        end
+
         plain_params.merge!(json_params)
       end
 
