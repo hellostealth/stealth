@@ -15,7 +15,7 @@ require 'stealth/configuration/configuration'
 require 'stealth/configuration/bandwidth'
 require 'stealth/configuration/slack'
 require 'stealth/configuration/spectre_configuration'
-# require 'stealth/core_ext'
+require 'stealth/core_ext'
 # require 'stealth/reloader'
 
 # helpers
@@ -41,6 +41,8 @@ require 'stealth/services/base_client'
 require 'stealth/services/jobs/handle_event_job'
 require 'stealth/services/jobs/scheduled_reply_job'
 require 'stealth/service_event'
+require 'stealth/nlp/result'
+require 'stealth/nlp/client'
 
 module Stealth
   def self.env

@@ -1,10 +1,13 @@
 module Stealth
   class Controller < ApplicationController
 
-    include Stealth::Controller::InterruptDetect
     include Stealth::Controller::DevJumps
-    include Stealth::Controller::Replies
+    include Stealth::Controller::DynamicDelay
     include Stealth::Controller::IntentClassifier
+    include Stealth::Controller::InterruptDetect
+    include Stealth::Controller::Messages
+    include Stealth::Controller::Nlp
+    include Stealth::Controller::Replies
 
     attr_reader :current_message, :current_service, :current_session_id
     attr_accessor :nlp_result, :pos, :current_session, :previous_session
