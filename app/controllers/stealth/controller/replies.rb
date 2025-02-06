@@ -76,7 +76,7 @@ module Stealth
           Stealth.trigger_reply(flow, state, current_message)
         end
 
-        def say(reply, **args)
+        def say(reply = nil, **args)
           perform_action(:transmit, reply, **args)
         end
 
@@ -87,7 +87,20 @@ module Stealth
         private
 
         def perform_action(action, reply_content, **args)
-          reply_instance = Stealth::Reply.new(unstructured_reply: reply_content)
+          if args[:reply_type] == "delay"
+            insert_delay(duration: args[:duration]) if args[:duration]
+            @previous_reply = Stealth::Reply.new(unstructured_reply: args) # Store delay reply
+            return
+          end
+
+          full_reply = args.merge(text: reply_content)
+          reply_instance = Stealth::Reply.new(unstructured_reply: full_reply)
+
+          # Check if auto-inserting delays is enabled and if the previous reply was not a delay
+          if Stealth.config.auto_insert_delays && !@previous_reply&.delay?
+            # If it's the first reply or the previous reply wasn't a custom delay, insert a dynamic delay
+            insert_delay(duration: "dynamic")
+          end
 
           handler = reply_handler.new(
             recipient_id: current_message.sender_id,
@@ -95,10 +108,11 @@ module Stealth
           )
 
           formatted_reply = handler.send(reply_instance.reply_type)
-
           client = service_client.new(reply: formatted_reply, **service_args(**args))
           client.public_send(action)
+          @previous_reply = reply_instance
         end
+
 
         def service_args(**args)
           case current_service
@@ -106,6 +120,8 @@ module Stealth
             return {
               thread_id: args.fetch(:thread_id, nil)
             }
+          else
+            {}
           end
         end
 
@@ -145,21 +161,21 @@ module Stealth
         #   end
         # end
 
-        # def insert_delay(duration:)
-        #   begin
-        #     sleep_duration = if duration == 'dynamic'
-        #       dyn_duration = dynamic_delay(previous_reply: @previous_reply)
+        def insert_delay(duration:)
+          begin
+            sleep_duration = if duration == 'dynamic'
+              dyn_duration = dynamic_delay(previous_reply: @previous_reply)
 
-        #       Stealth.config.dynamic_delay_muliplier * dyn_duration
-        #     else
-        #       Float(duration)
-        #     end
+              Stealth.config.dynamic_delay_muliplier * dyn_duration
+            else
+              Float(duration)
+            end
 
-        #     sleep(sleep_duration)
-        #   rescue ArgumentError, TypeError
-        #     raise(ArgumentError, 'Invalid duration specified. Duration must be a Numeric')
-        #   end
-        # end
+            sleep(sleep_duration)
+          rescue ArgumentError, TypeError
+            raise(ArgumentError, 'Invalid duration specified. Duration must be a Numeric')
+          end
+        end
 
         # def load_service_reply(custom_reply:, inline:)
         #   if inline.present?

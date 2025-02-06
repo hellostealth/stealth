@@ -7,7 +7,7 @@ module Stealth
 
     def initialize(unstructured_reply:)
       @reply = sanitize_reply(unstructured_reply)
-      @reply_type = determine_reply_type
+      @reply_type = @reply[:reply_type]
     end
 
     def [](key)
@@ -24,36 +24,26 @@ module Stealth
 
     private
 
-    def determine_reply_type
-      # WIP
-      # makes lighter synthax for text reply type
-      if @reply.key?(:message_id)
-        'delete'
-      elsif @reply.key?(:text) || @reply[:reply_type] == 'text'
-        'text'
-      elsif @reply[:reply_type] == 'image'
-        'image'
-      elsif @reply[:reply_type] == 'dropdown'
-        'dropdown'
-      else
-        raise "No valid reply type found."
-      end
-    end
-
     def sanitize_reply(reply)
-      # If the reply is a String, default it to a text reply
-      if reply.is_a?(String)
-        { text: sanitize(reply) }
-      elsif reply.is_a?(Hash)
-        reply.transform_values { |value| sanitize(value) }
-      else
-        raise "Invalid reply type. Must be a String or Hash."
+      raise "Invalid reply format. Expected a Hash." unless reply.is_a?(Hash)
+
+      sanitized_reply = reply.transform_values { |value| sanitize(value) }
+
+      # Default reply_type to "text" only if it's still missing
+      sanitized_reply[:reply_type] ||= "text" if sanitized_reply[:reply_type].nil?
+
+      if sanitized_reply[:suggestions].is_a?(String)
+        sanitized_reply[:suggestions] = JSON.parse(sanitized_reply[:suggestions])
       end
+
+      sanitized_reply
     end
 
     def sanitize(value)
+      return value unless value.is_a?(String)
       ActionView::Base.full_sanitizer.sanitize(value)
     end
+
   end
 end
 
