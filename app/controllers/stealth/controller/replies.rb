@@ -110,6 +110,9 @@ module Stealth
           formatted_reply = handler.send(reply_instance.reply_type)
           client = service_client.new(reply: formatted_reply, **service_args(**args))
           client.public_send(action)
+
+          log_reply(reply_instance, handler) if Stealth.config.transcript_logging
+
           @previous_reply = reply_instance
         end
 
@@ -317,34 +320,33 @@ module Stealth
         #   end
         # end
 
-        # def log_reply(reply, reply_handler)
-        #   message = case reply.reply_type
-        #             when 'text'
-        #               if reply_handler.respond_to?(:translated_reply)
-        #                 reply_handler.translated_reply
-        #               else
-        #                 reply['text']
-        #               end
-        #             when 'speech'
-        #               reply['speech']
-        #             when 'ssml'
-        #               reply['ssml']
-        #             when 'delay'
-        #               '<typing indicator>'
-        #             else
-        #               "<#{reply.reply_type}>"
-        #             end
+        def log_reply(reply, reply_handler)
+          message = case reply.reply_type
+                    when 'text'
+                      if reply_handler.respond_to?(:translated_reply)
+                        reply_handler.translated_reply
+                      else
+                        reply['text']
+                      end
+                    when 'speech'
+                      reply['speech']
+                    when 'ssml'
+                      reply['ssml']
+                    when 'delay'
+                      '<typing indicator>'
+                    else
+                      "<#{reply.reply_type}>"
+                    end
 
-        #   Stealth::Logger.l(
-        #     topic: current_service,
-        #     message: "User #{current_session_id} -> Sending: #{message}"
-        #   )
+          Stealth::Logger.l(
+            topic: current_service,
+            message: "User #{current_session_id} -> Sending: #{message}"
+          )
 
-        #   message
-        # end
+          message
+        end
 
       end # instance methods
-
     end
   end
 end
