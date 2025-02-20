@@ -8,6 +8,8 @@ module Stealth
     include Stealth::Controller::Messages
     include Stealth::Controller::Nlp
     include Stealth::Controller::Replies
+    include Stealth::Controller::CatchAll
+    include Stealth::Controller::UnrecognizedMessage
 
     attr_reader :current_message, :current_service, :current_session_id
     attr_accessor :nlp_result, :pos, :current_session, :previous_session
@@ -170,12 +172,41 @@ module Stealth
         back_to_session.set_session(new_flow: flow, new_state: state)
       end
 
+      # def step(flow:, state:, pos: nil)
+      #   update_session(flow: flow, state: state)
+      #   Stealth.trigger_flow(flow, state, @current_message)
+
+      #   @progressed = :stepped
+      #   @pos = pos
+      # end
+
       def step(flow:, state:, pos: nil)
         update_session(flow: flow, state: state)
-        Stealth.trigger_flow(flow, state, @current_message)
 
-        @progressed = :stepped
-        @pos = pos
+        begin
+          # Grab a mutual exclusion lock on the session
+          lock_session!(
+            session_slug: Stealth::Session.slugify(flow: flow, state: state)
+          )
+
+          Stealth.trigger_flow(flow, state, @current_message)
+
+          @progressed = :stepped
+          @pos = pos
+        rescue Stealth::Errors::Halted
+          Stealth::Logger.l(
+            topic: "session",
+            message: "User #{current_session_id}: session halted."
+          )
+        rescue StandardError => e
+          if e.is_a?(Stealth::Errors::UnrecognizedMessage)
+            run_unrecognized_message(err: e)
+          else
+            run_catch_all(err: e)
+          end
+        ensure
+          release_lock!
+        end
       end
 
       def get_flow_and_state(session: nil, flow: nil, state: nil, slug: nil)
@@ -215,6 +246,5 @@ module Stealth
           return current_session.flow_string, state.to_s
         end
       end
-
   end
 end

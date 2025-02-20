@@ -50,6 +50,14 @@ module Stealth
       end
     end
 
+    def flow_exists?(flow_name)
+      @flows.key?(flow_name.to_sym)
+    end
+
+    def state_exists?(flow_name, state_name)
+      @flows.dig(flow_name.to_sym, state_name.to_sym).present?
+    end
+
     def self.instance
       @instance ||= new
     end
