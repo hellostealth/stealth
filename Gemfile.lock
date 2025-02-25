@@ -6,6 +6,7 @@ PATH
       redis (~> 5.0)
       sidekiq (~> 7.0)
       spectre_ai (~> 1.2.0)
+      zeitwerk (~> 2.6)
 
 GEM
   remote: https://rubygems.org/
