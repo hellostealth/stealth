@@ -10,9 +10,18 @@ module Stealth
       @current_flow = nil
     end
 
-    def state(state_name, &block)
+    def state(state_name, **options, &block)
       @flows[@current_flow] ||= {}
-      @flows[@current_flow][state_name.to_sym] = block
+      @flows[@current_flow][state_name.to_sym] = { block: block, options: options }
+    end
+
+    def current_state(session)
+      return nil if session.flow.blank? || session.state.blank?
+
+      flow_states = @flows[session.flow_string.to_sym]
+      return nil unless flow_states
+
+      flow_states[session.state]
     end
 
     def trigger_flow(flow_name, state_name, service_event)
@@ -20,15 +29,18 @@ module Stealth
       state_name = state_name.to_sym
 
       if @flows[flow_name] && @flows[flow_name][state_name]
-        block = @flows[flow_name][state_name]
+        state_info = @flows[flow_name][state_name]
+        block = state_info[:block]
+        options = state_info[:options]
 
         # Always use DslEventContext if defined in the Rails app
         context_class = defined?(Stealth::DslEventContext) ? Stealth::DslEventContext : Stealth::Controller
         context = context_class.new(service_event: service_event)
 
         block_context = Class.new do
-          def initialize(context)
+          def initialize(context, options)
             @context = context
+            @options = options
           end
 
           def method_missing(method_name, *args, **kwargs, &block)
@@ -42,7 +54,11 @@ module Stealth
           def respond_to_missing?(method_name, include_private = false)
             @context.respond_to?(method_name) || super
           end
-        end.new(context)
+
+          def state_options
+            @options
+          end
+        end.new(context, options)
 
         block_context.instance_exec(service_event, &block)
       else

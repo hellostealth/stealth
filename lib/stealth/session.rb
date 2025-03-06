@@ -50,15 +50,36 @@ module Stealth
       [flow, state].join(SLUG_SEPARATOR)
     end
 
-    # def flow
-    #   return nil if flow_string.blank?
+    def flow
+      return nil if flow_string.blank?
+      return nil unless Stealth::FlowManager.instance.flow_exists?(flow_string.to_sym)
 
-    #   @flow ||= FlowMap.new.init(flow: flow_string, state: state_string)
-    # end
+      @flow ||= Stealth::FlowManager.instance.instance_variable_get(:@flows)[flow_string.to_sym]
+    end
 
-    # def state
-    #   flow&.current_state
-    # end
+    def state
+      return nil if flow.blank? || state_string.blank?
+
+      state_symbol = state_string.to_sym
+      return state_symbol if flow.key?(state_symbol)
+
+      nil
+    end
+
+    def current_state
+      Stealth::FlowManager.instance.current_state(self)
+    end
+
+    # Returns a new session pointing to the `fails_to` state if defined
+    def fails_to
+      return nil unless current_state&.dig(:options, :fails_to)
+      new_session = Stealth::Session.new(id: id)
+      new_session.session = self.class.canonical_session_slug(
+        flow: flow_string,
+        state: current_state.dig(:options, :fails_to).to_s
+      )
+      new_session
+    end
 
     def flow_string
       session&.split(SLUG_SEPARATOR)&.first
@@ -130,27 +151,26 @@ module Stealth
     end
 
     def +(steps)
-      return nil if flow.blank?
+      return nil if flow.blank? || state.blank?
       return self if steps.zero?
 
-      new_state = self.state + steps
-      new_session = Stealth::Session.new(id: self.id)
-      new_session.session = self.class.canonical_session_slug(
-        flow: self.flow_string,
-        state: new_state
-      )
+      states = flow.keys # Get all states in order
+      current_index = states.index(state)
+      return self unless current_index
+
+      new_index = current_index + steps
+      new_index = 0 if new_index.negative? # Ensure it doesn't go below the first state
+      return self if new_index >= states.size
+
+      new_state = states[new_index]
+      new_session = Stealth::Session.new(id: id)
+      new_session.session = self.class.canonical_session_slug(flow: flow_string, state: new_state)
 
       new_session
     end
 
     def -(steps)
-      return nil if flow.blank?
-
-      if steps < 0
-        return self + steps.abs
-      else
-        return self + (-steps)
-      end
+      self + (-steps)
     end
 
     def ==(other_session)
