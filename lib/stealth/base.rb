@@ -219,35 +219,3 @@ module Stealth
     end
   end
 end
-
-# require 'stealth/jobs'
-# require 'stealth/dispatcher'
-# require 'stealth/server'
-# require 'stealth/reply'
-# require 'stealth/scheduled_reply'
-# require 'stealth/service_reply'
-# require 'stealth/service_message'
-# require 'stealth/session'
-# require 'stealth/lock'
-# require 'stealth/nlp/result'
-# require 'stealth/nlp/client'
-# require 'stealth/controller/callbacks'
-# require 'stealth/controller/replies'
-# require 'stealth/controller/messages'
-# require 'stealth/controller/unrecognized_message'
-# require 'stealth/controller/catch_all'
-# require 'stealth/controller/helpers'
-# require 'stealth/controller/dynamic_delay'
-# require 'stealth/controller/interrupt_detect'
-# require 'stealth/controller/dev_jumps'
-# require 'stealth/controller/nlp'
-# require 'stealth/controller/controller'
-# require 'stealth/flow/base'
-# require 'stealth/services/base_client'
-
-# if defined?(ActiveRecord)
-#   require 'stealth/migrations/configurator'
-#   require 'stealth/migrations/generators'
-#   require 'stealth/migrations/railtie_config'
-#   require 'stealth/migrations/tasks'
-# end

@@ -172,14 +172,6 @@ module Stealth
         back_to_session.set_session(new_flow: flow, new_state: state)
       end
 
-      # def step(flow:, state:, pos: nil)
-      #   update_session(flow: flow, state: state)
-      #   Stealth.trigger_flow(flow, state, @current_message)
-
-      #   @progressed = :stepped
-      #   @pos = pos
-      # end
-
       def step(flow:, state:, pos: nil)
         update_session(flow: flow, state: state)
 
