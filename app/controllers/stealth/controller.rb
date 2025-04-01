@@ -7,6 +7,7 @@ module Stealth
     include Stealth::Controller::InterruptDetect
     include Stealth::Controller::Messages
     include Stealth::Controller::Nlp
+    include Stealth::Controller::Llm
     include Stealth::Controller::Replies
     include Stealth::Controller::CatchAll
     include Stealth::Controller::UnrecognizedMessage
@@ -172,14 +173,6 @@ module Stealth
         back_to_session.set_session(new_flow: flow, new_state: state)
       end
 
-      # def step(flow:, state:, pos: nil)
-      #   update_session(flow: flow, state: state)
-      #   Stealth.trigger_flow(flow, state, @current_message)
-
-      #   @progressed = :stepped
-      #   @pos = pos
-      # end
-
       def step(flow:, state:, pos: nil)
         update_session(flow: flow, state: state)
 
@@ -201,6 +194,8 @@ module Stealth
         rescue StandardError => e
           if e.is_a?(Stealth::Errors::UnrecognizedMessage)
             run_unrecognized_message(err: e)
+          elsif e.is_a?(Stealth::Errors::FlowTriggered)
+            redirect_to_llm_intent
           else
             run_catch_all(err: e)
           end

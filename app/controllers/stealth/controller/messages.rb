@@ -179,15 +179,29 @@ module Stealth
 
         def handle_mismatch(raise_on_mismatch)
           log_nlp_result unless Stealth.config.log_all_nlp_results # Already logged
+          return current_message.message unless raise_on_mismatch
 
-          if raise_on_mismatch
-            raise(
-              Stealth::Errors::UnrecognizedMessage,
-              "The reply '#{current_message.message}' was not recognized."
-            )
-          else
-            current_message.message
+          llm_response = perform_llm!
+          unless llm_response.present?
+            raise Stealth::Errors::UnrecognizedMessage, "The reply '#{current_message.message}' was not recognized."
           end
+
+          intent_name = llm_response[:intent].to_sym
+
+          if Stealth::FlowManager.instance.flow_exists?(intent_name)
+            Stealth::Logger.l(
+              topic: :llm,
+              message: "User #{current_session_id} -> Redirecting to flow '#{intent_name}'."
+            )
+            # Stops execution in the DSL state that triggered the mismatch if a recognized flow exists
+            raise Stealth::Errors::FlowTriggered, intent_name
+          end
+
+          Stealth::Logger.l(
+            topic: :llm,
+            message: "User #{current_session_id} -> No flow found for intent '#{intent_name}'. Falling back to UnrecognizedMessage."
+          )
+          raise Stealth::Errors::UnrecognizedMessage, "The reply '#{current_message.message}' was not recognized."
         end
 
         def contains_homophones?(arr)

@@ -16,6 +16,7 @@ module Stealth
                   :payload,
                   :referral,
                   :nlp_result,
+                  :llm_result,
                   :catch_all_reason,
                   :confidence
 
