@@ -11,8 +11,13 @@ module Stealth
                   :payload,         # Payload information
                   :attachments,     # Attachments
                   :location,        # Location information
-                  :reaction         # Reaction to a message
-                  :selected_option  # Selected action from an interactive message
+                  :reaction,        # Reaction to a message
+                  :selected_option, # Selected action from an interactive message
+                  :payload,
+                  :referral,
+                  :nlp_result,
+                  :catch_all_reason,
+                  :confidence
 
     def initialize(service:)
       @service = service
