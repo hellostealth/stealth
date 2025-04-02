@@ -5,6 +5,9 @@ $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'rspec'
 
+require 'rails'
+require 'rails/engine'
+
 require 'stealth'
 require 'sidekiq/testing'
 require 'mock_redis'
@@ -14,7 +17,7 @@ require 'mock_redis'
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 
 $redis = MockRedis.new
-$services_yml = File.read(File.join(File.dirname(__FILE__), 'support', 'services.yml'))
+# $services_yml = File.read(File.join(File.dirname(__FILE__), 'support', 'services.yml'))
 
 Sidekiq.logger.level = Logger::ERROR
 
@@ -24,7 +27,7 @@ RSpec.configure do |config|
   config.before(:each) do |example|
     Sidekiq::Testing.fake!
 
-    Stealth.load_services_config!($services_yml)
+    # Stealth.load_services_config!($services_yml)
   end
 
   config.expect_with :rspec do |expectations|
