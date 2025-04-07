@@ -69,6 +69,7 @@ module Stealth
         #   "100k" => proc { step_back }, "200k" => proc { step_to flow :hello }
         # }
         def handle_message(message_tuples)
+          @message_tuples = message_tuples
           match = NO_MATCH # dummy value since nils are used for matching
 
           if reserved_homophones_used = contains_homophones?(message_tuples.keys)
@@ -187,6 +188,12 @@ module Stealth
           end
 
           intent_name = llm_response[:intent].to_sym
+
+          # Check if message_tuples match
+          if @message_tuples&.key?(intent_name)
+            instance_eval(&@message_tuples[intent_name])
+            return
+          end
 
           if Stealth::FlowManager.instance.flow_exists?(intent_name)
             Stealth::Logger.l(
