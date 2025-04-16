@@ -225,7 +225,7 @@ module Stealth
             flow_states = flow_manager.instance_variable_get(:@flows)[flow.to_sym]
 
             if flow_states.present?
-              state = flow_states.keys.first.to_s
+              state = flow_states[:states].keys.first.to_s
             else
               raise ArgumentError, "No states defined for flow: #{flow}"
             end
