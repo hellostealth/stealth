@@ -61,7 +61,7 @@ module Stealth
       return nil if flow.blank? || state_string.blank?
 
       state_symbol = state_string.to_sym
-      return state_symbol if flow.key?(state_symbol)
+      return state_symbol if flow[:states].key?(state_symbol)
 
       nil
     end
