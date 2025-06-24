@@ -36,6 +36,9 @@ module Stealth
       flow_name = flow_name.to_sym
       state_name = state_name.to_sym
 
+      should_reload = Stealth.env.development? || !@flows.key?(flow_name)
+      load_flow_file(flow_name) if should_reload # force reload on every request in dev
+
       flow = @flows[flow_name]
       return unless flow
 
@@ -110,6 +113,16 @@ module Stealth
 
     def self.trigger_flow(flow_name, state_name, service_event)
       instance.trigger_flow(flow_name, state_name, service_event)
+    end
+
+    def load_flow_file(flow_name)
+      flow_file_path = Rails.root.join("stealth/flows", "#{flow_name}_flow.rb")
+
+      if File.exist?(flow_file_path)
+        load flow_file_path
+      else
+        Stealth::Logger.l(topic: 'flow', message: "Flow file not found: #{flow_file_path}")
+      end
     end
 
     # Callbacks

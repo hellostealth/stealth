@@ -12,10 +12,10 @@ module Stealth
     def trigger_reply(flow_name, state_name, service_event)
       flow_state_key = "#{flow_name}/#{state_name}".to_sym
 
-      # Check if reply is already registered
-      unless @replies.key?(flow_state_key)
-        # Load reply file based on flow and state if not registered
-        load_reply_file(flow_name, state_name)
+      if Stealth.env.development?
+        load_reply_file(flow_name, state_name)  # force reload on every request in dev
+      else
+        load_reply_file(flow_name, state_name) unless @replies.key?(flow_state_key)
       end
 
       if @replies.key?(flow_state_key)
