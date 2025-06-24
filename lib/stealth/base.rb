@@ -6,29 +6,47 @@ require 'yaml'
 require 'sidekiq'
 require 'redis'
 require 'active_support/all'
-
-begin
-  require "rails"
-  require "active_record"
-rescue LoadError
-  # Don't require ActiveRecord
-end
+require 'spectre'
 
 # core
 require 'stealth/version'
-require 'stealth/errors'
+require 'stealth/engine'
+require 'stealth/configuration/configuration'
+require 'stealth/configuration/bandwidth'
+require 'stealth/configuration/slack'
+require 'stealth/configuration/spectre_configuration'
 require 'stealth/core_ext'
-require 'stealth/logger'
-require 'stealth/configuration'
-require 'stealth/reloader'
+# require 'stealth/reloader'
 
 # helpers
 require 'stealth/helpers/redis'
 
-module Stealth
+require 'stealth/event_mapping'
+require 'stealth/event_manager'
+require 'stealth/event_triggers'
+require 'stealth/flow_manager'
+require 'stealth/flow_triggers'
+require 'stealth/reply_manager'
+require 'stealth/reply_triggers'
+require 'stealth/reply'
+require 'stealth/jobs'
+require 'stealth/lock'
+require 'stealth/dispatcher'
+require 'stealth/session'
+require 'stealth/errors'
+require 'stealth/logger'
 
+# services
+require 'stealth/services/base_client'
+require 'stealth/services/jobs/handle_event_job'
+require 'stealth/services/jobs/scheduled_reply_job'
+require 'stealth/service_event'
+require 'stealth/nlp/result'
+require 'stealth/nlp/client'
+
+module Stealth
   def self.env
-    @env ||= ActiveSupport::StringInquirer.new(ENV['STEALTH_ENV'] || 'development')
+    @env ||= ActiveSupport::StringInquirer.new(ENV['STEALTH_ENV'] || Rails.env)
   end
 
   def self.root
@@ -50,25 +68,25 @@ module Stealth
 
   def self.default_autoload_paths
     [
-      File.join(Stealth.root, 'bot', 'controllers', 'concerns'),
-      File.join(Stealth.root, 'bot', 'controllers'),
-      File.join(Stealth.root, 'bot', 'models', 'concerns'),
-      File.join(Stealth.root, 'bot', 'models'),
-      File.join(Stealth.root, 'bot', 'helpers'),
+      # File.join(Stealth.root, 'bot', 'controllers', 'concerns'),
+      # File.join(Stealth.root, 'bot', 'controllers'),
+      # File.join(Stealth.root, 'bot', 'models', 'concerns'),
+      # File.join(Stealth.root, 'bot', 'models'),
+      # File.join(Stealth.root, 'bot', 'helpers'),
       File.join(Stealth.root, 'config')
     ]
   end
 
-  def self.bot_reloader
-    @bot_reloader
-  end
+  # def self.bot_reloader
+  #   @bot_reloader
+  # end
 
   def self.set_config_defaults(config)
     defaults = {
       dynamic_delay_muliplier: 1.0,                     # values > 1 increase, values < 1 decrease delay
       session_ttl: 0,                                   # 0 seconds; don't expire sessions
       lock_autorelease: 30,                             # 30 seconds
-      transcript_logging: false,                        # show user replies in the logs
+      transcript_logging: true,                        # show user replies in the logs
       hot_reload: Stealth.env.development?,             # hot reload bot files on change (dev only)
       eager_load: Stealth.env.production?,              # eager load bot files for performance (prod only)
       autoload_paths: Stealth.default_autoload_paths,   # array of autoload paths used in eager and hot reloading
@@ -140,15 +158,11 @@ module Stealth
     end
   end
 
-  def self.tid
-    Thread.current.object_id.to_s(36)
-  end
-
   def self.require_directory(directory)
     for_each_file_in(directory) { |file| require_relative(file) }
   end
 
-private
+  private
 
   def self.for_each_file_in(directory, &blk)
     directory = directory.to_s.gsub(%r{(\/|\\)}, File::SEPARATOR)
@@ -158,36 +172,50 @@ private
     Dir.glob(directory).sort.each(&blk)
   end
 
-end
+  # Thread Management
+  def self.tid
+    Thread.current.object_id.to_s(36)
+  end
 
-require 'stealth/jobs'
-require 'stealth/dispatcher'
-require 'stealth/server'
-require 'stealth/reply'
-require 'stealth/scheduled_reply'
-require 'stealth/service_reply'
-require 'stealth/service_message'
-require 'stealth/session'
-require 'stealth/lock'
-require 'stealth/nlp/result'
-require 'stealth/nlp/client'
-require 'stealth/controller/callbacks'
-require 'stealth/controller/replies'
-require 'stealth/controller/messages'
-require 'stealth/controller/unrecognized_message'
-require 'stealth/controller/catch_all'
-require 'stealth/controller/helpers'
-require 'stealth/controller/dynamic_delay'
-require 'stealth/controller/interrupt_detect'
-require 'stealth/controller/dev_jumps'
-require 'stealth/controller/nlp'
-require 'stealth/controller/controller'
-require 'stealth/flow/base'
-require 'stealth/services/base_client'
+  class << self
+    include Stealth::EventTriggers
+    include Stealth::FlowTriggers
+    include Stealth::ReplyTriggers
 
-if defined?(ActiveRecord)
-  require 'stealth/migrations/configurator'
-  require 'stealth/migrations/generators'
-  require 'stealth/migrations/railtie_config'
-  require 'stealth/migrations/tasks'
+    attr_accessor :configurations
+
+    # Setup & Service Driver Configuration
+    def setup
+      self.configurations ||= {}
+      yield(self)
+    end
+
+    def configure_bandwidth
+      self.configurations[:bandwidth] ||= Bandwidth.new
+      yield(configurations[:bandwidth])
+    end
+
+    def configure_slack
+      self.configurations[:slack] ||= Slack.new
+      yield(configurations[:slack])
+    end
+
+    def configure_spectre
+      self.configurations[:spectre] ||= SpectreConfiguration.new
+      yield(configurations[:spectre])
+
+      Spectre.setup do |config|
+        config.default_llm_provider = configurations[:spectre].default_llm_provider
+
+        config.openai do |openai|
+          openai.api_key = configurations[:spectre].openai_api_key
+        end
+
+        config.ollama do |ollama|
+          ollama.api_key = configurations[:spectre].ollama_api_key
+          ollama.host = configurations[:spectre].ollama_host
+        end
+      end
+    end
+  end
 end

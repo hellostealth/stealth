@@ -1,3 +1,0 @@
-module <%= name.capitalize.underscore.camelize %>Helper
-
-end

@@ -4,7 +4,7 @@
 require 'stealth/services/base_reply_handler'
 require 'stealth/services/base_message_handler'
 
-require 'stealth/services/jobs/handle_message_job'
+# require 'stealth/services/jobs/handle_message_job'
 
 module Stealth
   module Services

@@ -3,12 +3,11 @@
 
 module Stealth
   class Reply
-
-    attr_accessor :reply_type, :reply
+    attr_reader :reply_type, :reply
 
     def initialize(unstructured_reply:)
-      @reply_type = unstructured_reply["reply_type"]
-      @reply = unstructured_reply
+      @reply = sanitize_reply(unstructured_reply)
+      @reply_type = @reply[:reply_type]
     end
 
     def [](key)
@@ -23,13 +22,26 @@ module Stealth
       reply_type == 'delay'
     end
 
-    def self.dynamic_delay
-      self.new(
-        unstructured_reply: {
-          'reply_type' => 'delay',
-          'duration' => 'dynamic'
-        }
-      )
+    private
+
+    def sanitize_reply(reply)
+      raise "Invalid reply format. Expected a Hash." unless reply.is_a?(Hash)
+
+      sanitized_reply = reply.transform_values { |value| sanitize(value) }
+
+      # Default reply_type to "text" only if it's still missing
+      sanitized_reply[:reply_type] ||= "text" if sanitized_reply[:reply_type].nil?
+
+      if sanitized_reply[:suggestions].is_a?(String)
+        sanitized_reply[:suggestions] = JSON.parse(sanitized_reply[:suggestions])
+      end
+
+      sanitized_reply
+    end
+
+    def sanitize(value)
+      return value unless value.is_a?(String)
+      ActionView::Base.full_sanitizer.sanitize(value)
     end
 
   end
