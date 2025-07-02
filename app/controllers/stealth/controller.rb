@@ -7,6 +7,7 @@ module Stealth
     include Stealth::Controller::InterruptDetect
     include Stealth::Controller::Messages
     include Stealth::Controller::Nlp
+    include Stealth::Controller::Llm
     include Stealth::Controller::Replies
     include Stealth::Controller::CatchAll
     include Stealth::Controller::UnrecognizedMessage
@@ -193,6 +194,8 @@ module Stealth
         rescue StandardError => e
           if e.is_a?(Stealth::Errors::UnrecognizedMessage)
             run_unrecognized_message(err: e)
+          elsif e.is_a?(Stealth::Errors::FlowTriggered)
+            redirect_to_llm_intent
           else
             run_catch_all(err: e)
           end

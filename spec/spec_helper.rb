@@ -7,6 +7,7 @@ require 'rspec'
 
 require 'rails'
 require 'rails/engine'
+
 require 'stealth'
 require 'sidekiq/testing'
 require 'mock_redis'

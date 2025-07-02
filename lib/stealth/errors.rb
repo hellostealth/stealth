@@ -43,6 +43,9 @@ module Stealth
     class FlowDefinitionError < Errors
     end
 
+    class FlowTriggered < Errors
+    end
+
     # Service errors
     class InvalidSessionID < Errors
     end
