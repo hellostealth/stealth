@@ -43,7 +43,6 @@ module Stealth
 
       def reset_pool!
         if defined?(@pool) && @pool
-          # Корректно закрыть соединения; метод доступен в connection_pool >= 2.2
           @pool.shutdown(&:close) rescue nil
         end
         @pool = nil
