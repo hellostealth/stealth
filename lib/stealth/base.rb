@@ -21,6 +21,7 @@ require 'stealth/core_ext'
 require 'stealth/logger'
 require 'stealth/configuration'
 require 'stealth/reloader'
+require 'stealth/redis'
 
 # helpers
 require 'stealth/helpers/redis'

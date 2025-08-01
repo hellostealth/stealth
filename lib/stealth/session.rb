@@ -23,7 +23,7 @@ module Stealth
         unless defined?($redis) && $redis.present?
           raise(
             Stealth::Errors::RedisNotConfigured,
-            "Please make sure REDIS_URL is configured before using sessions"
+            "Please make sure STEALTH_REDIS_URL or REDIS_URL is configured before using sessions"
           )
         end
 
@@ -91,7 +91,7 @@ module Stealth
     end
 
     def clear_session
-      $redis.del(session_key)
+      $redis.with { |r| r.del(session_key) }
     end
 
     def present?

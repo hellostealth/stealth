@@ -52,7 +52,7 @@ module Stealth
         private
 
           def fetch_error_level
-            if fail_attempts = $redis.get(error_slug)
+            if fail_attempts = $redis.with { |r| r.get(error_slug) }
               begin
                 fail_attempts = Integer(fail_attempts)
               rescue ArgumentError
@@ -65,7 +65,7 @@ module Stealth
             end
 
             # Set the error with an expiration to avoid filling Redis
-            $redis.setex(error_slug, 15.minutes.to_i, fail_attempts)
+            $redis.with { |r| r.setex(error_slug, 15.minutes.to_i, fail_attempts) }
 
             fail_attempts
           end

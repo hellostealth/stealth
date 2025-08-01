@@ -12,26 +12,28 @@ module Stealth
         if expiration > 0
           getex(key, expiration)
         else
-          $redis.get(key)
+          $redis.with { |r| r.get(key) }
         end
       end
 
       def delete_key(key)
-        $redis.del(key)
+        $redis.with { |r| r.del(key) }
       end
 
       def getex(key, expiration=Stealth.config.session_ttl)
-        $redis.multi do |pipeline|
-          pipeline.expire(key, expiration)
-          pipeline.get(key)
-        end.last
+        $redis.with do |r|
+          r.multi do |pipeline|
+            pipeline.expire(key, expiration)
+            pipeline.get(key)
+          end.last
+        end
       end
 
       def persist_key(key:, value:, expiration: Stealth.config.session_ttl)
         if expiration > 0
-          $redis.setex(key, expiration, value)
+          $redis.with { |r| r.setex(key, expiration, value) }
         else
-          $redis.set(key, value)
+          $redis.with { |r| r.set(key, value) }
         end
       end
 

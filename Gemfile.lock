@@ -1,8 +1,9 @@
 PATH
   remote: .
   specs:
-    stealth (2.0.0.beta7)
+    stealth (2.1.0)
       activesupport (~> 7.0)
+      connection_pool (~> 2.4)
       multi_json (~> 1.12)
       puma (~> 6.0)
       redis (~> 5.0)
