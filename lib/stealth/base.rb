@@ -5,6 +5,7 @@
 require 'yaml'
 require 'sidekiq'
 require 'redis'
+require "bigdecimal"
 require 'active_support/all'
 
 begin
