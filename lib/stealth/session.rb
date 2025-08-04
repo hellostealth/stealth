@@ -20,7 +20,7 @@ module Stealth
       @type = type
 
       if id.present?
-        unless defined?($redis) && $redis.present?
+        unless defined?(Stealth::RedisSupport) && Stealth::RedisSupport.connection_pool.present?
           raise(
             Stealth::Errors::RedisNotConfigured,
             "Please make sure STEALTH_REDIS_URL or REDIS_URL is configured before using sessions"
@@ -91,7 +91,7 @@ module Stealth
     end
 
     def clear_session
-      $redis.with { |r| r.del(session_key) }
+      Stealth::RedisSupport.with { |r| r.del(session_key) }
     end
 
     def present?

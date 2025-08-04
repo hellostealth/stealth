@@ -59,4 +59,3 @@ module Stealth
   end
 end
 
-$redis = Stealth::RedisSupport
