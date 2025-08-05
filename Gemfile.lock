@@ -3,10 +3,8 @@ PATH
   specs:
     stealth (2.1.0)
       activesupport (~> 7.0)
-      bigdecimal
       connection_pool (~> 2.4)
       multi_json (~> 1.12)
-      mutex_m
       puma (~> 6.0)
       redis (~> 5.0)
       sidekiq (~> 7.0)
@@ -22,7 +20,6 @@ GEM
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
       tzinfo (~> 2.0)
-    bigdecimal (3.2.2)
     concurrent-ruby (1.2.2)
     connection_pool (2.4.1)
     diff-lcs (1.5.0)
@@ -34,7 +31,6 @@ GEM
     multi_json (1.15.0)
     mustermann (3.0.0)
       ruby2_keywords (~> 0.0.1)
-    mutex_m (0.3.0)
     nio4r (2.5.9)
     oj (3.14.3)
     puma (6.3.0)
