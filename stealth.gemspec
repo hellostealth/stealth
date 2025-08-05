@@ -13,6 +13,7 @@ Gem::Specification.new do |s|
   s.email = 'mauricio@edge14.com'
 
   s.add_dependency 'activesupport', '~> 7.0'
+  s.add_dependency "bigdecimal"
   s.add_dependency 'multi_json', '~> 1.12'
   s.add_dependency 'puma', '~> 6.0'
   s.add_dependency 'redis', '~> 5.0'

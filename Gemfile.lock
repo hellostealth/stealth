@@ -3,6 +3,7 @@ PATH
   specs:
     stealth (2.1.0)
       activesupport (~> 7.0)
+      bigdecimal
       connection_pool (~> 2.4)
       multi_json (~> 1.12)
       puma (~> 6.0)
@@ -20,6 +21,7 @@ GEM
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
       tzinfo (~> 2.0)
+    bigdecimal (3.2.2)
     concurrent-ruby (1.2.2)
     connection_pool (2.4.1)
     diff-lcs (1.5.0)
