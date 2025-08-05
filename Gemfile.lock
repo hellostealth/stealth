@@ -6,6 +6,7 @@ PATH
       bigdecimal
       connection_pool (~> 2.4)
       multi_json (~> 1.12)
+      mutex_m
       puma (~> 6.0)
       redis (~> 5.0)
       sidekiq (~> 7.0)
@@ -33,6 +34,7 @@ GEM
     multi_json (1.15.0)
     mustermann (3.0.0)
       ruby2_keywords (~> 0.0.1)
+    mutex_m (0.3.0)
     nio4r (2.5.9)
     oj (3.14.3)
     puma (6.3.0)
