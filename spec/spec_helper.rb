@@ -6,8 +6,6 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'rspec'
 require 'connection_pool'
 require 'mock_redis'
-require "pry"
-require "pry-byebug"
 
 REDIS_TEST_CLIENT  = MockRedis.new
 REDIS_TEST_WRAPPER = ConnectionPool::Wrapper.new(size: 1, timeout: 1) { REDIS_TEST_CLIENT }
