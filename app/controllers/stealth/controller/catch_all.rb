@@ -47,8 +47,9 @@ module Stealth
         private
 
         def fetch_error_level
-          fail_attempts = ($redis.get(error_slug) || 0).to_i + 1
-          $redis.setex(error_slug, 15.minutes.to_i, fail_attempts) # Store error level for 15 min
+          redis_error_slug = Stealth::RedisSupport.with { |r| r.get(error_slug) } || 0
+          fail_attempts = redis_error_slug.to_i + 1
+          Stealth::RedisSupport.with { |r| r.setex(error_slug, 15.minutes.to_i, fail_attempts) } # Store error level for 15 min
           fail_attempts
         end
 

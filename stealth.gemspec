@@ -11,6 +11,7 @@ Gem::Specification.new do |s|
   s.email = 'm@hiremav.com'
 
   s.add_dependency 'redis', '~> 5.0'
+  s.add_dependency "connection_pool", "~> 2"
   s.add_dependency 'sidekiq', '~> 7.0'
   s.add_dependency 'spectre_ai', '~> 1.2.0'
 
