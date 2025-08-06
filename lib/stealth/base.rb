@@ -16,6 +16,7 @@ require 'stealth/configuration/bandwidth'
 require 'stealth/configuration/slack'
 require 'stealth/configuration/spectre_configuration'
 require 'stealth/core_ext'
+require 'stealth/redis'
 # require 'stealth/reloader'
 
 # helpers

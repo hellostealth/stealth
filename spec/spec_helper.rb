@@ -4,18 +4,39 @@
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'rspec'
+require 'connection_pool'
+require 'mock_redis'
+
+REDIS_TEST_CLIENT  = MockRedis.new
+REDIS_TEST_WRAPPER = ConnectionPool::Wrapper.new(size: 1, timeout: 1) { REDIS_TEST_CLIENT }
+
+$redis = REDIS_TEST_WRAPPER
 
 require 'rails'
 require 'rails/engine'
 require 'stealth'
 require 'sidekiq/testing'
-require 'mock_redis'
+
+module Stealth
+  module RedisSupport
+    class << self
+      def with(&blk)
+        REDIS_TEST_WRAPPER.with(&blk)
+      end
+      def pool
+        REDIS_TEST_WRAPPER
+      end
+      def reset_pool!
+        nil
+      end
+    end
+  end
+end
 
 # Requires supporting files with custom matchers and macros, etc,
 # in ./support/ and its subdirectories.
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 
-$redis = MockRedis.new
 # $services_yml = File.read(File.join(File.dirname(__FILE__), 'support', 'services.yml'))
 
 Sidekiq.logger.level = Logger::ERROR
