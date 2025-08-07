@@ -20,14 +20,12 @@ end
 describe "Stealth::Session" do
   let(:id) { '0xDEADBEEF' }
 
-  it "should raise an error if $redis is not set" do
-    $redis = nil
+  it "should raise an error if Stealth::RedisSupport connection_pool is not set" do
+    allow(Stealth::RedisSupport).to receive(:connection_pool).and_return(nil)
 
     expect {
       Stealth::Session.new(id: id)
     }.to raise_error(Stealth::Errors::RedisNotConfigured)
-
-    $redis = MockRedis.new
   end
 
   describe "without a session" do
