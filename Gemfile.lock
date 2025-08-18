@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    stealth (2.1.0)
+    stealth (2.1.1)
       activesupport (~> 7.0)
       connection_pool (~> 2.4)
       multi_json (~> 1.12)
