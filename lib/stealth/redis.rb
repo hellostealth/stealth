@@ -8,7 +8,7 @@ module Stealth
     attr_accessor :url, :pool_size, :pool_timeout
 
     def initialize
-      @url          = Stealth.env.development? ? "redis://localhost:6379/0" : ENV["STEALTH_REDIS_URL"] || ENV["REDIS_URL"]
+      @url          = ENV["STEALTH_REDIS_URL"] || ENV["REDIS_URL"] || "redis://localhost:6379/0"
       @pool_size    = Integer(ENV["STEALTH_REDIS_POOL"] || 5)
       @pool_timeout = Integer(ENV["STEALTH_REDIS_TIMEOUT"] || 5)
     end
