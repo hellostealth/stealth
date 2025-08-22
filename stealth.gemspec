@@ -6,11 +6,12 @@ Gem::Specification.new do |s|
   s.description = 'Ruby framework for building conversational bots.'
   s.homepage = 'https://github.com/hellostealth/stealth'
   s.licenses = ['MIT']
-  s.version = '3.0.0.alpha1'
+  s.version = Stealth::VERSION
   s.authors = ['Matthew Black']
   s.email = 'm@hiremav.com'
 
   s.add_dependency 'redis', '~> 5.0'
+  s.add_dependency "connection_pool", "~> 2"
   s.add_dependency 'sidekiq', '~> 7.0'
   s.add_dependency 'spectre_ai', '~> 1.2.0'
 
