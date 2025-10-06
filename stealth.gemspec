@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'redis', '~> 5.0'
   s.add_dependency "connection_pool", "~> 2"
   s.add_dependency 'sidekiq', '~> 7.0'
-  s.add_dependency 'spectre_ai', '~> 1.2.0'
+  s.add_dependency 'spectre_ai', '~> 2.0.0'
 
   s.add_development_dependency 'rspec', '~> 3.9'
   s.add_development_dependency 'rack-test', '~> 2.0'
