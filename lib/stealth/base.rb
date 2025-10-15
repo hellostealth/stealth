@@ -216,6 +216,14 @@ module Stealth
           ollama.api_key = configurations[:spectre].ollama_api_key
           ollama.host = configurations[:spectre].ollama_host
         end
+
+        config.claude do |claude|
+          claude.api_key = configurations[:spectre].claude_api_key
+        end
+
+        config.gemini do |gemini|
+          gemini.api_key = configurations[:spectre].gemini_api_key
+        end
       end
     end
   end
