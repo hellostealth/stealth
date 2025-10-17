@@ -5,7 +5,7 @@ module Stealth
   module Services
 
     class HandleEventJob < Stealth::Jobs
-      sidekiq_options queue: :realtime, retry: false
+      sidekiq_options queue: :realtime_standard_2x, retry: false
 
       def perform(service, params, headers)
         dispatcher = Stealth::Dispatcher.new(
