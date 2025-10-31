@@ -14,6 +14,7 @@ $redis = REDIS_TEST_WRAPPER
 
 require 'rails'
 require 'rails/engine'
+
 require 'stealth'
 require 'sidekiq/testing'
 

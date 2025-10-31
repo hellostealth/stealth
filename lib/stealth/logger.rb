@@ -44,7 +44,7 @@ module Stealth
                 :magenta
               when :alexa, :voice, :twilio_voice, :unrecognized_message
                 :light_cyan
-              when :nlp
+              when :nlp, :llm
                 :cyan
               when :catch_all, :err
                 :red

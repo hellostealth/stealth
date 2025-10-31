@@ -70,9 +70,13 @@ module Stealth
         #   release_lock!
         # end
 
-        def send_replies
-          flow = current_session.flow_string
-          state = current_session.state_string
+        def send_replies(custom_reply: nil)
+          flow, state = if custom_reply
+                          custom_reply.split('/')
+                        else
+                          [current_session.flow_string, current_session.state_string]
+                        end
+
           Stealth.trigger_reply(flow, state, current_message)
         end
 
